@@ -37,36 +37,31 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->defaultAvatarProvider(\Filament\AvatarProviders\UiAvatarsProvider::class)
+            ->homeUrl(function () {
+                if (auth()->check() && auth()->user()->isAccounts()) {
+                    return route('filament.admin.resources.students.index');
+                }
+                if (auth()->check() && auth()->user()->isDataEntry()) {
+                    return route('filament.admin.resources.notes.index');
+                }
+                return route('filament.admin.pages.dashboard');
+            })
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Teal,
             ])
-            ->darkMode(false)
+            ->darkMode(true)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->assets([
                 Css::make('custom-checkbox-fix', 'resources/css/filament/admin/custom.css'),
+                Css::make('filament-upload-styles', 'resources/css/filament-upload-styles.css'),
             ])
-            ->brandName('Practice Platform')
-            ->brandLogo(asset('images/logo.png'))
+            ->brandName('EdGuide')
+            ->brandLogo(asset('edguide-logo.png'))
             ->favicon(asset('images/favicon.ico'))
             ->spa()
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->pages([
-                \App\Filament\Pages\Dashboard::class,
-            ])
-            ->resources([
-                \App\Filament\Resources\CourseResource::class,
-                \App\Filament\Resources\BatchResource::class,
-                \App\Filament\Resources\StudentResource::class,
-                \App\Filament\Resources\NoteResource::class,
-                \App\Filament\Resources\VideoResource::class,
-                \App\Filament\Resources\UserResource::class,
-                \App\Filament\Resources\SubjectResource::class,
-                \App\Filament\Resources\QuestionResource::class,
-                \App\Filament\Resources\QuestionMediaResource::class,
-                \App\Filament\Resources\OptionResource::class,
-                \App\Filament\Resources\DayResource::class,
-                \App\Filament\Resources\OpinionVerificationResource::class,
-            ])
+            ->pages($this->getPagesForUser())
+            ->resources($this->getResourcesForUser())
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -91,53 +86,211 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-home')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
                     ->url(fn (): string => route('filament.admin.pages.dashboard'))
-                    ->visible(fn (): bool => auth()->check()),
-                NavigationItem::make('Videos')
-                    ->icon('heroicon-o-video-camera')
-                    ->group('Content Management')
-                    ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isDataManager() || auth()->user()->isTeacher())),
-                NavigationItem::make('Notes')
-                    ->icon('heroicon-o-document')
-                    ->group('Content Management')
-                    ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isDataManager() || auth()->user()->isTeacher()))
-                    ->url(fn (): string => route('filament.admin.resources.notes.index')),
+                    ->visible(fn (): bool => auth()->check() && !auth()->user()->isAccounts() && !auth()->user()->isDataEntry()),
+
                 NavigationItem::make('Register Student')
                     ->icon('heroicon-o-user-plus')
                     ->group('Students')
                     ->url(fn (): string => route('filament.admin.resources.students.create'))
-                    ->visible(fn (): bool => auth()->user()->isAdmin()),
+                    ->visible(fn (): bool => auth()->user()->isAdmin() || auth()->user()->isAccounts()),
                 NavigationItem::make('All Students')
                     ->icon('heroicon-o-users')
                     ->group('Students')
                     ->url(fn (): string => route('filament.admin.resources.students.index'))
-                    ->visible(fn (): bool => auth()->user()->isAdmin()),
-            ], $this->getCourseNavigationItems()))
-            ->navigationGroups([
+                    ->visible(fn (): bool => auth()->user()->isAdmin() || auth()->user()->isAccounts() || auth()->user()->isManager()),
+                NavigationItem::make('Student Activity')
+                    ->icon('heroicon-o-clock')
+                    ->group('Students')
+                    ->url(fn (): string => route('filament.admin.resources.student-activities.overview'))
+                    ->visible(fn (): bool => auth()->user()->isAdmin() || auth()->user()->isManager()),
+
+                // NavigationItem::make('Fee Payments')
+                //     ->icon('heroicon-o-credit-card')
+                //     ->group('Financial Management')
+                //     ->url(fn (): string => route('filament.admin.resources.fees.index'))
+                //     ->visible(fn (): bool => auth()->user()->isAdmin() || auth()->user()->isAccounts() || auth()->user()->isManager()),
+                // NavigationItem::make('Fee Summaries')
+                //     ->icon('heroicon-o-chart-bar')
+                //     ->group('Financial Management')
+                //     ->url(fn (): string => route('filament.admin.resources.fee-summaries.index'))
+                //     ->visible(fn (): bool => auth()->user()->isAdmin() || auth()->user()->isAccounts() || auth()->user()->isManager()),
+                // NavigationItem::make('Live Class')
+                //     ->icon('heroicon-o-microphone')
+                //     ->url(fn (): string => route('filament.admin.resources.speaking-sessions.index'))
+                //     ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isTeacher()) && !auth()->user()->isAccounts() && !auth()->user()->isDataEntry()),
+                // NavigationItem::make('Doubt Clearance')
+                //     ->icon('heroicon-o-chat-bubble-left-right')
+                //     ->url(fn (): string => route('filament.admin.resources.doubts.index'))
+                //     ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isTeacher()) && !auth()->user()->isAccounts() && !auth()->user()->isDataEntry()),
+                NavigationItem::make('Notes')
+                    ->icon('heroicon-o-document-text')
+                    ->group('Content Management')
+                    ->url(fn (): string => route('filament.admin.resources.notes.index'))
+                    ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isAccounts())),
+                NavigationItem::make('Videos')
+                    ->icon('heroicon-o-video-camera')
+                    ->group('Content Management')
+                    ->url(fn (): string => route('filament.admin.resources.videos.index'))
+                    ->visible(fn (): bool => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isAccounts())),
+            ], [])) // $this->getCourseNavigationItems() - temporarily disabled
+            ->navigationGroups($this->getNavigationGroupsForUser());
+    }
+
+    protected function getNavigationGroupsForUser(): array
+    {
+        if (auth()->check() && auth()->user()->isAccounts()) {
+            // For accounts users, show these groups including content management
+            return [
+                NavigationGroup::make()
+                    ->label('Students'),
+                // NavigationGroup::make()
+                //     ->label('Financial Management'),
                 NavigationGroup::make()
                     ->label('Content Management'),
+            ];
+        }
+        
+        if (auth()->check() && auth()->user()->isDataEntry()) {
+            // For dataentry users, show no navigation groups (content management removed)
+            return [];
+        }
+        
+        if (auth()->check() && auth()->user()->isManager()) {
+            // For manager users, show specific groups (no Content Management)
+            return [
                 NavigationGroup::make()
                     ->label('Students'),
                 NavigationGroup::make()
-                    ->label('A1 Course')
-                    ->collapsible(),
-                NavigationGroup::make()
-                    ->label('A2 Course')
-                    ->collapsible(),
-                NavigationGroup::make()
-                    ->label('B1 Course')
-                    ->collapsible(),
-                NavigationGroup::make()
-                    ->label('B2 Course')
-                    ->collapsible(),
-            ]);
+                    ->label('Batch Management'),
+                // NavigationGroup::make()
+                //     ->label('Financial Management'),
+                // NavigationGroup::make()
+                //     ->label('Test Management'),
+            ];
+        }
+        
+        // For all other users, show all groups including content management
+        return [
+            NavigationGroup::make()
+                ->label('Students'),
+            NavigationGroup::make()
+                ->label('Batch Management'),
+            // NavigationGroup::make()
+            //     ->label('Financial Management'),
+            NavigationGroup::make()
+                ->label('Content Management'),
+            // NavigationGroup::make()
+            //     ->label('Test Management'),
+            // NavigationGroup::make()
+            //     ->label('A1 Course')
+            //     ->collapsible(),
+            // NavigationGroup::make()
+            //     ->label('A2 Course')
+            //     ->collapsible(),
+            // NavigationGroup::make()
+            //     ->label('B1 Course')
+            //     ->collapsible(),
+            // NavigationGroup::make()
+            //     ->label('B2 Course')
+            //     ->collapsible(),
+        ];
+    }
+
+    protected function getPagesForUser(): array
+    {
+        if (auth()->check() && (auth()->user()->isAccounts() || auth()->user()->isDataEntry())) {
+            // For accounts and dataentry users, don't show any pages (no dashboard)
+            return [];
+        }
+        
+        // For all other users, show dashboard
+        return [
+            \App\Filament\Pages\Dashboard::class,
+        ];
+    }
+
+    protected function getResourcesForUser(): array
+    {
+        if (auth()->check() && auth()->user()->isAccounts()) {
+            // For accounts users, show these resources including notes and videos
+            return [
+                \App\Filament\Resources\BatchResource::class,
+                \App\Filament\Resources\StudentResource::class,
+                \App\Filament\Resources\FeeResource::class,
+                \App\Filament\Resources\FeeSummaryResource::class,
+                \App\Filament\Resources\NoteResource::class,
+                \App\Filament\Resources\VideoResource::class,
+                \App\Filament\Resources\VerificationCodeResource::class,
+            ];
+        }
+        
+        if (auth()->check() && auth()->user()->isDataEntry()) {
+            // For dataentry users, no resources (content management removed)
+            return [];
+        }
+        
+        if (auth()->check() && auth()->user()->isManager()) {
+            // For manager users, show read-only resources (no content management)
+            return [
+                \App\Filament\Resources\CourseResource::class,
+                \App\Filament\Resources\BatchResource::class,
+                \App\Filament\Resources\StudentResource::class,
+                \App\Filament\Resources\StudentActivityResource::class,
+                \App\Filament\Resources\FeeResource::class,
+                \App\Filament\Resources\FeeSummaryResource::class,
+                \App\Filament\Resources\SubjectResource::class,
+                \App\Filament\Resources\TestResource::class,
+                \App\Filament\Resources\OpinionVerificationResource::class,
+                \App\Filament\Resources\VerificationCodeResource::class,
+            ];
+        }
+        
+        if (auth()->check() && auth()->user()->isTeacher()) {
+            // For teachers, show limited resources (no verification codes, user management, etc.)
+            return [
+                \App\Filament\Resources\BatchResource::class,
+                \App\Filament\Resources\StudentResource::class,
+                \App\Filament\Resources\StudentActivityResource::class,
+                \App\Filament\Resources\SubjectResource::class,
+                \App\Filament\Resources\QuestionResource::class,
+                \App\Filament\Resources\TestResource::class,
+                \App\Filament\Resources\OpinionVerificationResource::class,
+            ];
+        }
+        
+        // For all other users, show all resources including content management
+        return [
+            \App\Filament\Resources\CourseResource::class,
+            \App\Filament\Resources\BatchResource::class,
+            \App\Filament\Resources\StudentResource::class,
+            \App\Filament\Resources\StudentActivityResource::class,
+            \App\Filament\Resources\FeeResource::class,
+            \App\Filament\Resources\FeeSummaryResource::class,
+            \App\Filament\Resources\SpeakingSessionResource::class,
+            \App\Filament\Resources\DoubtResource::class,
+            \App\Filament\Resources\UserResource::class,
+            \App\Filament\Resources\SubjectResource::class,
+            \App\Filament\Resources\QuestionResource::class,
+            \App\Filament\Resources\QuestionMediaResource::class,
+            \App\Filament\Resources\OptionResource::class,
+            \App\Filament\Resources\DayResource::class,
+            \App\Filament\Resources\TestResource::class,
+            \App\Filament\Resources\OpinionVerificationResource::class,
+            \App\Filament\Resources\VerificationCodeResource::class,
+            \App\Filament\Resources\NoteResource::class,
+            \App\Filament\Resources\VideoResource::class,
+        ];
     }
 
     protected function getCourseNavigationItems(): array
     {
-        // Only show for non-datamanager users
-        if (auth()->check() && auth()->user()->isDataManager()) {
-            return [];
-        }
+        // COMPLETELY DISABLED - Hide all course navigation items (A1, A2, B1, B2 with subjects and questions)
+        return [];
+        
+        // ALL ORIGINAL LOGIC DISABLED:
+        // if (auth()->check() && (auth()->user()->isDataManager() || auth()->user()->isAccounts() || auth()->user()->isDataEntry())) {
+        //     return [];
+        // }
         
         try {
             $courses = \App\Models\Course::all();

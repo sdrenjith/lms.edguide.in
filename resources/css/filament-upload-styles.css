@@ -1,0 +1,159 @@
+/* Custom styles for Filament file upload components */
+.fi-fo-file-upload {
+    border: 2px dashed #d1d5db !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    background-color: #f9fafb !important;
+    transition: all 0.2s ease-in-out !important;
+    min-height: 120px !important;
+}
+
+.fi-fo-file-upload:hover {
+    border-color: #9ca3af !important;
+    background-color: #f3f4f6 !important;
+}
+
+.fi-fo-file-upload .fi-fo-file-upload-dropzone {
+    border: none !important;
+    background: transparent !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    min-height: 80px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.fi-fo-file-upload .fi-fo-file-upload-dropzone-text {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.fi-fo-file-upload .fi-fo-file-upload-dropzone-icon {
+    color: #6b7280 !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 1.5rem !important;
+}
+
+/* Error state styling */
+.fi-fo-file-upload.has-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+/* Focus state styling */
+.fi-fo-file-upload:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* File list styling */
+.fi-fo-file-upload .fi-fo-file-upload-files {
+    margin-top: 1rem !important;
+}
+
+.fi-fo-file-upload .fi-fo-file-upload-file {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Required field indicator */
+.fi-fo-file-upload[data-required="true"] .fi-fo-file-upload-dropzone::before {
+    content: "*";
+    color: #ef4444;
+    margin-right: 0.25rem;
+}
+
+/* Additional styling for better visibility */
+.fi-fo-file-upload .fi-fo-file-upload-dropzone::before {
+    content: "📁";
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.6;
+}
+
+/* Make the upload area more prominent */
+.fi-fo-file-upload {
+    position: relative !important;
+}
+
+.fi-fo-file-upload::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.fi-fo-file-upload:hover::before {
+    border-color: #9ca3af;
+}
+
+.fi-fo-file-upload:focus-within::before {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Additional targeting for Filament file upload components */
+.fi-fo-file-upload-wrapper {
+    border: 2px dashed #d1d5db !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    background-color: #f9fafb !important;
+    transition: all 0.2s ease-in-out !important;
+    min-height: 120px !important;
+}
+
+.fi-fo-file-upload-wrapper:hover {
+    border-color: #9ca3af !important;
+    background-color: #f3f4f6 !important;
+}
+
+/* Target the actual dropzone area */
+.fi-fo-file-upload-wrapper .fi-fo-file-upload-dropzone {
+    border: 2px dashed #d1d5db !important;
+    border-radius: 0.5rem !important;
+    padding: 2rem !important;
+    background-color: #f9fafb !important;
+    text-align: center !important;
+    min-height: 80px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.fi-fo-file-upload-wrapper:hover .fi-fo-file-upload-dropzone {
+    border-color: #9ca3af !important;
+    background-color: #f3f4f6 !important;
+}
+
+/* Make sure the text is visible */
+.fi-fo-file-upload-wrapper .fi-fo-file-upload-dropzone-text {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Add an icon */
+.fi-fo-file-upload-wrapper .fi-fo-file-upload-dropzone::before {
+    content: "📁";
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.6;
+}

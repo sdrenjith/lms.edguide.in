@@ -14,4 +14,10 @@ class Dashboard extends Page
     {
         return 1;
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Hide the dashboard for accounts users
+        return !(auth()->check() && auth()->user()->isAccounts());
+    }
 }

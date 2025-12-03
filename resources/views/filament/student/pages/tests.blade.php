@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tests - Rosy's German Academy</title>
+    <title>Tests - EdGuide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -34,7 +34,7 @@
                 <div class="flex justify-between h-16 items-center">
                     <!-- Logo -->
                     <div class="flex items-center">
-                        <img src="{{ asset('/logo_whitebg.jpeg') }}" alt="Logo" class="h-10 sm:h-12 mr-4" style="width: 140px;" />
+                        <img src="{{ asset('/edguide-logo.png') }}" alt="Logo" class="h-10 sm:h-12 mr-4" style="width: 140px;" />
                     </div>
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
@@ -70,12 +70,12 @@
                     <div class="flex space-x-4 lg:space-x-8 overflow-x-auto scrollbar-hide">
                         <a href="{{ route('filament.student.pages.dashboard') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Dashboard</a>
                         <a href="{{ route('filament.student.pages.courses') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Courses</a>
-                        <a href="{{ route('filament.student.pages.tests') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Test</a>
+                        {{-- <a href="{{ route('filament.student.pages.tests') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Test</a> --}}
                         <a href="{{ route('filament.student.pages.study-materials') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Study Materials</a>
                         <a href="{{ route('filament.student.pages.profile') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Profile</a>
-                        <a href="{{ route('filament.student.pages.daily-works') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.daily-works') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Daily Works</a>
-                        <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Speaking Sessions</a>
-                        <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Doubt Clearance</a>
+                        {{-- <a href="{{ route('filament.student.pages.opinion-verification') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.opinion-verification') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Opinion Verification</a> --}}
+                        <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Live Classes</a>
+                        {{-- <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="text-sm lg:text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-2 lg:px-3 py-2 transition-colors duration-200 whitespace-nowrap">Doubt Clearance</a> --}}
                     </div>
                 </div>
             </div>
@@ -84,12 +84,12 @@
                 <div class="px-4 py-3 space-y-2">
                     <a href="{{ route('filament.student.pages.dashboard') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Dashboard</a>
                     <a href="{{ route('filament.student.pages.courses') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Courses</a>
-                    <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a>
+                    {{-- <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a> --}}
                     <a href="{{ route('filament.student.pages.study-materials') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Study Materials</a>
                     <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Profile</a>
-                    <a href="{{ route('filament.student.pages.daily-works') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.daily-works') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Daily Works</a>
-                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Speaking Sessions</a>
-                    <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a>
+                    {{-- <a href="{{ route('filament.student.pages.opinion-verification') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.opinion-verification') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Opinion Verification</a> --}}
+                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Live Classes</a>
+                    {{-- <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a> --}}
                     <!-- Mobile User Menu -->
                     <div class="border-t border-gray-200 pt-4 mt-4">
                         <div class="flex items-center px-4 py-3 bg-gray-50 rounded-lg mb-2">
@@ -178,8 +178,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
                     <div class="text-center sm:text-left">
-                        <p class="text-lg sm:text-xl font-semibold">Rosy's German Academy</p>
-                        <p class="text-sm text-gray-300 mt-1">Empowering German language learning</p>
+                        <p class="text-lg sm:text-xl font-semibold">EdGuide</p>
+                        <p class="text-sm text-gray-300 mt-1">Empowering learning</p>
                     </div>
                     <div class="text-center sm:text-right">
                         <p class="text-sm text-gray-300">© 2025 All rights reserved</p>

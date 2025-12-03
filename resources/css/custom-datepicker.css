@@ -2,7 +2,7 @@
 
 .flatpickr-calendar {
     z-index: 10000 !important;
-    background: #fff !important;
+    background: #000000 !important;
     border: 1px solid #ddd !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     border-radius: 8px !important;
@@ -50,7 +50,7 @@ span.flatpickr-weekday,
 
 /* Style the datepicker input to match other form fields */
 input.flatpickr-input {
-    background: #fff !important;
+    background: #000000 !important;
     border: 1px solid #d1d5db !important;
     border-radius: 0.5rem !important;
     padding: 0.75rem 0.75rem !important;

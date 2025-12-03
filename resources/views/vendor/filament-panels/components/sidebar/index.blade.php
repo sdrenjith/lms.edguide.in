@@ -61,10 +61,10 @@
             >
                 @if ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
-                        <img src="/logo.jpeg" alt="Study Logo" class="max-w-full h-auto p-2" style="width:170px; height:60px;" />
+                        <img src="/edguide-logo.png" alt="EdGuide" class="max-w-full h-auto p-2" style="width:170px; height:60px;" />
                     </a>
                 @else
-                    <img src="/logo.jpeg" alt="Study Logo" class="max-w-full h-auto p-2" style="width:250px; height:60px;" />
+                    <img src="/edguide-logo.png" alt="EdGuide" class="max-w-full h-auto p-2" style="width:250px; height:60px;" />
                 @endif
             </div>
 
@@ -125,8 +125,8 @@
             @endforeach
         </ul>
 
-        {{-- Dynamic Available Courses menu with Subjects --}}
-        @if (!auth()->check() || !auth()->user()->isDataManager())
+        <!-- {{-- Dynamic Available Courses menu with Subjects --}}
+        @if (!auth()->check() || (!auth()->user()->isDataManager() && !auth()->user()->isAccounts() && !auth()->user()->isDataEntry()))
         @php
             $courses = \App\Models\Course::all();
             // Filter subjects based on user role
@@ -203,7 +203,7 @@
             </ul>
         </div>
         @endif
-        {{-- End Dynamic Available Courses menu --}}
+        {{-- End Dynamic Available Courses menu --}} -->
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div

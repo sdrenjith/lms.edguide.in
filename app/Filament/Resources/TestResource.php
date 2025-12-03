@@ -25,6 +25,14 @@ class TestResource extends Resource
     protected static ?string $model = Test::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    
+    protected static ?string $navigationLabel = 'Tests';
+    
+    protected static ?string $navigationGroup = 'Test Management';
+    
+    protected static ?string $modelLabel = 'Test';
+    
+    protected static ?string $pluralModelLabel = 'Tests';
 
     public static function form(Form $form): Form
     {
@@ -184,8 +192,8 @@ class TestResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        $user = auth()->user();
-        return $user && ($user->isAdmin() || $user->isTeacher());
+        // Temporarily hidden - Show for admin, teacher, and manager users
+        return false; // $user && ($user->isAdmin() || $user->isTeacher() || $user->isManager());
     }
 
     public static function getEloquentQuery(): Builder

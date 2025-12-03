@@ -40,7 +40,7 @@
 .fi-dropdown,
 .fi-dropdown-panel {
     z-index: 9999 !important;
-    background: #fff !important;
+    background: #000000 !important;
     color: #111 !important;
     border: 1px solid #e5e7eb !important;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;

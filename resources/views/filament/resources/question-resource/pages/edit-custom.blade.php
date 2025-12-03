@@ -64,7 +64,7 @@
                                 <select wire:model="question_type_id" class="modern-select" id="question_type_id">
                                     <option value="">Select type</option>
                                     @foreach($questionTypes as $type)
-                                        <option value="{{ $type->id }}" {{ $question_type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                        <option value="{{ $type->id }}" {{ $question_type_id == $type->id ? 'selected' : '' }}>{{ $type->display_name }}</option>
                                     @endforeach
                                 </select>
                                 @error('question_type_id') <p class="error-text">{{ $message }}</p> @enderror

@@ -242,8 +242,84 @@ class EditQuestion extends Page
             $this->question_type_id = $record->question_type_id;
         }
 
+        // Initialize all array properties with safe defaults to prevent undefined array key errors
+        $this->initializeArrayProperties();
+
         // Load data based on question type
         $this->loadQuestionTypeData($record, $questionTypeName);
+    }
+
+    private function initializeArrayProperties()
+    {
+        // Initialize all array properties with safe defaults
+        $this->options = [''];
+        $this->answer_indices = [0];
+        $this->left_options = [''];
+        $this->right_options = [''];
+        $this->correct_pairs = [['left' => '', 'right' => '']];
+        $this->opinion_answer = '';
+        $this->sub_questions = [
+            [
+                'question' => '',
+                'options' => ['', ''],
+                'correct_indices' => [0]
+            ]
+        ];
+        $this->true_false_questions = [
+            [
+                'statement' => '',
+                'correct_answer' => ''
+            ]
+        ];
+        $this->true_false_statement = '';
+        $this->true_false_answer = '';
+        $this->reorder_fragments = ['', ''];
+        $this->reorder_answer_key = '';
+        $this->form_fill_paragraph = '';
+        $this->form_fill_options = ['', ''];
+        $this->form_fill_answer_key = [''];
+        $this->picture_mcq_images = [];
+        $this->picture_mcq_right_options = ['', ''];
+        $this->picture_mcq_correct_pairs = [
+            ['left' => '', 'right' => ''],
+            ['left' => '', 'right' => ''],
+        ];
+        $this->picture_mcq_image_uploads = [];
+        $this->audio_mcq_file = null;
+        $this->audio_mcq_sub_questions = [
+            [
+                'question' => '',
+                'options' => ['', ''],
+                'correct_indices' => [0]
+            ]
+        ];
+        $this->audio_image_text_audio_file = null;
+        $this->audio_image_text_images = [];
+        $this->audio_image_text_image_uploads = [];
+        $this->audio_image_text_right_options = ['', ''];
+        $this->audio_image_text_correct_pairs = [
+            ['left' => '', 'right' => ''],
+            ['left' => '', 'right' => ''],
+        ];
+        $this->audio_image_text_multiple_pairs = [];
+        $this->audio_image_text_multiple_existing_pairs = [];
+        $this->audio_image_text_multiple_right_options = ['', ''];
+        $this->audio_image_text_multiple_correct_pairs = [
+            ['left' => '', 'right' => ''],
+            ['left' => '', 'right' => ''],
+        ];
+        $this->audio_fill_paragraph = '';
+        $this->audio_fill_answer_key = [''];
+        $this->audio_fill_audio_file = null;
+        $this->picture_fill_paragraph = '';
+        $this->picture_fill_answer_key = [''];
+        $this->picture_fill_image = null;
+        $this->video_fill_paragraph = '';
+        $this->video_fill_answer_key = [''];
+        $this->video_fill_video = null;
+        $this->audio_picture_audios = [null];
+        $this->audio_picture_images = [null];
+        $this->audio_picture_pairs = [['left' => '', 'right' => '']];
     }
 
     private function loadQuestionTypeData($record, $questionTypeName)
@@ -2556,6 +2632,8 @@ private function updateAudioImageTextSingle()
     {
         if (count($this->audio_picture_audios) > 1) {
             array_splice($this->audio_picture_audios, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_audios = array_values($this->audio_picture_audios);
             // Update pairs to remove references to deleted audio
             foreach ($this->audio_picture_pairs as $key => $pair) {
                 if ($pair['left'] == $index) {
@@ -2576,6 +2654,8 @@ private function updateAudioImageTextSingle()
     {
         if (count($this->audio_picture_images) > 1) {
             array_splice($this->audio_picture_images, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_images = array_values($this->audio_picture_images);
             // Update pairs to remove references to deleted image
             foreach ($this->audio_picture_pairs as $key => $pair) {
                 if ($pair['right'] == $index) {
@@ -2596,6 +2676,8 @@ private function updateAudioImageTextSingle()
     {
         if (count($this->audio_picture_pairs) > 1) {
             array_splice($this->audio_picture_pairs, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_pairs = array_values($this->audio_picture_pairs);
         }
     }
 

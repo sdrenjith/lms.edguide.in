@@ -259,4 +259,10 @@ class OpinionVerificationResource extends Resource
         ->where('verification_status', 'pending')
         ->count();
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Temporarily hidden - Hide for accounts and dataentry users only
+        return false; // !(auth()->check() && (auth()->user()->isAccounts() || auth()->user()->isDataEntry()));
+    }
 } 

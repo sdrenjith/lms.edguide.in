@@ -1,28 +1,38 @@
 # PHP Configuration for File Uploads
 <IfModule mod_php7.c>
-    php_value upload_max_filesize 25M
-    php_value post_max_size 30M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 256M
+    php_value upload_max_filesize 150M
+    php_value post_max_size 160M
+    php_value max_execution_time 600
+    php_value max_input_time 600
+    php_value memory_limit 512M
     php_value max_file_uploads 20
 </IfModule>
 
 <IfModule mod_php8.c>
-    php_value upload_max_filesize 25M
-    php_value post_max_size 30M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 256M
+    php_value upload_max_filesize 150M
+    php_value post_max_size 160M
+    php_value max_execution_time 600
+    php_value max_input_time 600
+    php_value memory_limit 512M
     php_value max_file_uploads 20
 </IfModule>
 
 <IfModule mod_php.c>
-    php_value upload_max_filesize 25M
-    php_value post_max_size 30M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 256M
+    php_value upload_max_filesize 150M
+    php_value post_max_size 160M
+    php_value max_execution_time 600
+    php_value max_input_time 600
+    php_value memory_limit 512M
+    php_value max_file_uploads 20
+</IfModule>
+
+# Additional PHP configuration
+<IfModule mod_php.c>
+    php_value upload_max_filesize 150M
+    php_value post_max_size 160M
+    php_value max_execution_time 600
+    php_value max_input_time 600
+    php_value memory_limit 512M
     php_value max_file_uploads 20
 </IfModule>
 

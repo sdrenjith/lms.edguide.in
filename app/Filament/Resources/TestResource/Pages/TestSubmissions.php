@@ -83,51 +83,54 @@ class TestSubmissions extends Page
                 }
             }
             
-            // Calculate status and result
-            $status = 'not_started';
-            $result = null;
-            $score = null;
-            
-            if ($answeredCount === $totalQuestions) {
-                $status = 'completed';
+            // Only include students who have actually started the test (answered at least one question)
+            if ($answeredCount > 0) {
+                // Calculate status and result
+                $status = 'not_started';
+                $result = null;
+                $score = null;
                 
-                if (!$hasOpinion || $allOpinionVerified) {
-                    // Calculate earned points
-                    $earnedPoints = 0;
-                    foreach ($test->questions()->where('is_active', true)->get() as $question) {
-                        if ($studentAnswers->has($question->id)) {
-                            $studentAnswer = $studentAnswers->get($question->id);
-                            $isCorrect = false;
-                            
-                            if ($question->questionType && $question->questionType->name === 'opinion') {
-                                $isCorrect = $studentAnswer->verification_status === 'verified_correct';
-                            } else {
-                                $isCorrect = $studentAnswer->is_correct === true;
-                            }
-                            
-                            if ($isCorrect) {
-                                $earnedPoints += $question->points ?? 1;
+                if ($answeredCount === $totalQuestions) {
+                    $status = 'completed';
+                    
+                    if (!$hasOpinion || $allOpinionVerified) {
+                        // Calculate earned points
+                        $earnedPoints = 0;
+                        foreach ($test->questions()->where('is_active', true)->get() as $question) {
+                            if ($studentAnswers->has($question->id)) {
+                                $studentAnswer = $studentAnswers->get($question->id);
+                                $isCorrect = false;
+                                
+                                if ($question->questionType && $question->questionType->name === 'opinion') {
+                                    $isCorrect = $studentAnswer->verification_status === 'verified_correct';
+                                } else {
+                                    $isCorrect = $studentAnswer->is_correct === true;
+                                }
+                                
+                                if ($isCorrect) {
+                                    $earnedPoints += $question->points ?? 1;
+                                }
                             }
                         }
+                        
+                        $score = $earnedPoints . '/' . $test->total_score;
+                        $result = $earnedPoints >= $test->passmark ? 'Pass' : 'Fail';
+                    } else {
+                        $result = 'Pending';
                     }
-                    
-                    $score = $earnedPoints . '/' . $test->total_score;
-                    $result = $earnedPoints >= $test->passmark ? 'Pass' : 'Fail';
-                } else {
-                    $result = 'Pending';
+                } elseif ($answeredCount > 0) {
+                    $status = 'in_progress';
                 }
-            } elseif ($answeredCount > 0) {
-                $status = 'in_progress';
+                
+                $submissions->push((object) [
+                    'user' => $student,
+                    'user_id' => $student->id,
+                    'submitted_at' => $studentAnswers->max('submitted_at'),
+                    'status' => $status,
+                    'score' => $score,
+                    'result' => $result,
+                ]);
             }
-            
-            $submissions->push((object) [
-                'user' => $student,
-                'user_id' => $student->id,
-                'submitted_at' => $studentAnswers->max('submitted_at'),
-                'status' => $status,
-                'score' => $score,
-                'result' => $result,
-            ]);
         }
         
         return $submissions->sortByDesc('submitted_at');

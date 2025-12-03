@@ -19,7 +19,7 @@ class CreateBatch extends CreateRecord
     {
         if (auth()->user()->isTeacher()) {
             // For teachers: only show days that have questions for their assigned subjects
-            $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
+            $teacherSubjectIds = auth()->user()->subjects()->pluck('subjects.id')->toArray();
             
             if (empty($teacherSubjectIds)) {
                 return collect(); // No subjects assigned, no days to show
@@ -100,17 +100,31 @@ class CreateBatch extends CreateRecord
                 $selectedDayIds[] = $day->id;
                 
                 // Mark as completed
-                $batch->dayProgress()->create([
-                    'day_id' => $day->id,
-                    'is_completed' => true,
-                    'completed_at' => now(),
-                    'completed_by' => auth()->id()
-                ]);
+                $batch->dayProgress()->updateOrCreate(
+                    ['day_id' => $day->id],
+                    [
+                        'is_completed' => true,
+                        'completed_at' => now(),
+                        'completed_by' => auth()->id()
+                    ]
+                );
+            } else {
+                // Toggle is OFF: assign day but mark as NOT completed
+                $selectedDayIds[] = $day->id;
+                
+                // Mark as not completed
+                $batch->dayProgress()->updateOrCreate(
+                    ['day_id' => $day->id],
+                    [
+                        'is_completed' => false,
+                        'completed_at' => null,
+                        'completed_by' => null
+                    ]
+                );
             }
-            // If toggle is OFF, do nothing (no assignment, no completion record)
         }
         
-        // Sync day assignments (only assign days that are toggled ON)
+        // Sync day assignments (assign ALL selected days, regardless of completion status)
         $batch->days()->sync($selectedDayIds);
     }
 }

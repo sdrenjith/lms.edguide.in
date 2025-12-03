@@ -1176,33 +1176,54 @@
                                     </div>
                                     
                                     <div class="space-y-4">
-                                        @foreach($form_fill_answer_key as $index => $answerKey)
-                                            <div class="answer-key-item" wire:key="form_fill_answer_{{ $index }}">
+                                        @if(is_array($form_fill_answer_key) && count($form_fill_answer_key) > 0)
+                                            @foreach($form_fill_answer_key as $index => $answerKey)
+                                                <div class="answer-key-item" wire:key="form_fill_answer_{{ $index }}">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                        <div class="flex-1">
+                                                        <input type="text" wire:model.live="form_fill_answer_key.{{ $index }}" 
+                                                                   placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
+                                                            @error("form_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        </div>
+                                                        <div class="flex items-center space-x-2">
+                                                            @if($index === 0)
+                                                                <button type="button" wire:click="addFormFillAnswerKey" class="add-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" wire:click="removeFormFillAnswerKey({{ $index }})" class="remove-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <!-- Show at least one answer key field if array is empty -->
+                                            <div class="answer-key-item" wire:key="form_fill_answer_0">
                                                 <div class="flex items-center space-x-3">
-                                                    <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                    <div class="answer-number">Blank 1</div>
                                                     <div class="flex-1">
-                                                    <input type="text" wire:model.live="form_fill_answer_key.{{ $index }}" 
-                                                               placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
-                                                        @error("form_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        <input type="text" wire:model.live="form_fill_answer_key.0" 
+                                                               placeholder="Enter the correct answer for blank 1..." class="option-input">
+                                                        @error("form_fill_answer_key.0") <p class="error-text">{{ $message }}</p> @enderror
                                                     </div>
                                                     <div class="flex items-center space-x-2">
-                                                        @if($index === 0)
-                                                            <button type="button" wire:click="addFormFillAnswerKey" class="add-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" wire:click="removeFormFillAnswerKey({{ $index }})" class="remove-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @endif
+                                                        <button type="button" wire:click="addFormFillAnswerKey" class="add-btn-small">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -1264,7 +1285,7 @@
                                         </div>
                                     </div>
                                     
-                                    @if(count($filteredAnswerKeys) > 0)
+                                    @if(is_array($form_fill_answer_key) && count($filteredAnswerKeys) > 0)
                                         <div class="preview-answers" wire:key="answers-preview-{{ count($form_fill_answer_key) }}">
                                             <p class="preview-label">Answer key summary:</p>
                                             <div class="answers-preview">
@@ -1811,40 +1832,55 @@
                             <div class="mb-6">
                                 <h4 class="sub-question-title mb-4">Answer Keys</h4>
                                 <div class="answer-key-section">
-                                    <div class="answer-key-info mb-4">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        <span>Provide the correct answer for each blank in order. The answer must match the intended answer for each blank.</span>
-                                    </div>
                                     <div class="space-y-4">
-                                        @foreach($audio_fill_answer_key as $index => $answerKey)
-                                            <div class="answer-key-item" wire:key="audio-fill-answer-{{ $index }}">
+                                        @if(is_array($audio_fill_answer_key) && count($audio_fill_answer_key) > 0)
+                                            @foreach($audio_fill_answer_key as $index => $answerKey)
+                                                <div class="answer-key-item" wire:key="audio-fill-answer-{{ $index }}">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                        <div class="flex-1">
+                                                            <input type="text" wire:model.live="audio_fill_answer_key.{{ $index }}"
+                                                                   placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
+                                                            @error("audio_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        </div>
+                                                        <div class="flex items-center space-x-2">
+                                                            @if($index === 0)
+                                                                <button type="button" wire:click="addAudioFillAnswerKey" class="add-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" wire:click="removeAudioFillAnswerKey({{ $index }})" class="remove-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <!-- Show at least one answer key field if array is empty -->
+                                            <div class="answer-key-item" wire:key="audio-fill-answer-0">
                                                 <div class="flex items-center space-x-3">
-                                                    <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                    <div class="answer-number">Blank 1</div>
                                                     <div class="flex-1">
-                                                        <input type="text" wire:model.live="audio_fill_answer_key.{{ $index }}"
-                                                               placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
-                                                        @error("audio_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        <input type="text" wire:model.live="audio_fill_answer_key.0"
+                                                               placeholder="Enter the correct answer for blank 1..." class="option-input">
+                                                        @error("audio_fill_answer_key.0") <p class="error-text">{{ $message }}</p> @enderror
                                                     </div>
                                                     <div class="flex items-center space-x-2">
-                                                        @if($index === 0)
-                                                            <button type="button" wire:click="addAudioFillAnswerKey" class="add-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" wire:click="removeAudioFillAnswerKey({{ $index }})" class="remove-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @endif
+                                                        <button type="button" wire:click="addAudioFillAnswerKey" class="add-btn-small">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -1918,33 +1954,54 @@
                                 <h4 class="sub-question-title mb-4">Answer Keys</h4>
                                 <div class="answer-key-section">
                                     <div class="space-y-4">
-                                        @foreach($picture_fill_answer_key as $index => $answerKey)
-                                            <div class="answer-key-item" wire:key="picture-fill-answer-{{ $index }}">
+                                        @if(is_array($picture_fill_answer_key) && count($picture_fill_answer_key) > 0)
+                                            @foreach($picture_fill_answer_key as $index => $answerKey)
+                                                <div class="answer-key-item" wire:key="picture-fill-answer-{{ $index }}">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                        <div class="flex-1">
+                                                            <input type="text" wire:model.live="picture_fill_answer_key.{{ $index }}"
+                                                                   placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
+                                                            @error("picture_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        </div>
+                                                        <div class="flex items-center space-x-2">
+                                                            @if($index === 0)
+                                                                <button type="button" wire:click="addPictureFillAnswerKey" class="add-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" wire:click="removePictureFillAnswerKey({{ $index }})" class="remove-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <!-- Show at least one answer key field if array is empty -->
+                                            <div class="answer-key-item" wire:key="picture-fill-answer-0">
                                                 <div class="flex items-center space-x-3">
-                                                    <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                    <div class="answer-number">Blank 1</div>
                                                     <div class="flex-1">
-                                                        <input type="text" wire:model.live="picture_fill_answer_key.{{ $index }}"
-                                                               placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
-                                                        @error("picture_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        <input type="text" wire:model.live="picture_fill_answer_key.0"
+                                                               placeholder="Enter the correct answer for blank 1..." class="option-input">
+                                                        @error("picture_fill_answer_key.0") <p class="error-text">{{ $message }}</p> @enderror
                                                     </div>
                                                     <div class="flex items-center space-x-2">
-                                                        @if($index === 0)
-                                                            <button type="button" wire:click="addPictureFillAnswerKey" class="add-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" wire:click="removePictureFillAnswerKey({{ $index }})" class="remove-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @endif
+                                                        <button type="button" wire:click="addPictureFillAnswerKey" class="add-btn-small">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -2023,33 +2080,54 @@
                                 <h4 class="sub-question-title mb-4">Answer Keys</h4>
                                 <div class="answer-key-section">
                                     <div class="space-y-4">
-                                        @foreach($video_fill_answer_key as $index => $answerKey)
-                                            <div class="answer-key-item" wire:key="video-fill-answer-{{ $index }}">
+                                        @if(is_array($video_fill_answer_key) && count($video_fill_answer_key) > 0)
+                                            @foreach($video_fill_answer_key as $index => $answerKey)
+                                                <div class="answer-key-item" wire:key="video-fill-answer-{{ $index }}">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                        <div class="flex-1">
+                                                            <input type="text" wire:model.live="video_fill_answer_key.{{ $index }}"
+                                                                   placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
+                                                            @error("video_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        </div>
+                                                        <div class="flex items-center space-x-2">
+                                                            @if($index === 0)
+                                                                <button type="button" wire:click="addVideoFillAnswerKey" class="add-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" wire:click="removeVideoFillAnswerKey({{ $index }})" class="remove-btn-small">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <!-- Show at least one answer key field if array is empty -->
+                                            <div class="answer-key-item" wire:key="video-fill-answer-0">
                                                 <div class="flex items-center space-x-3">
-                                                    <div class="answer-number">Blank {{ $index + 1 }}</div>
+                                                    <div class="answer-number">Blank 1</div>
                                                     <div class="flex-1">
-                                                        <input type="text" wire:model.live="video_fill_answer_key.{{ $index }}"
-                                                               placeholder="Enter the correct answer for blank {{ $index + 1 }}..." class="option-input">
-                                                        @error("video_fill_answer_key.{$index}") <p class="error-text">{{ $message }}</p> @enderror
+                                                        <input type="text" wire:model.live="video_fill_answer_key.0"
+                                                               placeholder="Enter the correct answer for blank 1..." class="option-input">
+                                                        @error("video_fill_answer_key.0") <p class="error-text">{{ $message }}</p> @enderror
                                                     </div>
                                                     <div class="flex items-center space-x-2">
-                                                        @if($index === 0)
-                                                            <button type="button" wire:click="addVideoFillAnswerKey" class="add-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" wire:click="removeVideoFillAnswerKey({{ $index }})" class="remove-btn-small">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                                </svg>
-                                                            </button>
-                                                        @endif
+                                                        <button type="button" wire:click="addVideoFillAnswerKey" class="add-btn-small">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>

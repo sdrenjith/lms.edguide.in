@@ -11,10 +11,12 @@ class Batch extends Model
         'description',
         'teacher_id',
         'active_day_ids',
+        'start_date',
     ];
 
     protected $casts = [
         'active_day_ids' => 'array',
+        'start_date' => 'date',
     ];
 
     public function students()
@@ -30,6 +32,11 @@ class Batch extends Model
     public function days()
     {
         return $this->belongsToMany(Day::class, 'batch_day');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'batch_subject');
     }
 
     public function teacher()
@@ -79,7 +86,7 @@ class Batch extends Model
             return 0;
         }
 
-        $teacherSubjectIds = $teacher->subjects()->pluck('id')->toArray();
+        $teacherSubjectIds = $teacher->subjects()->pluck('subjects.id')->toArray();
         if (empty($teacherSubjectIds)) {
             return 0;
         }
@@ -126,5 +133,53 @@ class Batch extends Model
             ->count();
 
         return round(($completedAvailableDays / $totalAvailableDays) * 100, 1);
+    }
+
+    public function fees()
+    {
+        return $this->hasMany(Fee::class);
+    }
+
+    /**
+     * Get total course fees for this batch
+     */
+    public function getTotalCourseFeesAttribute(): float
+    {
+        return $this->students()->sum('course_fee');
+    }
+
+    /**
+     * Get total fees paid for this batch
+     */
+    public function getTotalFeesPaidAttribute(): float
+    {
+        return $this->fees()->sum('amount_paid');
+    }
+
+    /**
+     * Get balance amount for this batch
+     */
+    public function getBalanceAmountAttribute(): float
+    {
+        return $this->total_course_fees - $this->total_fees_paid;
+    }
+
+    /**
+     * Get payment percentage for this batch
+     */
+    public function getPaymentPercentageAttribute(): float
+    {
+        if ($this->total_course_fees <= 0) {
+            return 0;
+        }
+        return round(($this->total_fees_paid / $this->total_course_fees) * 100, 1);
+    }
+
+    /**
+     * Get number of students who have made payments
+     */
+    public function getStudentsWithPaymentsAttribute(): int
+    {
+        return $this->students()->whereHas('fees')->count();
     }
 }

@@ -37,10 +37,26 @@ class NoteResource extends Resource
                             ->placeholder('Enter the topic covered in this note')
                             ->helperText('Brief description of the main topic or concept covered')
                             ->columnSpanFull(),
-                        Forms\Components\View::make('filament.resources.note-resource.replace-pdf-field')
-                            ->label('')
-                            ->columnSpanFull(),
-                        Forms\Components\Grid::make(['default' => 1, 'md' => 3])
+                        Forms\Components\FileUpload::make('pdf_path')
+                            ->label('PDF File')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(10240) // 10MB
+                            ->required(fn ($record) => !$record) // Required only for creation
+                            ->helperText(fn ($record) => $record ? 'Upload a new PDF to replace the existing one. Leave empty to keep the current PDF.' : 'Upload the PDF file for this note.')
+                            ->disk('public')
+                            ->directory('notes')
+                            ->visibility('public')
+                            ->openable()
+                            ->downloadable()
+                            ->previewable(false)
+                            ->columnSpanFull()
+                            ->extraInputAttributes([
+                                'class' => 'fi-fo-file-upload fi-fo-file-upload-wrapper'
+                            ])
+                            ->extraAttributes([
+                                'style' => 'border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 1rem; background-color: #f9fafb; min-height: 120px;'
+                            ]),
+                        Forms\Components\Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
                                 Forms\Components\Select::make('course_id')
                                     ->label('Course')
@@ -54,11 +70,6 @@ class NoteResource extends Resource
                                     ->required()
                                     ->placeholder('Select subject')
                                     ->preload(),
-                                Forms\Components\TextInput::make('day_number')
-                                    ->label('Day')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(1),
                             ]),
                     ])
                     ->columns(2),
@@ -77,10 +88,6 @@ class NoteResource extends Resource
                 Tables\Columns\TextColumn::make('course.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('subject.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('day_number')
-                    ->label('Day')
-                    ->formatStateUsing(fn($state) => 'Day ' . $state)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -128,5 +135,11 @@ class NoteResource extends Resource
             'create' => Pages\CreateNote::route('/create'),
             'edit' => Pages\EditNote::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Show for all users except dataentry users
+        return !(auth()->check() && auth()->user()->isDataEntry());
     }
 } 

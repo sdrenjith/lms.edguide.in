@@ -130,7 +130,7 @@ function App() {
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 bg-[#FFFFFF]">
               <h1 className="text-xl sm:text-2xl font-semibold text-black mb-6 sm:mb-8 px-2">
-                Welcome to Rosy's German School
+                Welcome to EdGuide
               </h1>
 
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -163,7 +163,7 @@ function App() {
                         <BookOpen className="w-12 h-12 text-green-500" strokeWidth={1.5} />
                       </div>
                     </div>
-                    <p className="mt-4 text-base text-gray-600 text-center">Comics that cross boundaries, crafted in Germany!</p>
+                    <p className="mt-4 text-base text-gray-600 text-center">Comics that cross boundaries!</p>
                   </div>
                 </div>
 
@@ -203,7 +203,7 @@ function App() {
             {/* New Design Section */}
             <section className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 bg-white flex items-center">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-4 text-left">Rosy's German School- Linguist Since 1971</h2>
+                <h2 className="text-2xl font-bold mb-4 text-left">EdGuide - Linguist Since 1971</h2>
                 <p className="text-gray-600">We Are The Best Choice For Your Dream</p>
               </div>
               <div className="flex-1">
@@ -217,7 +217,7 @@ function App() {
 
             {/* Footer */}
             <footer className="bg-gray-800 text-white py-4 flex justify-between px-4">
-              <p>Rocys German Academy</p>
+              <p>Edguide Academy</p>
               <p>Terms & Privacy, © 2025 Copyright</p>
             </footer>
           </>

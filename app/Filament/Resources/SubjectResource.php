@@ -29,11 +29,15 @@ class SubjectResource extends Resource
                             ->label('Subject Name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Select::make('teacher_id')
-                            ->label('Assigned Teacher')
-                            ->options(fn () => \App\Models\User::where('role', 'teacher')->pluck('name', 'id')->toArray())
-                            ->placeholder('Select a teacher')
-                            ->helperText('Choose a teacher to assign to this subject')
+                        Forms\Components\Select::make('course_id')
+                            ->label('Course')
+                            ->options(fn () => \App\Models\Course::pluck('name', 'id')->toArray())
+                            ->required()
+                            ->placeholder('Select a course')
+                            ->helperText('Choose the course this subject belongs to'),
+                        \App\Forms\Components\MultiSelectTeachers::make('teachers')
+                            ->label('Assign Teachers')
+                            ->helperText('Click to select/deselect teachers')
                             ->columnSpanFull(),
                     ])
             ]);
@@ -42,29 +46,59 @@ class SubjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('teachers'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Subject Name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('teacher.name')
-                    ->label('Assigned Teacher')
+                Tables\Columns\TextColumn::make('course.name')->label('Course')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('teachers.name')
+                    ->label('Assigned Teachers')
                     ->sortable()
                     ->searchable()
-                    ->placeholder('No teacher assigned')
-                    ->badge()
-                    ->color(fn ($state) => $state ? 'success' : 'gray'),
+                    ->placeholder('No teachers assigned')
+                    ->formatStateUsing(function ($state) {
+                        if (!$state) {
+                            return 'No teachers assigned';
+                        }
+                        
+                        // If it's already a string, return it as is
+                        if (is_string($state)) {
+                            return $state;
+                        }
+                        
+                        // If it's a collection, implode it
+                        if (is_object($state) && method_exists($state, 'implode')) {
+                            return $state->implode(', ');
+                        }
+                        
+                        // If it's an array, implode it
+                        if (is_array($state)) {
+                            return implode(', ', $state);
+                        }
+                        
+                        return 'No teachers assigned';
+                    })
+                    ->color('gray'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('teacher_id')
+                Tables\Filters\SelectFilter::make('course_id')
+                    ->label('Filter by Course')
+                    ->relationship('course', 'name')
+                    ->placeholder('All courses'),
+                Tables\Filters\SelectFilter::make('teachers')
                     ->label('Filter by Teacher')
-                    ->relationship('teacher', 'name', fn (Builder $query) => $query->where('role', 'teacher'))
+                    ->relationship('teachers', 'name', fn (Builder $query) => $query->where('role', 'teacher'))
                     ->placeholder('All teachers'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn () => !auth()->user()->isManager()),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn () => !auth()->user()->isManager()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => !auth()->user()->isManager()),
                 ]),
             ]);
     }
@@ -78,6 +112,13 @@ class SubjectResource extends Resource
 
     public static function getPages(): array
     {
+        if (auth()->check() && auth()->user()->isManager()) {
+            // For manager users, only show list page (read-only)
+            return [
+                'index' => Pages\ListSubjects::route('/'),
+            ];
+        }
+        
         return [
             'index' => Pages\ListSubjects::route('/'),
             'create' => Pages\CreateSubject::route('/create'),
@@ -92,22 +133,22 @@ class SubjectResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        // Show for admin only
-        return auth()->check() && auth()->user()->isAdmin();
+        // Show for admin and manager
+        return auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->check() && auth()->user()->isAdmin();
+        return auth()->check() && auth()->user()->isAdmin() && !auth()->user()->isManager();
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->check() && auth()->user()->isAdmin();
+        return auth()->check() && auth()->user()->isAdmin() && !auth()->user()->isManager();
     }
 
     public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->check() && auth()->user()->isAdmin();
+        return auth()->check() && auth()->user()->isAdmin() && !auth()->user()->isManager();
     }
 }

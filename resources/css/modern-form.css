@@ -162,8 +162,8 @@
 
 .fi-header-actions .fi-btn-outlined {
     background: white !important;
-    border: 2px solid #e5e7eb !important;
-    color: #6b7280 !important;
+    border: 2px solid #d1d5db !important;
+    color: #374151 !important;
 }
 
 .fi-header-actions .fi-btn-outlined:hover {
@@ -394,6 +394,37 @@
     box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4) !important;
 }
 
+/* Ensure all primary buttons have proper contrast and visibility */
+.fi-btn.fi-btn-color-primary,
+.fi-btn-primary,
+.fi-header-actions .fi-btn-primary,
+.fi-btn[data-filament-action="create"] {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-btn.fi-btn-color-primary .fi-btn-label,
+.fi-btn-primary .fi-btn-label,
+.fi-header-actions .fi-btn-primary .fi-btn-label,
+.fi-btn[data-filament-action="create"] .fi-btn-label {
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-primary:hover,
+.fi-btn-primary:hover,
+.fi-header-actions .fi-btn-primary:hover,
+.fi-btn[data-filament-action="create"]:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4) !important;
+}
+
 /* Success Buttons (Add buttons) */
 .fi-btn-success,
 .fi-fo-repeater-add-item-btn {
@@ -450,6 +481,17 @@
     background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
     color: white !important;
     border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-btn-secondary .fi-btn-label,
+.fi-btn-gray .fi-btn-label {
+    color: white !important;
+    font-weight: 600 !important;
 }
 
 .fi-btn-secondary:hover,
@@ -457,6 +499,211 @@
     background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
     transform: translateY(-2px) !important; /* Removed scale effect */
     box-shadow: 0 10px 15px -3px rgba(107, 114, 128, 0.4) !important;
+}
+
+.fi-btn-secondary:hover .fi-btn-label,
+.fi-btn-gray:hover .fi-btn-label {
+    color: white !important;
+}
+
+/* Ensure outlined buttons have proper contrast */
+.fi-btn-outlined,
+.fi-btn.fi-btn-color-gray {
+    background: white !important;
+    border: 2px solid #d1d5db !important;
+    color: #374151 !important;
+}
+
+.fi-btn-outlined .fi-btn-label,
+.fi-btn.fi-btn-color-gray .fi-btn-label {
+    color: #374151 !important;
+}
+
+.fi-btn-outlined:hover,
+.fi-btn.fi-btn-color-gray:hover {
+    border-color: #3b82f6 !important;
+    color: #3b82f6 !important;
+    background: #f8fafc !important;
+}
+
+.fi-btn-outlined:hover .fi-btn-label,
+.fi-btn.fi-btn-color-gray:hover .fi-btn-label {
+    color: #3b82f6 !important;
+}
+
+/* Action button styling for better visibility */
+.fi-btn.fi-btn-color-gray {
+    background: #374151 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.fi-btn.fi-btn-color-gray .fi-btn-label {
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-gray:hover {
+    background: #1f2937 !important;
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-gray:hover .fi-btn-label {
+    color: white !important;
+}
+
+/* Cancel button specific styling for better visibility */
+.fi-btn[data-filament-action="cancel"],
+.fi-btn[aria-label*="cancel"],
+.fi-btn[aria-label*="Cancel"],
+.fi-btn[title*="cancel"],
+.fi-btn[title*="Cancel"] {
+    background: #6b7280 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-btn[data-filament-action="cancel"] .fi-btn-label,
+.fi-btn[aria-label*="cancel"] .fi-btn-label,
+.fi-btn[aria-label*="Cancel"] .fi-btn-label,
+.fi-btn[title*="cancel"] .fi-btn-label,
+.fi-btn[title*="Cancel"] .fi-btn-label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.fi-btn[data-filament-action="cancel"]:hover,
+.fi-btn[aria-label*="cancel"]:hover,
+.fi-btn[aria-label*="Cancel"]:hover,
+.fi-btn[title*="cancel"]:hover,
+.fi-btn[title*="Cancel"]:hover {
+    background: #4b5563 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-btn[data-filament-action="cancel"]:hover .fi-btn-label,
+.fi-btn[aria-label*="cancel"]:hover .fi-btn-label,
+.fi-btn[aria-label*="Cancel"]:hover .fi-btn-label,
+.fi-btn[title*="cancel"]:hover .fi-btn-label,
+.fi-btn[title*="Cancel"]:hover .fi-btn-label {
+    color: white !important;
+}
+
+/* Modal-specific button styling for better visibility */
+.fi-modal .fi-btn,
+.fi-modal-footer .fi-btn,
+.fi-modal-content .fi-btn {
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Ensure all modal buttons have visible text */
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) {
+    background: #6b7280 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label,
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label,
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover,
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover,
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover {
+    background: #4b5563 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label,
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label,
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label {
+    color: white !important;
+}
+
+/* Force all non-primary, non-danger buttons in modals to have visible text */
+.fi-modal .fi-btn[class*="gray"],
+.fi-modal .fi-btn[class*="secondary"],
+.fi-modal .fi-btn[class*="outlined"],
+.fi-modal-footer .fi-btn[class*="gray"],
+.fi-modal-footer .fi-btn[class*="secondary"],
+.fi-modal-footer .fi-btn[class*="outlined"],
+.fi-modal-content .fi-btn[class*="gray"],
+.fi-modal-content .fi-btn[class*="secondary"],
+.fi-modal-content .fi-btn[class*="outlined"] {
+    background: #6b7280 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.fi-modal .fi-btn[class*="gray"] .fi-btn-label,
+.fi-modal .fi-btn[class*="secondary"] .fi-btn-label,
+.fi-modal .fi-btn[class*="outlined"] .fi-btn-label,
+.fi-modal-footer .fi-btn[class*="gray"] .fi-btn-label,
+.fi-modal-footer .fi-btn[class*="secondary"] .fi-btn-label,
+.fi-modal-footer .fi-btn[class*="outlined"] .fi-btn-label,
+.fi-modal-content .fi-btn[class*="gray"] .fi-btn-label,
+.fi-modal-content .fi-btn[class*="secondary"] .fi-btn-label,
+.fi-modal-content .fi-btn[class*="outlined"] .fi-btn-label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Edit action button (primary) */
+.fi-btn.fi-btn-color-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.fi-btn.fi-btn-color-primary .fi-btn-label {
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-primary:hover .fi-btn-label {
+    color: white !important;
+}
+
+/* Delete action button (danger) */
+.fi-btn.fi-btn-color-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.fi-btn.fi-btn-color-danger .fi-btn-label {
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    color: white !important;
+}
+
+.fi-btn.fi-btn-color-danger:hover .fi-btn-label {
+    color: white !important;
 }
 
 /* ===== MODERN FIELDSETS ===== */

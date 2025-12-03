@@ -25,11 +25,9 @@ class StudentCourseController extends Controller
             $subjects = \App\Models\Subject::all();
         }
         
-        // Get questions not assigned to any active test
+        // Get all active questions (including those in tests)
+        // Students should see all their assigned days regardless of test assignments
         $questions = \App\Models\Question::where('is_active', true)
-            ->whereDoesntHave('test', function($query) {
-                $query->where('is_active', true);
-            })
             ->get()
             ->groupBy(function($q) {
                 return $q->course_id . '-' . $q->subject_id . '-' . $q->day_id;
@@ -56,6 +54,7 @@ class StudentCourseController extends Controller
         $user = auth()->user();
         $assignedCourseIds = $user->assignedCourses()->pluck('id')->toArray();
         $assignedDayIds = $user->assignedDays()->pluck('id')->toArray();
+        $assignedSubjectIds = $user->assignedSubjects()->pluck('id')->toArray();
         
         // Check if student has access to this course and day
         if (!in_array($courseId, $assignedCourseIds)) {
@@ -66,6 +65,12 @@ class StudentCourseController extends Controller
         if (!in_array($dayId, $assignedDayIds)) {
             return redirect()->route('filament.student.pages.courses')
                 ->with('error', 'You do not have access to this day. Please contact your administrator.');
+        }
+        
+        // Check if student has access to this subject (verification code expiration check)
+        if (!in_array($subjectId, $assignedSubjectIds)) {
+            return redirect()->route('filament.student.pages.courses')
+                ->with('error', 'You do not have access to this subject. Your verification code may have expired. Please contact your administrator.');
         }
         
         // Get the course, subject, and day details
@@ -117,6 +122,7 @@ class StudentCourseController extends Controller
             'day', 
             'questions', 
             'answeredQuestionIds', 
+            'studentAnswers',
             'allSubjectQuestionsCompleted', 
             'subjectResults',
             'totalQuestions',

@@ -8,94 +8,349 @@ body, html {
   font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif !important;
 }
 
-.fi-sidebar, .fi-sidebar-header {
-  background: #0a192f !important; /* dark blue (blackblue) */
-}
+
 
 .db-card {
-  background-color: #111827 !important; /* Tailwind gray-900 */
-  border-color: #1f2937 !important;      /* Tailwind gray-800 */
-  color: #fff !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 1.5px 4px rgba(0,0,0,0.08);
+  background-color: #fff !important; /* Changed from gray-900 to gray-50 (very light) */
+  border-color: #e2e8f0 !important;      /* Changed from gray-800 to gray-200 (light) */
+  color: #14b8a6 !important; /* Changed from#000000 to gray-800 (dark text) */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
 }
 
 .db-card a {
-  color: #60a5fa !important; /* Tailwind blue-400 */
+  color: #14b8a6  !important; /* Changed from blue-400 to blue-500 for better contrast */
 }
 
 .db-card a:hover {
-  color: #3b82f6 !important; /* Tailwind blue-500 */
+  color: #2563eb !important; /* Changed from blue-500 to blue-600 for better contrast */
 }
 
 .db-card:hover {
     transform: translateY(-2px);
 }
 
-/* Sidebar menu text color */
+/* Sidebar menu text color - changed to black for contrast against#000000 background */
 .fi-sidebar .fi-sidebar-item-label,
 .fi-sidebar .fi-sidebar-group-label,
 .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label,
 .fi-sidebar .fi-sidebar-group .fi-sidebar-group-label,
 .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label a,
 .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label svg,
-.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label a {
-  color: #fff !important;
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label a,
+.fi-sidebar .fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-item.fi-active svg,
+.fi-sidebar .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+/* Available courses specific styling */
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"] .fi-sidebar-group-label,
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-label a,
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-label svg,
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-icon,
+/* All sidebar items under any group */
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-icon,
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item svg,
+/* Available Courses dropdown/expanded state */
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items .fi-sidebar-item-icon,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items svg,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items a,
+/* Specific Available Courses expanded items */
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded[data-group-label="Available Courses"] .fi-sidebar-group-items .fi-sidebar-item-icon,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded[data-group-label="Available Courses"] .fi-sidebar-group-items svg,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded[data-group-label="Available Courses"] .fi-sidebar-group-items a,
+/* All expanded group items */
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-label,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-icon,
+.fi-sidebar .fi-sidebar-group.fi-sidebar-group-expanded .fi-sidebar-group-items .fi-sidebar-item svg {
+  color: #000000 !important; /* Changed from#000000 to black */
+  fill: #000000 !important; /* Ensure SVG icons are also black */
 }
 
-/* Sidebar 'Available Courses' label and details - force white */
+/* Available Courses specific classes from Blade template */
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label,
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label,
+/* Target the specific classes used in the Available Courses template */
+.fi-sidebar .text-primary-600,
+.fi-sidebar .text-green-600,
+.fi-sidebar .text-yellow-600,
+.fi-sidebar .text-blue-600,
+.fi-sidebar .text-gray-500,
+/* Target all text within Available Courses section */
+.fi-sidebar .fi-sidebar-group .ac,
+.fi-sidebar .fi-sidebar-group .ac span,
+.fi-sidebar .fi-sidebar-group .ac svg,
+.fi-sidebar .fi-sidebar-group ul li span,
+.fi-sidebar .fi-sidebar-group ul li a,
+.fi-sidebar .fi-sidebar-group ul li svg,
+/* Target nested elements */
+.fi-sidebar .fi-sidebar-group ul ul li span,
+.fi-sidebar .fi-sidebar-group ul ul li a,
+.fi-sidebar .fi-sidebar-group ul ul ul li span,
+.fi-sidebar .fi-sidebar-group ul ul ul li a,
+.fi-sidebar .fi-sidebar-group ul ul ul ul li a {
+  color: #000000 !important; /* Force black color */
+  fill: #000000 !important; /* Force black fill for SVG icons */
+}
+
+/* Sidebar 'Available Courses' label and details - force black */
 .fi-sidebar .fi-sidebar-group-label,
 .fi-sidebar .fi-sidebar-group .fi-sidebar-group-items .fi-sidebar-item-label {
-  color: #fff !important;
+  color: #000000 !important; /* Changed from#000000 to black */
 }
 
-.ac {
-    color: inherit !important;
-}
-
+/* Main content area - make#000000 */
 .fi-main-ctn {
-  background: #fff !important;
+  background: #fff !important; /* Changed to#000000 */
   border-left: 1px solid #e5e7eb !important; /* Tailwind gray-200 */
 }
 
 .fi-topbar, .fi-topbar nav {
-  background: #fff !important;
+  background: #fff !important; /* Changed to#000000 */
 }
 
-/* Modern clean Filament table style */
+/* Modern clean Filament table style - updated for white background */
 .fi-ta-table-container {
-  background: #fff !important;
-  border: 1px solid #1a202c !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important; /* Changed from dark to light border */
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06); /* Reduced shadow opacity */
   border-radius: 16px !important;
   overflow: hidden;
 }
 .fi-ta-table {
   width: 100%;
   background: #fff !important;
-  color: #1a202c !important;
+  color: #1e293b !important; /* Changed to gray-800 for better readability */
 }
 .fi-ta-table thead tr {
-  background: #f9fafb !important;
-  color: #1a202c !important;
+  background: #f1f5f9 !important; /* Changed from gray-50 to gray-100 for subtle header */
+  color: #1e293b !important;
 }
 .fi-ta-table th, .fi-ta-table td {
   padding: 1rem 0.75rem !important;
-  border-bottom: 1px solid #1a202c !important;
+  border-bottom: 1px solid #e2e8f0 !important; /* Changed from dark to light border */
   font-size: 1rem;
-  color: #1a202c !important;
+  color: #1e293b !important;
 }
 .fi-ta-table tbody tr {
-  background: #fff !important;
-  transition: background 0.2s;
-  color: #1a202c !important;
+  background: #ffffff !important;
+  transition: none !important;
+  color: #1e293b !important;
 }
+
 .fi-ta-table tbody tr:hover {
-  background: #f3f4f6 !important;
+  background: #ffffff !important;
+  transform: none !important;
 }
+/* Table row hover effect removed */
 .fi-ta-table input[type='checkbox'] {
-  accent-color: #374151 !important;
-  background: #fff !important;
-  border: 1px solid #1a202c !important;
+  accent-color: #3b82f6 !important; /* Changed to blue-500 for better visibility */
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important; /* Changed to gray-300 */
+}
+
+/* Force table backgrounds to be white - override any conflicting rules */
+.fi-ta-table-container,
+.fi-ta-table,
+.fi-ta-table thead,
+.fi-ta-table tbody,
+.fi-ta-table tfoot,
+.fi-ta-table tr,
+.fi-ta-table th,
+.fi-ta-table td {
+  background-color: #ffffff !important;
+}
+
+.fi-ta-table thead tr {
+  background-color: #f8fafc !important;
+}
+
+.fi-ta-table tbody tr {
+  background-color: #ffffff !important;
+}
+
+.fi-ta-table tbody tr:hover {
+  background-color: #ffffff !important;
+}
+
+/* Ultra-specific overrides for Filament table elements */
+.modern-card-table,
+.modern-card-table *,
+.modern-card-table table,
+.modern-card-table table *,
+.modern-card-table thead,
+.modern-card-table thead *,
+.modern-card-table tbody,
+.modern-card-table tbody *,
+.modern-card-table tfoot,
+.modern-card-table tfoot *,
+.modern-card-table tr,
+.modern-card-table tr *,
+.modern-card-table th,
+.modern-card-table th *,
+.modern-card-table td,
+.modern-card-table td * {
+  background-color: #ffffff !important;
+}
+
+.modern-card-table thead tr {
+  background-color: #f8fafc !important;
+}
+
+.modern-card-table tbody tr {
+  background-color: #ffffff !important;
+}
+
+.modern-card-table tbody tr:hover {
+  background-color: #ffffff !important;
+}
+
+/* Nuclear option - override ALL possible table backgrounds */
+*[class*="table"],
+*[class*="fi-ta"],
+*[class*="modern-card"],
+table,
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td {
+  background-color: #ffffff !important;
+}
+
+/* Specific overrides for any remaining black backgrounds */
+*[style*="background: #000000"],
+*[style*="background: #000"],
+*[style*="background-color: #000000"],
+*[style*="background-color: #000"],
+*[style*="background: black"],
+*[style*="background-color: black"] {
+  background-color: #ffffff !important;
+}
+
+/* Final form element overrides */
+.fi-form,
+.fi-form-section,
+.fi-fieldset,
+.fi-form-actions {
+  background-color: transparent !important;
+}
+
+.fi-form input,
+.fi-form textarea,
+.fi-form select {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #1e293b !important;
+}
+
+/* Hide AVAILABLE COURSES section from sidebar */
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"],
+.fi-sidebar .fi-sidebar-group[data-group-label="AVAILABLE COURSES"],
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-group-label:contains("Available Courses")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-group-label:contains("AVAILABLE COURSES")),
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label:contains("Available Courses"),
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label:contains("AVAILABLE COURSES") {
+  display: none !important;
+}
+
+/* Alternative selectors for hiding the courses section */
+.fi-sidebar [data-group-label*="Available"],
+.fi-sidebar [data-group-label*="AVAILABLE"],
+.fi-sidebar .fi-sidebar-group-label[data-group-label*="Available"],
+.fi-sidebar .fi-sidebar-group-label[data-group-label*="AVAILABLE"] {
+  display: none !important;
+}
+
+/* Hide any sidebar group containing course-related items */
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("A1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("A2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("B1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("B2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("A1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("A2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("B1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("B2")) {
+  display: none !important;
+}
+
+/* Additional selectors for course items */
+.fi-sidebar .fi-sidebar-item:contains("A1"),
+.fi-sidebar .fi-sidebar-item:contains("A2"),
+.fi-sidebar .fi-sidebar-item:contains("B1"),
+.fi-sidebar .fi-sidebar-item:contains("B2"),
+.fi-sidebar .fi-sidebar-item-label:contains("A1"),
+.fi-sidebar .fi-sidebar-item-label:contains("A2"),
+.fi-sidebar .fi-sidebar-item-label:contains("B1"),
+.fi-sidebar .fi-sidebar-item-label:contains("B2") {
+  display: none !important;
+}
+
+/* Final override for any Filament table elements */
+.fi-table,
+.fi-table-container,
+.fi-table-wrapper,
+.fi-table-content,
+.fi-table-header,
+.fi-table-body,
+.fi-table-footer,
+.fi-table-row,
+.fi-table-cell,
+.fi-table-header-cell,
+.fi-table-data-cell {
+  background-color: #ffffff !important;
+}
+
+.fi-table-header {
+  background-color: #f8fafc !important;
+}
+
+.fi-table-row:hover {
+  background-color: #ffffff !important;
+}
+
+/* Comprehensive form input overrides */
+.fi-input,
+.fi-text-input,
+.fi-textarea,
+.fi-select,
+.fi-select-input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #1e293b !important;
+}
+
+.fi-input::placeholder,
+.fi-text-input::placeholder,
+.fi-textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 0.7;
+}
+
+.fi-input:focus,
+.fi-text-input:focus,
+.fi-textarea:focus,
+.fi-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: #ffffff !important;
+  border-color: #14b8a6 !important;
+  color: #1e293b !important;
+  box-shadow: 0 0 0 1px #14b8a6 !important;
 }
 .fi-ta-pagination {
   display: flex !important;
@@ -103,123 +358,203 @@ body, html {
   align-items: center !important;
   width: 100% !important;
   padding: 1rem 0.5rem !important;
-  background: #fff !important;
+  background: #ffffff !important;
   border-radius: 0 0 1.25rem 1.25rem !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   margin-top: 0 !important;
 }
 
-.fi-ta-pagination-summary, .fi-ta-pagination-per-page, .fi-ta-pagination-per-page *, .fi-pagination-overview {
-  color: #1a202c !important;
-  font-size: 1rem !important;
+/* Dashboard title and breadcrumb - make black */
+.fi-page-header-heading,
+.fi-page-header-subheading,
+.fi-breadcrumbs-item,
+.fi-breadcrumbs-item a {
+  color: #000000 !important; /* Make dashboard title and breadcrumb black */
 }
 
-.fi-ta-pagination .fi-ta-pagination-summary {
-  margin-right: 1rem !important;
+/* Dashboard cards text - make black */
+.db-card {
+  background-color: #fff !important; /* Changed from gray-900 to gray-50 (very light) */
+  border-color: #e2e8f0 !important;      /* Changed from gray-800 to gray-200 (light) */
+  color: #14b8a6 !important; /* Changed to pure black for better visibility */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
 }
 
-.fi-ta-pagination .fi-ta-pagination-per-page {
-  margin-left: 1rem !important;
+.db-card a {
+  color: #14b8a6 !important; /* Changed to black for better visibility */
 }
 
-.fi-ta-header-cell-label {
-  color: #1a202c !important;
+.db-card a:hover {
+  color: #1e293b !important; /* Changed to dark gray on hover */
 }
 
+/* Dashboard cards - target all text elements */
+.db-card *,
+.db-card h1,
+.db-card h2,
+.db-card h3,
+.db-card h4,
+.db-card h5,
+.db-card h6,
+.db-card p,
+.db-card span,
+.db-card div,
+.db-card strong,
+.db-card b,
+.db-card em,
+.db-card i {
+  color: #14b8a6 !important; /* Force all text in dashboard cards to be black */
+}
+
+/* Specific dashboard card content */
+.db-card .text-gray-500,
+.db-card .text-gray-600,
+.db-card .text-gray-700,
+.db-card .text-gray-800,
+.db-card .text-gray-900,
+.db-card .text-sm,
+.db-card .text-base,
+.db-card .text-lg,
+.db-card .text-xl,
+.db-card .text-2xl,
+.db-card .text-3xl,
+.db-card .text-4xl,
+.db-card .text-5xl,
+.db-card .text-6xl {
+  color: #14b8a6 !important; /* Override any gray text classes */
+}
+
+/* Dashboard card numbers and labels */
+.db-card .text-4xl,
+.db-card .text-5xl,
+.db-card .text-6xl,
+.db-card .font-bold,
+.db-card .font-semibold,
+.db-card .font-medium {
+  color: #14b8a6 !important; /* Make numbers and labels black */
+}
+
+/* Table headers and content - make black */
+.fi-ta-header-cell-label,
+.fi-ta-text-item-label,
+.fi-ta-table th,
+.fi-ta-table td,
+.fi-ta-table thead tr,
+.fi-ta-table tbody tr {
+  color: #1e293b !important; /* Make all table text dark gray for readability */
+}
+
+/* Pagination and other dashboard text - make black */
+.fi-ta-pagination-summary, 
+.fi-ta-pagination-per-page, 
+.fi-ta-pagination-per-page *, 
+.fi-pagination-overview,
+.fi-ta-header-cell-label,
+.fi-ta-text-item-label,
+.fi-pagination-overview, 
+.fi-input-wrp-label {
+  color: #1e293b !important; /* Make all pagination and label text dark gray */
+}
+
+/* Form labels and inputs - make black */
+.fi-input, 
+.fi-text-input, 
+.fi-form-label, 
+.fi-form-helper-text, 
+.fi-form-hint, 
+.fi-form-error, 
+.fi-ta-header-cell-label, 
 .fi-ta-text-item-label {
-  color: #1a202c !important;
+  color: #14b8a6 !important; /* Make all form text black */
 }
 
-.fi-pagination-overview, .fi-input-wrp-label {
-  color: #1a202c !important;
-}
-
-/* Primary (Edit) button: dark blue */
-.fi-btn.fi-btn-color-primary, .fi-btn.bg-custom-600 {
-  background-color: #2563eb !important;
-  color: #fff !important;
-  border: none !important;
-}
-.fi-btn.fi-btn-color-primary:hover, .fi-btn.bg-custom-600:hover {
-  background-color: #1d4ed8 !important;
-}
-.fi-btn.fi-btn-color-primary:focus-visible, .fi-btn.bg-custom-600:focus-visible {
-  box-shadow: 0 0 0 2px #2563eb33 !important;
-}
-
-/* View button: black */
-.fi-btn.fi-btn-color-gray {
-  background-color: #374151 !important;
-  color: #fff !important;
-  border: none !important;
-}
-.fi-btn.fi-btn-color-gray:hover {
-  background-color: #1f2937 !important;
-}
-
-/* Delete button: red */
-.fi-btn.fi-btn-color-danger {
-  background-color: #dc2626 !important;
-  color: #fff !important;
-  border: none !important;
-}
-.fi-btn.fi-btn-color-danger:hover {
-  background-color: #b91c1c !important;
-}
-
-/* Edit button text color */
-.text-custom-600 {
-  color: #2563eb !important;
-}
-/* View button text color */
-.fi-btn.fi-btn-color-gray .fi-btn-label {
-  color: #fff !important;
-}
-/* Delete button text color */
-.fi-btn.fi-btn-color-danger .fi-btn-label, .fi-btn.fi-btn-color-danger {
-  color: #dc2626 !important;
-}
-
-.text-gray-700, .fi-btn-label.text-gray-700 {
-  color: #111 !important;
-}
-.text-custom-600, .fi-btn-label.text-custom-600 {
-  color: #dc2626 !important;
-}
-
-.fi-btn-label, .fi-btn {
-  color: #fff !important;
-}
-
-.fi-input, .fi-text-input, .fi-form-label, .fi-form-helper-text, .fi-form-hint, .fi-form-error, .fi-ta-header-cell-label, .fi-ta-text-item-label {
-  color: #1a202c !important;
-}
-
-/* Form fields and labels: dark text and borders for visibility */
+/* Form fields and labels: black text and borders for visibility */
 input, textarea, select, .fi-input, .fi-text-input, .fi-select, .fi-form-label, .fi-form-helper-text, .fi-form-hint, .fi-form-error, .fi-ta-header-cell-label, .fi-ta-text-item-label {
-  color: #1a202c !important;
-  border-color: #1a202c !important;
-  background-color: #fff !important;
+  color: #1e293b !important; /* Make all form text dark gray */
+  border-color: #d1d5db !important; /* Changed to gray-300 for lighter borders */
+  background-color: #ffffff !important;
 }
 
-input:focus, textarea:focus, select:focus, .fi-input:focus, .fi-text-input:focus, .fi-select:focus {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 2px #2563eb33 !important;
+/* Select input text - make black */
+.fi-select-input {
+  border: 1px solid #d1d5db !important; /* Tailwind gray-300 */
+  border-radius: 0.5rem !important;
+  background: #ffffff !important;
+  color: #1e293b !important; /* Changed to dark gray */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem !important;
 }
 
-.fi-btn.fi-btn-color-primary, .fi-btn-label, .fi-btn.fi-btn-color-primary .fi-btn-label {
-  color: #fff !important;
+/* Date input text - make black */
+input[type="date"],
+input[name*="dayname"],
+input.dayname-field {
+  border: 1px solid #d1d5db !important; /* Tailwind gray-300 */
+  border-radius: 0.5rem !important;
+  background: #ffffff !important;
+  color: #1e293b !important; /* Changed to dark gray */
 }
 
-/* Input field: black border, rounded, no shadow */
-.fi-input, input.fi-input, .fi-text-input {
-  border: none !important;
-  border-top-right-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
-  box-shadow: none !important;
-  outline: none !important;
-  border-left-width: 1px !important;
-  padding-left: 1rem !important;
+/* Input wrapper text - make black */
+.fi-input-wrp input {
+  color: #1e293b !important; /* Changed to dark gray */
+}
+
+/* Form field labels - make black */
+.fi-fo-field-wrp-label,
+.fi-fo-field-wrp-label span {
+  color: #1e293b !important; /* Changed to dark gray */
+}
+
+/* Pagination page numbers - make black */
+button.fi-pagination-item-button.group span.fi-pagination-item-label {
+  color: #14b8a6 !important; /* Changed to black */
+  font-size: 1.1rem !important;
+  display: inline !important;
+  font-weight: 600 !important;
+}
+
+/* Select dropdown text - make black */
+.student-registration-select .fi-select-input {
+    background-color: #000000 !important;
+    border: 1px solid #d1d5db !important;
+    color: #14b8a6 !important; /* Changed to black */
+}
+
+.fi-select-dropdown {
+    background-color: #000000 !important;
+    border: 1px solid #d1d5db !important;
+    color: #14b8a6 !important; /* Changed to black */
+}
+
+.fi-select-dropdown .fi-select-option {
+    padding: 0.5rem 0.75rem !important;
+}
+
+.fi-select-dropdown .fi-select-option:hover {
+    background-color: #000000 !important;
+}
+
+.fi-select-dropdown .fi-select-option.fi-selected {
+    background-color: #2563eb !important;
+    color: #000000 !important;
+}
+
+.custom-green-toggle[aria-checked="true"],
+.custom-green-toggle:checked {
+    background-color: #22c55e !important; /* Tailwind green-500 */
+    border-color: #22c55e !important;
+}
+
+.fi-fo-toggle[aria-checked="true"] {
+    background-color: #22c55e !important; /* Tailwind green-500 */
+    border-color: #22c55e !important;
 }
 
 /* Edit button: blue text */
@@ -227,8 +562,23 @@ input:focus, textarea:focus, select:focus, .fi-input:focus, .fi-text-input:focus
   color: #2563eb !important;
 }
 
+/* Primary button labels should have proper contrast */
 .fi-btn-label {
-  color: white !important;
+  color: #000000 !important;
+}
+
+/* Ensure primary buttons have proper contrast in#000000 mode */
+.fi-btn.fi-btn-color-primary .fi-btn-label,
+.fi-btn-primary .fi-btn-label,
+.fi-header-actions .fi-btn-primary .fi-btn-label {
+  color: #000000 !important;
+}
+
+/* Ensure outlined/secondary buttons have dark text for visibility */
+.fi-btn.fi-btn-color-gray .fi-btn-label,
+.fi-btn-secondary .fi-btn-label,
+.fi-btn-outlined .fi-btn-label {
+  color: #374151 !important;
 }
 
 /* Edit (blue) action button */
@@ -263,45 +613,23 @@ input:focus, textarea:focus, select:focus, .fi-input:focus, .fi-text-input:focus
   display: none !important;
 }
 
-/* Make the background for the search icon also white */
+/* Make the background for the search icon also#000000 */
 .fi-input-wrp-prefix {
-  background: #fff !important;
+  background: #ffffff !important;
   border-radius: 0.5rem 0 0 0.5rem !important; /* match input rounding if needed */
 }
 
 /* Style the select input with a gray 1px border and custom dropdown arrow */
-.fi-select-input {
-  border: 1px solid #d1d5db !important; /* Tailwind gray-300 */
-  border-radius: 0.5rem !important;
-  background: #fff !important;
-  color: #111 !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1.25em 1.25em;
-  padding-right: 2.5rem !important;
-}
 .fi-select-input option {
   background: #111827 !important;
-  color: #fff !important;
+  color: #000000 !important;
 }
 .fi-select-input option:checked, .fi-select-input option:focus, .fi-select-input option:hover {
   background: #2563eb !important;
-  color: #fff !important;
+  color: #000000 !important;
 }
 
 /* Style date and dayname input fields with gray border and black placeholder */
-input[type="date"],
-input[name*="dayname"],
-input.dayname-field {
-  border: 1px solid #d1d5db !important; /* Tailwind gray-300 */
-  border-radius: 0.5rem !important;
-  background: #fff !important;
-  color: #111 !important;
-}
 input[type="date"]::placeholder,
 input[name*="dayname"]::placeholder,
 input.dayname-field::placeholder {
@@ -313,10 +641,7 @@ input.dayname-field::placeholder {
 .fi-input-wrp {
   border: 1px solid #d1d5db !important;
   border-radius: 0.5rem !important;
-  background: #fff !important;
-}
-.fi-input-wrp input {
-  color: #111 !important;
+  background: #ffffff !important;
 }
 
 /* Make placeholder color for date and select fields match Day Name (black) */
@@ -329,7 +654,7 @@ input[type="date"]::placeholder,
 /* Set form field label color to black */
 .fi-fo-field-wrp-label,
 .fi-fo-field-wrp-label span {
-  color: #111 !important;
+  color: #1e293b !important; /* Changed to dark gray */
 }
 
 /* Set placeholder color for date and select fields to gray */
@@ -339,9 +664,363 @@ input[type="date"]::placeholder,
   opacity: 1 !important;
 }
 
-/* Ensure delete button text is always white */
+/* Ensure delete button text is always#000000 */
 .fi-btn.fi-btn-color-danger, .fi-btn.fi-btn-color-danger .fi-btn-label {
-  color: #fff !important;
+  color: #000000 !important;
+}
+
+/* Ensure CreateAction buttons (like "New course") have proper styling */
+.fi-btn[data-filament-action="create"] .fi-btn-label,
+.fi-btn[data-filament-action="create"] {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color:#000000 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-btn[data-filament-action="create"]:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* General button visibility improvements for#000000 mode */
+.fi-btn {
+  /* Ensure minimum contrast for all buttons */
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Ensure all button labels have proper contrast */
+.fi-btn-label {
+  font-weight: 600 !important;
+}
+
+/* Specific styling for View buttons to ensure visibility */
+.fi-btn[data-filament-action="view"],
+.fi-btn[aria-label*="view"],
+.fi-btn[aria-label*="View"],
+.fi-btn[title*="view"],
+.fi-btn[title*="View"],
+.fi-btn.fi-btn-color-gray {
+  background: #374151 !important;
+  color:#000000 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.fi-btn[data-filament-action="view"] .fi-btn-label,
+.fi-btn[aria-label*="view"] .fi-btn-label,
+.fi-btn[aria-label*="View"] .fi-btn-label,
+.fi-btn[title*="view"] .fi-btn-label,
+.fi-btn[title*="View"] .fi-btn-label,
+.fi-btn.fi-btn-color-gray .fi-btn-label {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+.fi-btn[data-filament-action="view"]:hover,
+.fi-btn[aria-label*="view"]:hover,
+.fi-btn[aria-label*="View"]:hover,
+.fi-btn[title*="view"]:hover,
+.fi-btn[title*="View"]:hover,
+.fi-btn.fi-btn-color-gray:hover {
+  background: #1f2937 !important;
+  color: #000000 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-btn[data-filament-action="view"]:hover .fi-btn-label,
+.fi-btn[aria-label*="view"]:hover .fi-btn-label,
+.fi-btn[aria-label*="View"]:hover .fi-btn-label,
+.fi-btn[title*="view"]:hover .fi-btn-label,
+.fi-btn[title*="View"]:hover .fi-btn-label,
+.fi-btn.fi-btn-color-gray:hover .fi-btn-label {
+  color: #000000 !important;
+}
+
+/* Ensure View button icons are visible */
+.fi-btn[data-filament-action="view"] svg,
+.fi-btn[aria-label*="view"] svg,
+.fi-btn[aria-label*="View"] svg,
+.fi-btn[title*="view"] svg,
+.fi-btn[title*="View"] svg,
+.fi-btn.fi-btn-color-gray svg {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+/* Specific styling for Export buttons to ensure visibility */
+.fi-btn[data-filament-action*="export"],
+.fi-btn[aria-label*="export"],
+.fi-btn[aria-label*="Export"],
+.fi-btn[title*="export"],
+.fi-btn[title*="Export"],
+.fi-btn[class*="export"],
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-btn.fi-btn-color-success,
+.fi-btn.fi-btn-color-warning {
+  background: #6b7280 !important;
+  color: #000000 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.fi-btn[data-filament-action*="export"] .fi-btn-label,
+.fi-btn[aria-label*="export"] .fi-btn-label,
+.fi-btn[aria-label*="Export"] .fi-btn-label,
+.fi-btn[title*="export"] .fi-btn-label,
+.fi-btn[title*="Export"] .fi-btn-label,
+.fi-btn[class*="export"] .fi-btn-label,
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label,
+.fi-btn.fi-btn-color-success .fi-btn-label,
+.fi-btn.fi-btn-color-warning .fi-btn-label {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+.fi-btn[data-filament-action*="export"]:hover,
+.fi-btn[aria-label*="export"]:hover,
+.fi-btn[aria-label*="Export"]:hover,
+.fi-btn[title*="export"]:hover,
+.fi-btn[title*="Export"]:hover,
+.fi-btn[class*="export"]:hover,
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover,
+.fi-btn.fi-btn-color-success:hover,
+.fi-btn.fi-btn-color-warning:hover {
+  background: #4b5563 !important;
+  color:#000000 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-btn[data-filament-action*="export"]:hover .fi-btn-label,
+.fi-btn[aria-label*="export"]:hover .fi-btn-label,
+.fi-btn[aria-label*="Export"]:hover .fi-btn-label,
+.fi-btn[title*="export"]:hover .fi-btn-label,
+.fi-btn[title*="Export"]:hover .fi-btn-label,
+.fi-btn[class*="export"]:hover .fi-btn-label,
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label {
+  color:#000000 !important;
+}
+
+.fi-btn[data-filament-action="view"]:hover svg,
+.fi-btn[aria-label*="view"]:hover svg,
+.fi-btn[aria-label*="View"]:hover svg,
+.fi-btn[title*="view"]:hover svg,
+.fi-btn[title*="View"]:hover svg,
+.fi-btn.fi-btn-color-gray:hover svg {
+  color:#000000 !important;
+  fill:#000000 !important;
+  stroke:#000000 !important;
+}
+
+/* Ensure Export button icons are visible */
+.fi-btn[data-filament-action*="export"] svg,
+.fi-btn[aria-label*="export"] svg,
+.fi-btn[aria-label*="Export"] svg,
+.fi-btn[title*="export"] svg,
+.fi-btn[title*="Export"] svg,
+.fi-btn[class*="export"] svg,
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) svg,
+.fi-btn.fi-btn-color-success svg,
+.fi-btn.fi-btn-color-warning svg {
+  color:#000000 !important;
+  fill:#000000 !important;
+  stroke:#000000 !important;
+}
+
+.fi-btn[data-filament-action*="export"]:hover svg,
+.fi-btn[aria-label*="export"]:hover svg,
+.fi-btn[aria-label*="Export"]:hover svg,
+.fi-btn[title*="export"]:hover svg,
+.fi-btn[title*="Export"]:hover svg,
+.fi-btn[class*="export"]:hover svg,
+.fi-header-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover svg {
+  color:#000000 !important;
+  fill:#000000 !important;
+  stroke:#000000 !important;
+}
+
+/* Override any light text colors that might cause visibility issues */
+.fi-btn[style*="color: rgb(156, 163, 175)"],
+.fi-btn[style*="color: #9ca3af"],
+.fi-btn[style*="color: rgb(107, 114, 128)"],
+.fi-btn[style*="color: #6b7280"] {
+  color: #374151 !important;
+}
+
+.fi-btn[style*="color: rgb(156, 163, 175)"] .fi-btn-label,
+.fi-btn[style*="color: #9ca3af"] .fi-btn-label,
+.fi-btn[style*="color: rgb(107, 114, 128)"] .fi-btn-label,
+.fi-btn[style*="color: #6b7280"] .fi-btn-label {
+  color: #374151 !important;
+}
+
+/* Ensure cancel buttons have proper visibility */
+.fi-btn[data-filament-action="cancel"],
+.fi-btn[aria-label*="cancel"],
+.fi-btn[aria-label*="Cancel"],
+.fi-btn[title*="cancel"],
+.fi-btn[title*="Cancel"],
+.fi-btn-secondary,
+.fi-btn-gray {
+  background: #6b7280 !important;
+  color:#000000 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-btn[data-filament-action="cancel"] .fi-btn-label,
+.fi-btn[aria-label*="cancel"] .fi-btn-label,
+.fi-btn[aria-label*="Cancel"] .fi-btn-label,
+.fi-btn[title*="cancel"] .fi-btn-label,
+.fi-btn[title*="Cancel"] .fi-btn-label,
+.fi-btn-secondary .fi-btn-label,
+.fi-btn-gray .fi-btn-label {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+.fi-btn[data-filament-action="cancel"]:hover,
+.fi-btn[aria-label*="cancel"]:hover,
+.fi-btn[aria-label*="Cancel"]:hover,
+.fi-btn[title*="cancel"]:hover,
+.fi-btn[title*="Cancel"]:hover,
+.fi-btn-secondary:hover,
+.fi-btn-gray:hover {
+  background: #4b5563 !important;
+  color:#000000 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-btn[data-filament-action="cancel"]:hover .fi-btn-label,
+.fi-btn[aria-label*="cancel"]:hover .fi-btn-label,
+.fi-btn[aria-label*="Cancel"]:hover .fi-btn-label,
+.fi-btn[title*="cancel"]:hover .fi-btn-label,
+.fi-btn[title*="Cancel"]:hover .fi-btn-label,
+.fi-btn-secondary:hover .fi-btn-label,
+.fi-btn-gray:hover .fi-btn-label {
+  color:#000000 !important;
+}
+
+/* Ultra-specific modal button styling to override any existing styles */
+.fi-modal .fi-btn,
+.fi-modal-footer .fi-btn,
+.fi-modal-content .fi-btn,
+.fi-modal .fi-btn *,
+.fi-modal-footer .fi-btn *,
+.fi-modal-content .fi-btn * {
+  /* Force all modal buttons to have visible text */
+  color:#000000 !important;
+  background: #6b7280 !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+/* Override any existing text colors in modal buttons */
+.fi-modal .fi-btn .fi-btn-label,
+.fi-modal-footer .fi-btn .fi-btn-label,
+.fi-modal-content .fi-btn .fi-btn-label,
+.fi-modal .fi-btn span,
+.fi-modal-footer .fi-btn span,
+.fi-modal-content .fi-btn span,
+.fi-modal .fi-btn div,
+.fi-modal-footer .fi-btn div,
+.fi-modal-content .fi-btn div {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+/* Exception for primary and danger buttons */
+.fi-modal .fi-btn.fi-btn-color-primary,
+.fi-modal-footer .fi-btn.fi-btn-color-primary,
+.fi-modal-content .fi-btn.fi-btn-color-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color:#000000 !important;
+}
+
+.fi-modal .fi-btn.fi-btn-color-danger,
+.fi-modal-footer .fi-btn.fi-btn-color-danger,
+.fi-modal-content .fi-btn.fi-btn-color-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color:#000000 !important;
+}
+
+/* Force all other modal buttons to be gray with#000000 text */
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) {
+  background: #6b7280 !important;
+  color:#000000 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-modal .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) *,
+.fi-modal-footer .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) *,
+.fi-modal-content .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) * {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+/* Nuclear option - force all text in modal buttons to be#000000 */
+.fi-modal button,
+.fi-modal-footer button,
+.fi-modal-content button {
+  color:#000000 !important;
+  background: #6b7280 !important;
+  border: none !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fi-modal button *,
+.fi-modal-footer button *,
+.fi-modal-content button * {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+/* Exception for primary and danger buttons */
+.fi-modal button.fi-btn-color-primary,
+.fi-modal-footer button.fi-btn-color-primary,
+.fi-modal-content button.fi-btn-color-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+}
+
+.fi-modal button.fi-btn-color-danger,
+.fi-modal-footer button.fi-btn-color-danger,
+.fi-modal-content button.fi-btn-color-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
 }
 
 /* Center the form action buttons */
@@ -351,13 +1030,54 @@ input[type="date"]::placeholder,
   align-items: center !important;
 }
 
+/* Specific styling for the cancel button next to Save changes */
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger),
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger) {
+  background: #6b7280 !important;
+  color:#000000 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger) .fi-btn-label,
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) span,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger) span,
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger) div,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger) div {
+  color:#000000 !important;
+  font-weight: 600 !important;
+}
+
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover {
+  background: #4b5563 !important;
+  color:#000000 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover .fi-btn-label,
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover span,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover span,
+.fi-form-actions .fi-btn:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover div,
+.fi-form-actions button:not(.fi-btn-color-primary):not(.fi-btn-color-danger):hover div {
+  color:#000000 !important;
+}
+
 .modern-card-table {
   margin-bottom: 2rem !important;
 }
 
 /* Fix for Filament pagination page numbers not showing */
 button.fi-pagination-item-button.group span.fi-pagination-item-label {
-  color: #1a202c !important;
+  color: #000000 !important; /* Changed to black */
   font-size: 1.1rem !important;
   display: inline !important;
   font-weight: 600 !important;
@@ -373,16 +1093,16 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   align-items: center !important;
 }
 
-/* Force Filament user menu dropdown header and label to white */
+/* Force Filament user menu dropdown header and label to#000000 */
 .fi-user-menu .fi-dropdown-header-label,
 .fi-user-menu .fi-dropdown-list-item-label,
 .fi-user-menu .fi-dropdown-header-icon,
 .fi-user-menu .fi-dropdown-list-item-icon {
-    color: #fff !important;
-    fill: #fff !important;
+    color: #000000 !important;
+    fill: #000000 !important;
 }
 
-/* Modern Login Page Styles - Blue Theme */
+/* Modern Login Page Styles - EdGuide Theme */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -390,7 +1110,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #0a192f 0%, #112240 50%, #1a365d 100%);
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2a2a2a 100%);
   padding: 20px;
 }
 
@@ -407,7 +1127,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 .bg-shape {
   position: absolute;
   border-radius: 50%;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(20, 184, 166, 0.1);
   animation: float 6s ease-in-out infinite;
 }
 
@@ -448,19 +1168,19 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 
 .login-card {
   background: linear-gradient(145deg, 
-      rgba(255, 255, 255, 0.95) 0%, 
-      rgba(248, 250, 252, 0.9) 50%, 
-      rgba(241, 245, 249, 0.95) 100%);
+      rgba(26, 26, 26, 0.95) 0%, 
+      rgba(42, 42, 42, 0.9) 50%, 
+      rgba(58, 58, 58, 0.95) 100%);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(20, 184, 166, 0.3);
   border-radius: 24px;
   padding: 48px 40px;
   width: 100%;
   max-width: 440px;
   box-shadow: 
-      0 25px 50px rgba(0, 0, 0, 0.25),
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      0 25px 50px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(20, 184, 166, 0.2),
+      inset 0 1px 0 rgba(20, 184, 166, 0.1);
   position: relative;
   z-index: 10;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
@@ -476,7 +1196,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
       rgba(59, 130, 246, 0.3), 
       rgba(147, 197, 253, 0.1), 
       rgba(59, 130, 246, 0.2));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#000000 0 0) content-box, linear-gradient(#000000 0 0);
   mask-composite: xor;
   -webkit-mask-composite: xor;
   opacity: 0.8;
@@ -504,31 +1224,31 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 .login-icon {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #000000, #1a1a1a);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 24px;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.3);
 }
 
 .login-icon:hover {
   transform: rotate(10deg) scale(1.1);
-  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.5);
 }
 
 .login-icon svg {
   width: 28px;
   height: 28px;
-  color: white;
+  color: #14b8a6;
 }
 
 .login-title {
   font-size: 32px;
   font-weight: 700;
-  color: #1e293b;
+  color: #14b8a6;
   margin: 0 0 8px 0;
   letter-spacing: -0.5px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -536,7 +1256,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 
 .login-subtitle {
   font-size: 16px;
-  color: #64748b;
+  color: #14b8a6;
   margin: 0;
   font-weight: 400;
 }
@@ -618,36 +1338,36 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 .form-input {
   width: 100%;
   padding: 16px 16px 16px 48px;
-  border: 2px solid rgba(59, 130, 246, 0.2);
+  border: 2px solid rgba(20, 184, 166, 0.3);
   border-radius: 12px;
   font-size: 16px;
-  background: rgba(30, 41, 59, 0.5);
+  background: rgba(26, 26, 26, 0.8);
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
   outline: none;
-  color: #ffffff;
+  color: #14b8a6;
 }
 
 .form-input::placeholder {
-  color: #64748b;
+  color: #14b8a6;
   transition: all 0.3s ease;
 }
 
 .form-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
   transform: translateY(-1px);
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(26, 26, 26, 0.9);
 }
 
 .form-input:focus + .input-icon,
 .input-wrapper:hover .input-icon {
-  color: #3b82f6;
+  color: #14b8a6;
   transform: translateY(-50%) scale(1.1);
 }
 
 .form-input:focus::placeholder {
-  color: #94a3b8;
+  color: #14b8a6;
   transform: translateX(4px);
 }
 
@@ -681,13 +1401,13 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 }
 
 .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom {
-  background: #fff; /* white when checked */
+  background: #000000; /*#000000 when checked */
   border-color: #3b82f6;
   transform: scale(1.05);
 }
 
 .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom::after {
-  border-color: #111827; /* black checkmark on white */
+  border-color: #111827; /* black checkmark on#000000 */
 }
 
 .checkbox-custom::after {
@@ -697,36 +1417,36 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   left: 6px;
   width: 6px;
   height: 10px;
-  border: solid #fff;
+  border: solid #000000;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg) scale(0);
   transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom {
-  background: #fff; /* white when checked */
+  background: #000000; /*#000000 when checked */
   border-color: #3b82f6;
   transform: scale(1.05);
 }
 
 .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom::after {
-  border-color: #111827; /* black checkmark on white */
+  border-color: #111827; /* black checkmark on#000000 */
 }
 
 .checkbox-wrapper:hover .checkbox-custom {
-  border-color: #3b82f6;
+  border-color: #14b8a6;
   transform: scale(1.05);
 }
 
 .checkbox-label {
   font-size: 14px;
-  color: #000000;
+  color: #14b8a6;
   font-weight: 500;
 }
 
 .forgot-link {
   font-size: 14px;
-  color: #60a5fa;
+  color: #14b8a6;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -740,12 +1460,12 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   transition: width 0.3s ease;
 }
 
 .forgot-link:hover {
-  color: #3b82f6;
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
@@ -755,7 +1475,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 
 .login-btn {
   width: 100%;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
   color: #ffffff;
   border: none;
   padding: 18px 24px;
@@ -798,7 +1518,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 
 .login-btn:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 15px 40px rgba(20, 184, 166, 0.4);
 }
 
 .login-btn:hover::before {
@@ -817,17 +1537,17 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   text-align: center;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(20, 184, 166, 0.3);
 }
 
 .login-footer p {
   font-size: 14px;
-  color: #64748b;
+  color: #14b8a6;
   margin: 0;
 }
 
 .signup-link {
-  color: #3b82f6;
+  color: #14b8a6;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -841,12 +1561,12 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   transition: width 0.3s ease;
 }
 
 .signup-link:hover {
-  color: #3b82f6;
+  color: #ffffff;
 }
 
 .signup-link:hover::after {
@@ -900,19 +1620,19 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 @media (prefers-contrast: high) {
   .login-card {
       border: 2px solid #3b82f6;
-      background: #ffffff;
+      background: #000000;
   }
   
   .form-input {
       border-color: #1f2937;
-      background: #ffffff;
+      background: #000000;
       color: #000000;
   }
   
   .login-btn {
       background: #1f2937;
       border: 2px solid #1f2937;
-      color: #ffffff;
+      color: #000000;
   }
 }
 
@@ -939,7 +1659,7 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
   width: max-content;
   max-width: 220px;
   background-color: #222;
-  color: #fff;
+  color: #000000;
   text-align: center;
   border-radius: 6px;
   padding: 6px 12px;
@@ -956,45 +1676,4 @@ button.fi-pagination-item-button.group.fi-active span.fi-pagination-item-label {
 .custom-tooltip-wrapper:hover .custom-tooltip-text {
   visibility: visible;
   opacity: 1;
-}
-
-/* New styles for a minimal select dropdown */
-.student-registration-select .fi-select-input {
-    background-color: #fff !important;
-    border: 1px solid #d1d5db !important;
-    color: #111827 !important;
-}
-
-.fi-select-input:focus {
-    --tw-ring-color: #2563eb !important;
-}
-
-.fi-select-dropdown {
-    background-color: #fff !important;
-    border: 1px solid #d1d5db !important;
-    color: #111827 !important;
-}
-
-.fi-select-dropdown .fi-select-option {
-    padding: 0.5rem 0.75rem !important;
-}
-
-.fi-select-dropdown .fi-select-option:hover {
-    background-color: #f3f4f6 !important;
-}
-
-.fi-select-dropdown .fi-select-option.fi-selected {
-    background-color: #2563eb !important;
-    color: #fff !important;
-}
-
-.custom-green-toggle[aria-checked="true"],
-.custom-green-toggle:checked {
-    background-color: #22c55e !important; /* Tailwind green-500 */
-    border-color: #22c55e !important;
-}
-
-.fi-fo-toggle[aria-checked="true"] {
-    background-color: #22c55e !important; /* Tailwind green-500 */
-    border-color: #22c55e !important;
 }

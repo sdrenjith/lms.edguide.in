@@ -34,20 +34,21 @@ class StudentPanelProvider extends PanelProvider
             ->id('student')
             ->path('student')
             ->login(\Filament\Pages\Auth\Login::class)
+            ->homeUrl(fn (): string => route('filament.student.pages.profile'))
             ->colors([
                 'primary' => Color::Blue,
             ])
             ->darkMode(false)
-            ->brandName('Rosy\'s German School')
+            ->brandName('EdGuide')
             ->brandLogo(asset('images/student-logo.png'))
             ->favicon(asset('images/favicon.ico'))
             ->discoverResources(in: app_path('Filament/Student/Resources'), for: 'App\\Filament\\Student\\Resources')
             ->discoverPages(in: app_path('Filament/Student/Pages'), for: 'App\\Filament\\Student\\Pages')
             ->pages([
-                \App\Filament\Student\Pages\Dashboard::class,
+                // \App\Filament\Student\Pages\Dashboard::class, // Hidden from navigation
                 Profile::class,
                 \App\Filament\Student\Pages\StudyMaterials::class,
-                \App\Filament\Student\Pages\DailyWorks::class,
+                // \App\Filament\Student\Pages\OpinionVerification::class, // Temporarily disabled
                 \App\Filament\Student\Pages\SpeakingSessions::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Student/Widgets'), for: 'App\\Filament\\Student\\Widgets')
@@ -68,6 +69,7 @@ class StudentPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 StudentMiddleware::class,
+                \App\Http\Middleware\StudentVerificationMiddleware::class,
             ])
             ->navigationItems([
                 // Custom navigation is handled in the dashboard template
@@ -77,7 +79,7 @@ class StudentPanelProvider extends PanelProvider
     protected function registerPages(): void
     {
         Filament::registerPages([
-            \App\Filament\Student\Pages\Dashboard::class,
+            // \App\Filament\Student\Pages\Dashboard::class, // Hidden from navigation
         ]);
     }
 } 

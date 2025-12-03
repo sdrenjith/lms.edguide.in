@@ -2,222 +2,87 @@
 /* Import the complete modern styling based on your custom design */
 @import url('../../modern-form.css');
 
+/* ===== EDGUIDE WHITE THEME - ALL TEAL ===== */
+/* Clean, targeted approach to change only background and text colors */
 
-
-/* Custom Opinion Verification Toggle Styles */
-.opinion-verification-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
+/* ===== WHITE BACKGROUND OVERRIDE ===== */
+/* Force all black/dark backgrounds to white */
+body, html, #app, .fi-body, .fi-panel-admin {
+    background-color: #ffffff !important;
 }
 
-.opinion-verification-toggle .fi-fo-field-wrp {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+/* Override all dark background classes */
+.bg-black, .bg-gray-900, .bg-gray-800, .bg-gray-700, .bg-slate-900, .bg-slate-800 {
+    background-color: #ffffff !important;
 }
 
-.opinion-verification-toggle .fi-toggle {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
+/* Override Filament dark theme backgrounds with higher specificity */
+.fi-sidebar, .fi-sidebar *, .fi-topbar, .fi-topbar *, .fi-page, .fi-widget, .fi-dashboard, .fi-stats-overview-widget {
+    background-color: #000000 !important;
 }
 
-.opinion-verification-toggle .fi-toggle input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+/* Ultra-specific overrides for stubborn elements - KEEP SIDEBAR BLACK */
+.fi-sidebar.fixed.inset-y-0.start-0.z-30,
+.fi-sidebar-nav,
+.fi-sidebar-header,
+.fi-sidebar-footer,
+.fi-sidebar-item,
+.fi-sidebar-item * {
+    background-color: #000000 !important;
 }
 
-.opinion-verification-toggle .fi-toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 4.5rem;
-    height: 2.25rem;
-    background-color: #ef4444;
-    border-radius: 9999px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    border: 4px solid #374151;
-    vertical-align: middle;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(55, 65, 81, 0.1);
-    outline: 1px solid #e5e7eb;
-    outline-offset: 2px;
+/* Override any inline dark backgrounds - EXCEPT FOR SIDEBAR */
+*[style*="background-color: rgb(0, 0, 0)"]:not(.fi-sidebar):not(.fi-sidebar *),
+*[style*="background-color: #000000"]:not(.fi-sidebar):not(.fi-sidebar *),
+*[style*="background-color: #000"]:not(.fi-sidebar):not(.fi-sidebar *),
+*[style*="background: rgb(0, 0, 0)"]:not(.fi-sidebar):not(.fi-sidebar *),
+*[style*="background: #000000"]:not(.fi-sidebar):not(.fi-sidebar *),
+*[style*="background: #000"]:not(.fi-sidebar):not(.fi-sidebar *) {
+    background-color: #ffffff !important;
 }
 
-.opinion-verification-toggle .fi-toggle-switch-button {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 1.625rem;
-    height: 1.625rem;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    border: 2px solid #374151;
+/* Override dashboard cards and widgets */
+.fi-stats-overview-widget-card, .fi-widget, .fi-card, .fi-section {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
 }
 
-/* When toggle is ON (checked) */
-.opinion-verification-toggle input:checked + .fi-toggle-switch {
-    background-color: #10b981;
-    border-color: #059669;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(16, 185, 129, 0.3);
-    outline: 1px solid #10b981;
-    outline-offset: 2px;
+/* Override any remaining dark elements - KEEP SIDEBAR BLACK */
+.fi-sidebar-header, .fi-sidebar-footer, .fi-sidebar-nav {
+    background-color: #000000 !important;
 }
 
-.opinion-verification-toggle input:checked + .fi-toggle-switch .fi-toggle-switch-button {
-    transform: translateX(2.375rem);
-    background-color: white;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    border: 2px solid #10b981;
+/* Ensure proper text contrast on white backgrounds */
+.fi-stats-overview-widget-card .fi-stats-overview-widget-value,
+.fi-stats-overview-widget-card .fi-stats-overview-widget-label {
+    color: #1f2937 !important;
 }
 
-/* When toggle is OFF (unchecked) */
-.opinion-verification-toggle input:not(:checked) + .fi-toggle-switch {
-    background: linear-gradient(135deg, #f87171 0%, #ef4444 50%, #dc2626 100%);
-    border-color: #b91c1c;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.2);
-    outline: 1px solid #ef4444;
-    outline-offset: 2px;
+/* NUCLEAR OPTION - Override the specific rule from developer tools */
+.fi-sidebar, .fi-sidebar *, .fi-topbar, .fi-topbar *, .fi-widget, .fi-card, .fi-modal, .fi-dropdown-panel, .fi-page-header, .fi-page-header * {
+    background-color: #000000 !important;
 }
 
-.opinion-verification-toggle input:not(:checked) + .fi-toggle-switch .fi-toggle-switch-button {
-    transform: translateX(0);
-    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.8);
-    border: 2px solid #ef4444;
+/* Target the exact classes shown in developer tools */
+.fi-sidebar.fixed.inset-y-0.start-0.z-30.flex.flex-col.h-screen,
+.fi-sidebar-nav.flex-grow.flex.flex-col.gap-y-7.overflow-y-auto.overflow-x-hidden.px-6.py-8 {
+    background-color: #000000 !important;
 }
 
-/* Hover effects */
-.opinion-verification-toggle .fi-toggle-switch:hover {
-    /* Base hover effect - specific states override this */
+/* Override any remaining dark mode classes - KEEP SIDEBAR BLACK */
+.dark .fi-sidebar,
+.dark .fi-sidebar * {
+    background-color: #000000 !important;
 }
 
-.opinion-verification-toggle input:checked + .fi-toggle-switch:hover {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(16, 185, 129, 0.2);
+.dark .fi-topbar,
+.dark .fi-topbar * {
+    background-color: #ffffff !important;
 }
 
-.opinion-verification-toggle input:not(:checked) + .fi-toggle-switch:hover {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
-    border-color: #991b1b;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(239, 68, 68, 0.4), 0 6px 16px rgba(239, 68, 68, 0.3);
-    transform: scale(1.02) translateY(-1px);
-}
-
-/* Focus effects for accessibility */
-.opinion-verification-toggle input:focus + .fi-toggle-switch {
-    outline: 3px solid #3b82f6;
-    outline-offset: 2px;
-}
-
-/* Icon positioning within the toggle button */
-.opinion-verification-toggle .fi-toggle-switch-button svg {
-    width: 1rem;
-    height: 1rem;
-    color: #374151;
-}
-
-/* Label alignment */
-.opinion-verification-toggle .fi-fo-field-wrp-label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.25rem;
-}
-
-.opinion-verification-toggle .fi-fo-field-wrp-label-text {
-    font-weight: 500;
-    color: #374151;
-}
-
-.opinion-verification-toggle .fi-fo-field-wrp-helper-text {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.25rem;
-}
-
-/* Fix for Filament field wrapper alignment */
-.opinion-verification-toggle [data-field-wrapper] {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.opinion-verification-toggle [data-field-wrapper] > div {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-/* Animation for the toggle switch */
-.opinion-verification-toggle .fi-toggle-switch-button:hover {
-    transform: scale(1.05);
-}
-
-.opinion-verification-toggle input:checked + .fi-toggle-switch .fi-toggle-switch-button:hover {
-    transform: translateX(2.375rem) scale(1.05);
-}
-
-.opinion-verification-toggle input:not(:checked) + .fi-toggle-switch .fi-toggle-switch-button:hover {
-    transform: translateX(0) scale(1.05) translateY(-1px);
-    background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
-    border: 2px solid #d1d5db;
-}
-
-/* Enhanced border visibility */
-.opinion-verification-toggle .fi-toggle-switch {
-    position: relative;
-}
-
-.opinion-verification-toggle .fi-toggle-switch::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    border-radius: 9999px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(0,0,0,0.1));
-    z-index: -1;
-}
-
-/* Add text labels to make it more understandable */
-.opinion-verification-toggle .fi-toggle-switch::after {
-    content: attr(data-state);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.opinion-verification-toggle input:checked + .fi-toggle-switch::after {
-    content: 'ON';
-    color: white;
-}
-
-.opinion-verification-toggle input:not(:checked) + .fi-toggle-switch::after {
-    content: 'OFF';
-    color: white;
-}
-
-/* Core theme variables */
+/* Core theme variables - EdGuide Brand Colors */
 :root {
-    --primary: 59 130 246;
+    --primary: 20 184 166; /* Teal/Turquoise - EdGuide brand color */
     --gray: 107 114 128;
     --success: 16 185 129;
     --danger: 239 68 68;
@@ -225,128 +90,272 @@
     --info: 6 182 212;
 }
 
-/* Table spacing improvements */
-.fi-ta-table {
-    border-spacing: 0 8px;
+/* ===== GLOBAL TEXT COLOR OVERRIDE ===== */
+/* Ensure all text elements use appropriate colors for white background */
+* {
+    color: #1f2937 !important; /* Dark gray for readability on white */
+    scroll-behavior: smooth;
 }
 
-.fi-ta-table td {
-    padding: 12px 16px !important;
-    vertical-align: middle;
-    white-space: nowrap;
+/* Keep teal for specific accent elements */
+.fi-sidebar-nav-item, .fi-sidebar-item-button, .fi-topbar-nav-item {
+    color: #14b8a6 !important;
 }
 
-.fi-ta-table th {
-    padding: 16px 16px !important;
-    font-weight: 600;
+/* Override any potential black or dark text */
+*:not(.fi-sidebar-nav-item[aria-current="page"]):not(.fi-sidebar-nav-item[aria-current="page"] *):not(.fi-sidebar-item-button[aria-current="page"]):not(.fi-sidebar-item-button[aria-current="page"] *) {
+    color: #14b8a6 !important;
 }
 
-/* Status badge improvements */
-.fi-badge {
-    padding: 4px 12px !important;
-    font-size: 0.875rem;
-    min-width: 80px;
-    text-align: center;
-    display: inline-block;
+/* Specific override for any remaining black text */
+.text-black,
+.text-gray-900,
+.text-gray-800,
+.text-gray-700,
+.text-slate-900,
+.text-slate-800 {
+    color: #14b8a6 !important;
 }
 
-/* Question column wrapping */
-.fi-ta-table td:nth-child(3) {
-    white-space: normal !important;
-    word-wrap: break-word;
-    max-width: 300px;
+/* ===== ULTRA-COMPREHENSIVE TEXT OVERRIDE ===== */
+/* Force teal color on absolutely everything */
+html *,
+body *,
+div *,
+span *,
+p *,
+a *,
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
+ul *, ol *, li *,
+table *, tr *, td *, th *,
+button *, input *, select *, textarea *,
+label *, form *, fieldset *, legend * {
+    color: #14b8a6 !important;
 }
 
-/* Enhanced sidebar styling */
+/* Target all possible text-containing elements */
+[class*="text-"],
+[class*="font-"],
+[style*="color:"],
+[style*="color "] {
+    color: #14b8a6 !important;
+}
+
+/* Sidebar specific comprehensive override */
+.fi-sidebar,
+.fi-sidebar *,
+.fi-sidebar-item,
+.fi-sidebar-item *,
+.fi-sidebar-group,
+.fi-sidebar-group *,
+aside,
+aside * {
+    color: #14b8a6 !important;
+}
+
+/* Navigation comprehensive override */
+nav,
+nav *,
+.nav,
+.nav *,
+.navigation,
+.navigation *,
+.menu,
+.menu * {
+    color: #14b8a6 !important;
+}
+
+/* ===== MAIN LAYOUT OVERRIDES ===== */
+/* Only target specific Filament classes to avoid breaking layout */
+
+/* Main application background */
+.fi-app {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Main content area */
+.fi-main-content {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Page wrapper */
+.fi-page-wrapper {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* ===== SIDEBAR STYLING ===== */
 .fi-sidebar {
-    background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-    border-right: 1px solid #334155;
+    background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%) !important;
+    border-right: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-topbar {
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #e5e7eb;
+/* Force sidebar to stay black in all scenarios including private browsing */
+.fi-sidebar,
+.fi-sidebar *,
+.fi-sidebar-header,
+.fi-sidebar-nav,
+.fi-sidebar-footer,
+.fi-sidebar-item,
+.fi-sidebar-group,
+.fi-sidebar-group *,
+aside,
+aside * {
+    background-color: #000000 !important;
+    background: #000000 !important;
 }
 
-/* Enhanced navigation with your modern style */
+.fi-sidebar-header {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid #14b8a6 !important;
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%) !important;
+    color: #14b8a6 !important;
+}
+
+/* Ensure logo is visible in sidebar header */
+.fi-sidebar-header img,
+.fi-sidebar-header .fi-logo img,
+.fi-sidebar-header a img,
+.fi-sidebar-header .fi-logo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+    filter: none !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Fix any logo container issues */
+.fi-sidebar-header a,
+.fi-sidebar-header .fi-logo,
+.fi-sidebar-header .fi-logo a,
+.fi-sidebar-header .fi-logo span,
+.fi-sidebar-header .fi-logo div,
+.fi-sidebar-header .fi-logo p,
+.fi-sidebar-header .fi-logo h1,
+.fi-sidebar-header .fi-logo h2,
+.fi-sidebar-header .fi-logo h3,
+.fi-sidebar-header .fi-logo h4,
+.fi-sidebar-header .fi-logo h5,
+.fi-sidebar-header .fi-logo h6 {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* ===== FINAL SIDEBAR OVERRIDE - NUCLEAR OPTION ===== */
+/* This ensures sidebar stays black in ALL scenarios including private browsing */
+.fi-sidebar,
+.fi-sidebar *,
+.fi-sidebar-header,
+.fi-sidebar-nav,
+.fi-sidebar-footer,
+.fi-sidebar-item,
+.fi-sidebar-group,
+.fi-sidebar-group *,
+.fi-sidebar-nav-item,
+.fi-sidebar-nav-item *,
+.fi-sidebar-item-button,
+.fi-sidebar-item-button *,
+aside,
+aside *,
+[class*="fi-sidebar"],
+[class*="fi-sidebar"] * {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    background-image: none !important;
+}
+
+/* Override any potential teal/white backgrounds that might appear in private browsing */
+.fi-sidebar[style*="background"],
+.fi-sidebar *[style*="background"],
+.fi-sidebar[style*="background-color"],
+.fi-sidebar *[style*="background-color"] {
+    background-color: #000000 !important;
+    background: #000000 !important;
+}
+
+/* ===== LOGO AREA SPECIFIC FIX ===== */
+/* Target any white backgrounds that might appear behind the logo in normal browsing */
+.fi-sidebar-header *,
+.fi-sidebar-header *:before,
+.fi-sidebar-header *:after,
+.fi-sidebar-header a *,
+.fi-sidebar-header .fi-logo *,
+.fi-sidebar-header .fi-logo *:before,
+.fi-sidebar-header .fi-logo *:after {
+    background-color: #000000 !important;
+    background: #000000 !important;
+}
+
+/* Override any inline styles that might set white backgrounds in logo area */
+.fi-sidebar-header[style*="background"],
+.fi-sidebar-header *[style*="background"],
+.fi-sidebar-header[style*="background-color"],
+.fi-sidebar-header *[style*="background-color"],
+.fi-sidebar-header .fi-logo[style*="background"],
+.fi-sidebar-header .fi-logo *[style*="background"],
+.fi-sidebar-header .fi-logo[style*="background-color"],
+.fi-sidebar-header .fi-logo *[style*="background-color"] {
+    background-color: #000000 !important;
+    background: #000000 !important;
+}
+.fi-sidebar-header a,
+.fi-sidebar-header .fi-logo {
+    display: block !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+    text-decoration: none !important;
+}
+
 .fi-sidebar-nav-item {
     border-radius: 10px;
     margin: 6px 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-}
-
-.fi-sidebar-nav-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
+    color: #14b8a6 !important;
 }
 
 .fi-sidebar-nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(20, 184, 166, 0.1) !important;
     transform: translateX(6px) scale(1.02);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.fi-sidebar-nav-item:hover::before {
-    left: 100%;
+    color: #14b8a6 !important;
 }
 
 .fi-sidebar-nav-item[aria-current="page"] {
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+    box-shadow: 0 6px 12px rgba(20, 184, 166, 0.4);
     transform: translateX(4px);
+    color: #14b8a6 !important;
 }
 
-.fi-sidebar-nav-item[aria-current="page"]::before {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-}
-
-/* Sidebar brand/logo area */
-.fi-sidebar-header {
-    padding: 1.5rem 1rem;
-    border-bottom: 1px solid #334155;
-    background: linear-gradient(135deg, #1e293b 0%, #2d3748 100%);
-}
-
-/* Navigation text styling */
 .fi-sidebar-nav-item-label {
     font-weight: 500;
     transition: all 0.3s ease;
+    color: #14b8a6 !important;
 }
 
 .fi-sidebar-nav-item:hover .fi-sidebar-nav-item-label {
     font-weight: 600;
+    color: #14b8a6 !important;
 }
 
 .fi-sidebar-nav-item[aria-current="page"] .fi-sidebar-nav-item-label {
     font-weight: 700;
-    color: white;
-}
-
-/* Navigation icons */
-.fi-sidebar-nav-item-icon {
-    transition: all 0.3s ease;
-}
-
-.fi-sidebar-nav-item:hover .fi-sidebar-nav-item-icon {
-    transform: scale(1.1);
-}
-
-/* Collapsible sidebar groups */
-.fi-sidebar-group {
-    margin: 0.5rem 0;
+    color: #14b8a6 !important;
 }
 
 .fi-sidebar-group-label {
-    color: #94a3b8;
+    color: #14b8a6 !important;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -355,468 +364,538 @@
     margin-bottom: 0.25rem;
 }
 
-/* User menu/profile area styling */
-.fi-user-menu {
-    border-radius: 10px;
-    transition: all 0.3s ease;
+/* ===== ICONS STYLING ===== */
+.fi-icon,
+svg,
+i {
+    color: #14b8a6 !important;
+    fill: #14b8a6 !important;
+    stroke: #14b8a6 !important;
 }
 
-/* Ensure all modern styling takes precedence */
-.fi-main-content {
-    background: #f8fafc;
-    min-height: 100vh;
+/* ===== TOPBAR STYLING ===== */
+.fi-topbar {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%) !important;
+    border-bottom: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Page wrapper for consistent spacing */
-.fi-page-wrapper {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+.fi-topbar-nav-item {
+    color: #14b8a6 !important;
 }
 
-/* Make sure tables inherit the modern styling */
-.fi-ta-table-container {
-    margin: 1.5rem 0;
+.fi-topbar-nav-item:hover {
+    color: #14b8a6 !important;
+    background-color: rgba(20, 184, 166, 0.1) !important;
 }
 
-/* Ensure form sections are properly spaced */
-.fi-form-section {
-    margin-bottom: 2rem;
+.fi-topbar-nav-item[aria-current="page"] {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
 }
 
-/* Global animation for smooth transitions */
-* {
-    scroll-behavior: smooth;
+.fi-user-menu-trigger {
+    color: #14b8a6 !important;
 }
 
-/* Custom scrollbar for sidebar */
-.fi-sidebar::-webkit-scrollbar {
-    width: 6px;
+.fi-user-menu-trigger:hover {
+    color: #14b8a6 !important;
+    background-color: rgba(20, 184, 166, 0.1) !important;
 }
 
-.fi-sidebar::-webkit-scrollbar-track {
-    background: transparent;
+/* ===== PAGE HEADERS ===== */
+.fi-page-header {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
+.fi-page-header-heading {
+    color: #14b8a6 !important;
 }
 
-.fi-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+/* Comprehensive page header overrides */
+.fi-page-header,
+.fi-page-header *,
+.fi-page-header-heading,
+.fi-page-header-heading *,
+.fi-page-header-title,
+.fi-page-header-title *,
+.fi-page-header-subheading,
+.fi-page-header-subheading *,
+.fi-page-header-actions,
+.fi-page-header-actions * {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
 }
 
-/* Simplified Modern Flatpickr Styles - Fixed Day Grid Layout */
-
-/* Hide the native date picker */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none !important;
+/* Dashboard specific header overrides */
+.fi-dashboard-page-header,
+.fi-dashboard-page-header *,
+.fi-dashboard-header,
+.fi-dashboard-header * {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
 }
 
-input[type="date"]::-webkit-inner-spin-button {
-    display: none !important;
+/* Any remaining white page headers */
+.fi-page-header[style*="background-color: white"],
+.fi-page-header[style*="background-color: #fff"],
+.fi-page-header[style*="background-color: #ffffff"],
+.fi-page-header[style*="background: white"],
+.fi-page-header[style*="background: #fff"],
+.fi-page-header[style*="background: #ffffff"] {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
 }
 
-input[type="date"]::-webkit-clear-button {
-    display: none !important;
+/* ===== DASHBOARD CARDS AND WIDGETS ===== */
+.fi-widget,
+.fi-card {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Modern Flatpickr Calendar */
-.flatpickr-calendar.modern-flatpickr,
-.flatpickr-calendar {
-    background: #ffffff !important;
+.fi-widget-header,
+.fi-card-header {
+    background-color: #1a1a1a !important;
+    border-bottom: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+.fi-widget-content,
+.fi-card-content {
+    background-color: #1a1a1a !important;
+    color: #14b8a6 !important;
+}
+
+/* Stats overview widgets */
+.fi-stats-overview-widget-card {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+.fi-stats-overview-widget-card-value {
+    color: #14b8a6 !important;
+}
+
+.fi-stats-overview-widget-card-label {
+    color: #14b8a6 !important;
+}
+
+/* ===== TABLES ===== */
+.fi-ta-table {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-spacing: 0;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-    font-family: 'Inter', system-ui, sans-serif !important;
-    overflow: hidden !important;
-    z-index: 10000 !important;
-    position: absolute !important;
-    width: 280px !important;
 }
 
-/* Calendar Header */
-.flatpickr-months {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-    color: #ffffff !important;
-    border-radius: 12px 12px 0 0 !important;
-    padding: 16px !important;
-    border-bottom: none !important;
-    position: relative !important;
-}
-
-.flatpickr-month {
-    background: transparent !important;
-    color: #ffffff !important;
-    height: auto !important;
-}
-
-.flatpickr-current-month {
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    font-size: 16px !important;
-    position: static !important;
-}
-
-.flatpickr-current-month input.cur-year {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 6px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    padding: 4px 8px !important;
-    font-size: 16px !important;
-    width: 70px !important;
-}
-
-.flatpickr-current-month .flatpickr-monthDropdown-months {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 6px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    padding: 4px 8px !important;
-    font-size: 16px !important;
-    appearance: none !important;
-}
-
-/* Navigation Arrows */
-.flatpickr-prev-month,
-.flatpickr-next-month {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 6px !important;
-    width: 28px !important;
-    height: 28px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.2s ease !important;
-    position: absolute !important;
-    top: 16px !important;
-}
-
-.flatpickr-prev-month {
-    left: 16px !important;
-}
-
-.flatpickr-next-month {
-    right: 16px !important;
-}
-
-.flatpickr-prev-month:hover,
-.flatpickr-next-month:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-}
-
-.flatpickr-prev-month svg,
-.flatpickr-next-month svg {
-    fill: #ffffff !important;
-    width: 12px !important;
-    height: 12px !important;
-}
-
-/* Weekdays Header */
-.flatpickr-weekdays {
-    background: #f8fafc !important;
+.fi-ta-table th {
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
     border-bottom: 1px solid #e2e8f0 !important;
-    padding: 8px 0 !important;
-    display: flex !important;
-    width: 100% !important;
-}
-
-.flatpickr-weekday {
-    background: transparent !important;
-    color: #64748b !important;
-    font-weight: 600 !important;
-    font-size: 11px !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    flex: 1 !important;
-    text-align: center !important;
-    line-height: 1 !important;
-    padding: 8px 4px !important;
-}
-
-/* Calendar Days Container - THIS IS THE KEY FIX */
-.flatpickr-days {
-    background: #ffffff !important;
     border: none !important;
-    padding: 8px !important;
-    width: 100% !important;
-    position: relative !important;
+    padding: 16px 16px !important;
+    font-weight: 600;
 }
 
-.dayContainer {
-    width: 100% !important;
-    min-width: auto !important;
-    max-width: none !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-start !important;
-    padding: 0 !important;
-}
-
-/* Individual Days - CRITICAL GRID LAYOUT */
-.flatpickr-day {
-    background: transparent !important;
+.fi-ta-table td {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-bottom: 1px solid #e2e8f0 !important;
     border: none !important;
-    border-radius: 6px !important;
-    color: #1e293b !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    height: 32px !important;
-    width: 32px !important;
-    line-height: 32px !important;
-    margin: 1px !important;
-    transition: all 0.15s ease !important;
-    cursor: pointer !important;
-    text-align: center !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 0 0 calc(14.28571% - 2px) !important; /* 7 columns for days of week */
-    box-sizing: border-box !important;
+    padding: 12px 16px !important;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 
-.flatpickr-day:hover {
-    background: #f1f5f9 !important;
-    color: #1e293b !important;
-    transform: scale(1.05) !important;
-}
-
-/* Today */
-.flatpickr-day.today {
-    background: #e0f2fe !important;
-    color: #0369a1 !important;
-    font-weight: 600 !important;
-    border: 2px solid #0ea5e9 !important;
-}
-
-/* Selected Day */
-.flatpickr-day.selected {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
-}
-
-.flatpickr-day.selected:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-}
-
-/* Disabled Days */
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-    color: #cbd5e1 !important;
-}
-
-.flatpickr-day.flatpickr-disabled {
-    color: #e2e8f0 !important;
-    cursor: not-allowed !important;
-}
-
-.flatpickr-day.flatpickr-disabled:hover {
-    background: transparent !important;
+/* Table row hover effect removed */
+.fi-ta-table tbody tr:hover {
+    background-color: #ffffff !important;
     transform: none !important;
 }
 
-/* Input styling fixes */
-.flatpickr-input {
-    cursor: pointer !important;
-}
-
-.flatpickr-input[readonly] {
+.fi-ta-table tbody tr {
     background-color: #ffffff !important;
-    cursor: pointer !important;
+    transition: none !important;
 }
 
-/* Ensure the calendar doesn't break form layout */
-.flatpickr-calendar {
-    position: absolute !important;
-    z-index: 10000 !important;
+/* Force table backgrounds to be white - override any conflicting rules */
+.fi-ta-table-container,
+.fi-ta-table,
+.fi-ta-table thead,
+.fi-ta-table tbody,
+.fi-ta-table tfoot,
+.fi-ta-table tr,
+.fi-ta-table th,
+.fi-ta-table td {
+    background-color: #ffffff !important;
 }
 
-/* Hide the default calendar that's causing layout issues */
-.flatpickr-wrapper {
-    position: relative !important;
-    display: inline-block !important;
-    width: 100% !important;
+.fi-ta-table thead tr {
+    background-color: #f8fafc !important;
 }
 
-/* Remove any conflicting styles */
-.flatpickr-calendar * {
-    box-sizing: border-box !important;
+.fi-ta-table tbody tr {
+    background-color: #ffffff !important;
 }
 
-/* Ensure proper calendar width and layout */
-.flatpickr-calendar.open {
-    display: block !important;
-    opacity: 1 !important;
+.fi-ta-table tbody tr:hover {
+    background-color: #ffffff !important;
 }
 
-.flatpickr-calendar.inline {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
+/* Comprehensive form input overrides */
+.fi-input,
+.fi-text-input,
+.fi-textarea,
+.fi-select,
+.fi-select-input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #1e293b !important;
 }
 
-/* Fix any Filament conflicts */
-.fi-fo-field-wrp .flatpickr-calendar {
-    position: absolute !important;
-    z-index: 10000 !important;
+.fi-input::placeholder,
+.fi-text-input::placeholder,
+.fi-textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 0.7;
 }
 
-/* Fix for Filament columns dropdown text visibility */
+.fi-input:focus,
+.fi-text-input:focus,
+.fi-textarea:focus,
+.fi-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    background-color: #ffffff !important;
+    border-color: #14b8a6 !important;
+    color: #1e293b !important;
+    box-shadow: 0 0 0 1px #14b8a6 !important;
+}
+
+/* Hide AVAILABLE COURSES section from sidebar */
+.fi-sidebar .fi-sidebar-group[data-group-label="Available Courses"],
+.fi-sidebar .fi-sidebar-group[data-group-label="AVAILABLE COURSES"],
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-group-label:contains("Available Courses")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-group-label:contains("AVAILABLE COURSES")),
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label:contains("Available Courses"),
+.fi-sidebar .fi-sidebar-group .fi-sidebar-group-label:contains("AVAILABLE COURSES") {
+    display: none !important;
+}
+
+/* Alternative selectors for hiding the courses section */
+.fi-sidebar [data-group-label*="Available"],
+.fi-sidebar [data-group-label*="AVAILABLE"],
+.fi-sidebar .fi-sidebar-group-label[data-group-label*="Available"],
+.fi-sidebar .fi-sidebar-group-label[data-group-label*="AVAILABLE"] {
+    display: none !important;
+}
+
+/* Hide any sidebar group containing course-related items */
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("A1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("A2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("B1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item:contains("B2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("A1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("A2")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("B1")),
+.fi-sidebar .fi-sidebar-group:has(.fi-sidebar-item-label:contains("B2")) {
+    display: none !important;
+}
+
+/* Additional selectors for course items */
+.fi-sidebar .fi-sidebar-item:contains("A1"),
+.fi-sidebar .fi-sidebar-item:contains("A2"),
+.fi-sidebar .fi-sidebar-item:contains("B1"),
+.fi-sidebar .fi-sidebar-item:contains("B2"),
+.fi-sidebar .fi-sidebar-item-label:contains("A1"),
+.fi-sidebar .fi-sidebar-item-label:contains("A2"),
+.fi-sidebar .fi-sidebar-item-label:contains("B1"),
+.fi-sidebar .fi-sidebar-item-label:contains("B2") {
+    display: none !important;
+}
+
+/* Ultra-specific overrides for Filament table elements */
+.modern-card-table,
+.modern-card-table *,
+.modern-card-table table,
+.modern-card-table table *,
+.modern-card-table thead,
+.modern-card-table thead *,
+.modern-card-table tbody,
+.modern-card-table tbody *,
+.modern-card-table tfoot,
+.modern-card-table tfoot *,
+.modern-card-table tr,
+.modern-card-table tr *,
+.modern-card-table th,
+.modern-card-table th *,
+.modern-card-table td,
+.modern-card-table td * {
+    background-color: #ffffff !important;
+}
+
+.modern-card-table thead tr {
+    background-color: #f8fafc !important;
+}
+
+.modern-card-table tbody tr {
+    background-color: #ffffff !important;
+}
+
+.modern-card-table tbody tr:hover {
+    background-color: #ffffff !important;
+}
+
+/* ===== FORMS ===== */
+.fi-fo-field-wrp {
+    background-color: transparent !important;
+}
+
+.fi-fo-field-wrp-label {
+    color: #1e293b !important;
+}
+
+.fi-fo-field-wrp-label-text {
+    color: #1e293b !important;
+}
+
+.fi-fo-field-wrp-helper-text {
+    color: #6b7280 !important;
+}
+
+/* Input fields */
+.fi-input,
+.fi-select,
+.fi-textarea {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #1e293b !important;
+}
+
+.fi-input:focus,
+.fi-select:focus,
+.fi-textarea:focus {
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 0 1px #14b8a6 !important;
+    color: #1e293b !important;
+}
+
+.fi-input::placeholder,
+.fi-textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 0.7;
+}
+
+/* ===== BUTTONS ===== */
+.fi-btn {
+    background-color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+.fi-btn:hover {
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
+    color: #14b8a6 !important;
+}
+
+.fi-btn-secondary {
+    background-color: transparent !important;
+    border-color: #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+.fi-btn-secondary:hover {
+    background-color: #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+/* ===== LINKS ===== */
+.fi-link,
+a {
+    color: #14b8a6 !important;
+}
+
+.fi-link:hover,
+a:hover {
+    color: #14b8a6 !important;
+    opacity: 0.8;
+}
+
+/* ===== BADGES ===== */
+.fi-badge {
+    background-color: #14b8a6 !important;
+    color: #14b8a6 !important;
+    border: 1px solid #14b8a6 !important;
+    padding: 4px 12px !important;
+    font-size: 0.875rem;
+    min-width: 80px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ===== DROPDOWNS ===== */
 .fi-dropdown-panel {
-    background: white !important;
-    border: 1px solid #e5e7eb !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-dropdown-list-item-label {
-    color: #111827 !important;
-    font-weight: 500 !important;
+.fi-dropdown-list-item {
+    color: #14b8a6 !important;
 }
 
 .fi-dropdown-list-item:hover {
-    background: #f3f4f6 !important;
+    background-color: #2a2a2a !important;
+    color: #14b8a6 !important;
 }
 
-.fi-dropdown-list-item:hover .fi-dropdown-list-item-label {
-    color: #1f2937 !important;
-    fill: black !important;
+/* ===== PAGINATION ===== */
+.fi-pagination {
+    background-color: transparent !important;
 }
 
-/* Fix for table column visibility toggles */
-.fi-ta-col-visibility-toggle {
-    color: #111827 !important;
+.fi-pagination-item {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-ta-col-visibility-toggle-label {
-    color: #111827 !important;
-    font-weight: 500 !important;
+.fi-pagination-item:hover {
+    background-color: #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-ta-col-visibility-toggle-checkbox {
-    accent-color: #3b82f6 !important;
+.fi-pagination-item[aria-current="page"] {
+    background-color: #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Fix checkbox labels in dropdowns */
-.fi-checkbox-label {
-    color: #111827 !important;
+/* ===== SEARCH AND FILTERS ===== */
+.fi-search-input {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Ensure all dropdown text is visible */
-.fi-dropdown-panel * {
-    color: #111827 !important;
+.fi-search-input:focus {
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 0 1px #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Fix for search input in dropdowns */
-.fi-dropdown-panel input[type="search"],
-.fi-dropdown-panel input[type="text"] {
-    color: #111827 !important;
-    background: white !important;
-    border: 1px solid #e5e7eb !important;
+/* ===== MODAL DIALOGS ===== */
+.fi-modal {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-.fi-dropdown-panel input[type="search"]::placeholder,
-.fi-dropdown-panel input[type="text"]::placeholder {
-    color: #9ca3af !important;
+.fi-modal-header {
+    background-color: #000000 !important;
+    border-bottom: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Fix for dropdown headers */
-.fi-dropdown-header {
-    background: black !important;
-    border-bottom: 1px solid #e5e7eb !important;
+.fi-modal-content {
+    background-color: #1a1a1a !important;
+    color: #14b8a6 !important;
 }
 
-.fi-dropdown-header-label {
-    color: white !important;
-    font-weight: 600 !important;
+/* ===== NOTIFICATIONS ===== */
+.fi-notification {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .flatpickr-calendar {
-        width: 260px !important;
-        font-size: 14px !important;
-    }
-    
-    .flatpickr-day {
-        height: 28px !important;
-        width: 28px !important;
-        line-height: 28px !important;
-        font-size: 12px !important;
-        flex: 0 0 calc(14.28571% - 2px) !important;
-    }
-    
-    .flatpickr-weekday {
-        font-size: 10px !important;
-        padding: 6px 2px !important;
-    }
+/* ===== BREADCRUMBS ===== */
+.fi-breadcrumbs {
+    color: #14b8a6 !important;
 }
 
-/* ===== CHECKBOX FIXES ===== */
-/* Fix checkbox visual feedback for Filament tables */
-.filament-tables-checkbox-cell input[type="checkbox"]:checked {
-    background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e") !important;
+.fi-breadcrumbs-item {
+    color: #14b8a6 !important;
 }
 
-.filament-tables-checkbox-cell input[type="checkbox"]:checked:hover {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
+.fi-breadcrumbs-item:hover {
+    color: #14b8a6 !important;
+    opacity: 0.8;
 }
 
-.filament-tables-checkbox-cell input[type="checkbox"]:focus {
-    outline: 2px solid #3b82f6 !important;
-    outline-offset: 2px !important;
+/* ===== TABS ===== */
+.fi-tabs {
+    background-color: transparent !important;
 }
 
-/* Fix for bulk actions header checkbox */
-.filament-tables-checkbox-cell input[type="checkbox"][data-check-all]:checked {
-    background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e") !important;
+.fi-tabs-item {
+    color: #14b8a6 !important;
+    border-bottom: 2px solid transparent !important;
 }
 
-/* Enhanced hover states */
-.filament-tables-checkbox-cell input[type="checkbox"]:hover {
-    border-color: #9ca3af !important;
+.fi-tabs-item:hover {
+    color: #14b8a6 !important;
+    border-bottom-color: #14b8a6 !important;
+    opacity: 0.8;
 }
 
-.filament-tables-checkbox-cell input[type="checkbox"]:checked:hover {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
+.fi-tabs-item[aria-selected="true"] {
+    color: #14b8a6 !important;
+    border-bottom-color: #14b8a6 !important;
 }
 
-/* Fix for indeterminate state (select all) */
-.filament-tables-checkbox-cell input[type="checkbox"]:indeterminate {
-    background-color: #6b7280 !important;
-    border-color: #6b7280 !important;
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3 8h10a1 1 0 010 2H3a1 1 0 010-2z'/%3e%3c/svg%3e") !important;
+/* ===== ACTION BUTTONS IN TABLES ===== */
+.fi-ta-action {
+    color: #14b8a6 !important;
 }
 
-/* Alternative approach: Force checkbox styling */
+.fi-ta-action:hover {
+    color: #14b8a6 !important;
+    background-color: transparent !important;
+    opacity: 1;
+}
+
+/* ===== BULK ACTIONS ===== */
+.fi-bulk-actions {
+    background-color: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    color: #14b8a6 !important;
+}
+
+/* ===== CHECKBOXES ===== */
 .fi-ta-table input[type="checkbox"] {
     appearance: none !important;
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     width: 16px !important;
     height: 16px !important;
-    border: 2px solid #d1d5db !important;
+    border: 2px solid #14b8a6 !important;
     border-radius: 4px !important;
-    background-color: white !important;
+    background-color: #ffffff !important;
     cursor: pointer !important;
     position: relative !important;
     transition: all 0.2s ease-in-out !important;
 }
 
 .fi-ta-table input[type="checkbox"]:checked {
-    background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
+    background-color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
 }
 
 .fi-ta-table input[type="checkbox"]:checked::after {
@@ -826,21 +905,451 @@ input[type="date"]::-webkit-clear-button {
     top: 1px !important;
     width: 4px !important;
     height: 8px !important;
-    border: solid white !important;
+    border: solid #14b8a6 !important;
     border-width: 0 2px 2px 0 !important;
     transform: rotate(45deg) !important;
 }
 
 .fi-ta-table input[type="checkbox"]:hover {
-    border-color: #9ca3af !important;
+    border-color: #d1d5db !important;
+    opacity: 1;
 }
 
 .fi-ta-table input[type="checkbox"]:checked:hover {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
+    background-color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
 }
 
 .fi-ta-table input[type="checkbox"]:focus {
-    outline: 2px solid #3b82f6 !important;
+    outline: 2px solid #14b8a6 !important;
     outline-offset: 2px !important;
 }
+
+/* ===== LOADING STATES ===== */
+.fi-loading {
+    color: #14b8a6 !important;
+}
+
+/* ===== ERROR STATES ===== */
+.fi-error {
+    color: #14b8a6 !important;
+}
+
+/* ===== SUCCESS STATES ===== */
+.fi-success {
+    color: #14b8a6 !important;
+}
+
+/* ===== WARNING STATES ===== */
+.fi-warning {
+    color: #14b8a6 !important;
+}
+
+/* ===== LABELS AND TITLES ===== */
+label,
+.fi-label,
+h1, h2, h3, h4, h5, h6,
+.fi-heading,
+.fi-title {
+    color: #14b8a6 !important;
+}
+
+/* ===== TEXT ELEMENTS ===== */
+p, span, div, td, th, li, ul, ol {
+    color: #14b8a6 !important;
+}
+
+/* ===== SYMBOLS AND SPECIAL CHARACTERS ===== */
+.fi-symbol,
+.fi-indicator,
+.fi-status,
+.fi-badge-dot {
+    color: #14b8a6 !important;
+    background-color: #14b8a6 !important;
+}
+
+/* ===== CUSTOM SCROLLBAR FOR SIDEBAR ===== */
+.fi-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fi-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.fi-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(20, 184, 166, 0.2);
+    border-radius: 3px;
+}
+
+.fi-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 184, 166, 0.3);
+}
+
+/* ===== FLATPICKR CALENDAR STYLING ===== */
+.flatpickr-calendar.modern-flatpickr,
+.flatpickr-calendar {
+    background: #1a1a1a !important;
+    border: 1px solid #14b8a6 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    overflow: hidden !important;
+    z-index: 10000 !important;
+    position: absolute !important;
+    width: 280px !important;
+    color: #14b8a6 !important;
+}
+
+.flatpickr-months {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+    color: #14b8a6 !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 16px !important;
+    border-bottom: none !important;
+    position: relative !important;
+}
+
+.flatpickr-day {
+    color: #14b8a6 !important;
+}
+
+.flatpickr-day.selected {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+    color: #14b8a6 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4) !important;
+}
+
+.flatpickr-day.selected:hover {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+    color: #14b8a6 !important;
+}
+
+/* ===== REPLACE ALL WHITE BACKGROUNDS WITH BLACK ===== */
+/* Target all possible white background elements */
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-slate-50,
+.bg-slate-100,
+.bg-neutral-50,
+.bg-neutral-100,
+.bg-zinc-50,
+.bg-zinc-100 {
+    background-color: #000000 !important;
+}
+
+/* Generic background targeting */
+*[style*="background-color: white"],
+*[style*="background-color: #fff"],
+*[style*="background-color: #ffffff"],
+*[style*="background: white"],
+*[style*="background: #000000"],
+*[style*="background: #000000"] {
+    background-color: #000000 !important;
+}
+
+/* Main application backgrounds */
+html, body {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Filament specific background overrides */
+.fi-main,
+.fi-body,
+.fi-content,
+.fi-panel,
+.fi-section {
+    background-color: #fff !important;
+    color: #14b8a6 !important;
+}
+
+/* Page backgrounds */
+.fi-page,
+.fi-page-content,
+.fi-layout {
+    background-color: #fff !important;
+    color: #14b8a6 !important;
+}
+
+/* Widget and card backgrounds override */
+.fi-widget,
+.fi-card,
+.fi-widget-card {
+    background-color: #1a1a1a !important;
+    color: #14b8a6 !important;
+}
+
+/* Modal and dropdown backgrounds */
+.fi-modal-content,
+.fi-dropdown-content,
+.fi-popover-content {
+    background-color: #1a1a1a !important;
+    color: #14b8a6 !important;
+}
+
+/* Form backgrounds */
+.fi-form,
+.fi-form-section,
+.fi-fieldset {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Table backgrounds */
+.fi-table,
+.fi-table-container {
+    background-color: #ffffff !important;
+    color: #14b8a6 !important;
+}
+
+/* Any remaining white or light backgrounds */
+div[class*="bg-white"],
+section[class*="bg-white"],
+header[class*="bg-white"],
+main[class*="bg-white"],
+aside[class*="bg-white"] {
+    background-color: #fff !important;
+    color: #14b8a6 !important;
+}
+
+/* Removed overly aggressive inline background override */
+
+/* Removed problematic universal override */
+
+/* Force page headers to be black */
+.fi-page-header,
+.fi-page-header *,
+.fi-page-header-heading,
+.fi-page-header-heading *,
+.fi-page-header-title,
+.fi-page-header-title *,
+.fi-page-header-subheading,
+.fi-page-header-subheading *,
+.fi-page-header-actions,
+.fi-page-header-actions *,
+.fi-dashboard-page-header,
+.fi-dashboard-page-header *,
+.fi-dashboard-header,
+.fi-dashboard-header * {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Ultra-aggressive dashboard header override */
+.fi-page-header,
+.fi-page-header > *,
+.fi-page-header > div,
+.fi-page-header > div > *,
+.fi-page-header > div > div,
+.fi-page-header > div > div > *,
+.fi-page-header > div > div > div,
+.fi-page-header > div > div > div > *,
+.fi-page-header > div > div > div > div,
+.fi-page-header > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > div > div > div > div > *,
+.fi-page-header > div > div > div > div > div > div > div > div > div > div,
+.fi-page-header > div > div > div > div > div > div > div > div > div > div > * {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Target any element with white background in page headers */
+.fi-page-header *[style*="background-color: white"],
+.fi-page-header *[style*="background-color: #fff"],
+.fi-page-header *[style*="background-color: #ffffff"],
+.fi-page-header *[style*="background: white"],
+.fi-page-header *[style*="background: #fff"],
+.fi-page-header *[style*="background: #ffffff"],
+.fi-page-header *[style*="background-color: rgb(255, 255, 255)"],
+.fi-page-header *[style*="background: rgb(255, 255, 255)"] {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Target any element with white background anywhere */
+*[style*="background-color: white"],
+*[style*="background-color: #fff"],
+*[style*="background-color: #ffffff"],
+*[style*="background: white"],
+*[style*="background: #fff"],
+*[style*="background: #ffffff"],
+*[style*="background-color: rgb(255, 255, 255)"],
+*[style*="background: rgb(255, 255, 255)"] {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Targeted dashboard header fix only */
+.fi-header {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Ensure images display properly */
+img,
+.image,
+.profile-image,
+.profile-picture,
+.avatar,
+.user-avatar,
+.fi-avatar,
+.fi-user-avatar,
+.fi-profile-image,
+.fi-profile-picture {
+    background-color: transparent !important;
+    background-image: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Fix profile image containers */
+.profile-image-container,
+.profile-picture-container,
+.avatar-container,
+.user-avatar-container,
+.fi-avatar-container,
+.fi-user-avatar-container,
+.fi-profile-image-container,
+.fi-profile-picture-container {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Ensure image sources are not overridden */
+img[src],
+img[srcset],
+.image[src],
+.image[srcset] {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Fix all image-related elements */
+img,
+.image,
+.profile-image,
+.profile-picture,
+.avatar,
+.user-avatar,
+.fi-avatar,
+.fi-user-avatar,
+.fi-profile-image,
+.fi-profile-picture,
+.fi-user-menu-trigger img,
+.fi-user-menu-trigger .avatar,
+.fi-user-menu-trigger .profile-image,
+.fi-user-menu-trigger .profile-picture,
+.fi-user-menu-trigger .user-avatar,
+.fi-user-menu-trigger .fi-avatar,
+.fi-user-menu-trigger .fi-user-avatar,
+.fi-user-menu-trigger .fi-profile-image,
+.fi-user-menu-trigger .fi-profile-picture {
+    background-color: transparent !important;
+    background-image: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* Fix image containers and wrappers */
+.profile-image-container,
+.profile-picture-container,
+.avatar-container,
+.user-avatar-container,
+.fi-avatar-container,
+.fi-user-avatar-container,
+.fi-profile-image-container,
+.fi-profile-picture-container,
+.fi-user-menu-trigger,
+.fi-user-menu-trigger * {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Ensure user menu images work */
+.fi-user-menu-trigger img {
+    background-color: transparent !important;
+    background-image: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* But allow specific elements to have their intended backgrounds */
+.fi-sidebar,
+.fi-sidebar *,
+.fi-topbar,
+.fi-topbar *,
+.fi-widget,
+.fi-card,
+.fi-modal,
+.fi-dropdown-panel,
+.fi-page-header,
+.fi-page-header * {
+    background-color: #000000 !important;
+    color: #14b8a6 !important;
+}
+
+/* Allow cards and widgets to have dark gray background */
+.fi-widget,
+.fi-card,
+.fi-modal,
+.fi-dropdown-panel {
+    background-color: #1a1a1a !important;
+    color: #14b8a6 !important;
+}
+
+.fi-app,
+.fi-main-content,
+.fi-page-wrapper {
+    background-color: #000000 !important;
+}
+
+.fi-widget,
+.fi-card,
+.fi-modal,
+.fi-dropdown-panel {
+    background-color: #1a1a1a !important;
+}
+/* Ensure all remaining elements use teal */
+input, select, textarea, button {
+    color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
+}
+
+/* Menu items and navigation */
+.fi-menu-item,
+.fi-nav-item {
+    color: #14b8a6 !important;
+}
+
+/* Table headers and cells */
+thead, tbody, tfoot {
+    color: #14b8a6 !important;
+}
+
+/* Form controls */
+.fi-control,
+.fi-form-control {
+    color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
+}
+

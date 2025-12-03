@@ -25,7 +25,7 @@
 @push('styles')
 <style>
 .modern-card-table {
-    background: #fff;
+    background: #ffffff;
     border-radius: 1.25rem;
     box-shadow: 0 2px 12px 0 #0001;
     padding: 2rem 2.5rem;
@@ -65,7 +65,7 @@ table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: #fff;
+    background: #ffffff;
     border-radius: 1rem;
     box-shadow: 0 1px 6px 0 #0001;
     overflow: hidden;
@@ -87,10 +87,11 @@ td {
     color: #334155;
 }
 tbody tr {
-    transition: background 0.15s;
+    background: #ffffff;
+    transition: none;
 }
 tbody tr:hover {
-    background: #f3f4f6;
+    background: #ffffff;
 }
 tr:last-child td {
     border-bottom: none;

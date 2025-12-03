@@ -2408,6 +2408,8 @@ class CreateQuestion extends Page
     {
         if (count($this->audio_picture_audios) > 1) {
             array_splice($this->audio_picture_audios, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_audios = array_values($this->audio_picture_audios);
         }
     }
     public function addAudioPictureImage()
@@ -2418,6 +2420,8 @@ class CreateQuestion extends Page
     {
         if (count($this->audio_picture_images) > 1) {
             array_splice($this->audio_picture_images, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_images = array_values($this->audio_picture_images);
         }
     }
     public function addAudioPicturePair()
@@ -2428,6 +2432,8 @@ class CreateQuestion extends Page
     {
         if (count($this->audio_picture_pairs) > 1) {
             array_splice($this->audio_picture_pairs, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->audio_picture_pairs = array_values($this->audio_picture_pairs);
         }
     }
     public function clearAllAudioPicturePairs()
@@ -2710,6 +2716,8 @@ class CreateQuestion extends Page
     {
         if (count($this->picture_fill_answer_key) > 1) {
             array_splice($this->picture_fill_answer_key, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->picture_fill_answer_key = array_values($this->picture_fill_answer_key);
         }
     }
 
@@ -2745,6 +2753,8 @@ class CreateQuestion extends Page
     {
         if (count($this->video_fill_answer_key) > 1) {
             array_splice($this->video_fill_answer_key, $index, 1);
+            // Reindex the array to ensure sequential indices
+            $this->video_fill_answer_key = array_values($this->video_fill_answer_key);
         }
     }
 

@@ -258,8 +258,8 @@ class QuestionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->getStateUsing(function ($record) {
-                        // Try to get course from day first, then fallback to direct course relationship
-                        return $record->day?->course?->name ?? $record->course?->name ?? 'No Course';
+                        // Use direct course relationship for accurate display
+                        return $record->course?->name ?? 'No Course';
                     }),
 
                 Tables\Columns\TextColumn::make('subject.name')
@@ -281,11 +281,10 @@ class QuestionResource extends Resource
                     ->color('primary')
                     ->placeholder('No topic'),
 
-                Tables\Columns\TextColumn::make('questionType.name')
+                Tables\Columns\TextColumn::make('questionType.display_name')
                     ->label('Type')
                     ->badge()
                     ->color('info')
-                    ->formatStateUsing(fn (string $state): string => str_replace('_', ' ', ucwords($state)))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('day.title')
@@ -304,7 +303,7 @@ class QuestionResource extends Resource
                     ->relationship('subject', 'name', function ($query) {
                         // If user is a teacher, only show their assigned subjects
                         if (auth()->user()->isTeacher()) {
-                            $teacherSubjectIds = auth()->user()->subjects()->pluck('id');
+                            $teacherSubjectIds = auth()->user()->subjects()->pluck('subjects.id');
                             return $query->whereIn('id', $teacherSubjectIds);
                         }
                         return $query;
@@ -391,9 +390,12 @@ class QuestionResource extends Resource
     {
         $query = parent::getEloquentQuery();
         
+        // Load necessary relationships to avoid N+1 queries and ensure correct data
+        $query->with(['course', 'subject', 'day.course', 'questionType', 'test']);
+        
         // If user is a teacher, filter questions by their assigned subjects
         if (auth()->user()->isTeacher()) {
-            $teacherSubjectIds = auth()->user()->subjects()->pluck('id');
+            $teacherSubjectIds = auth()->user()->subjects()->pluck('subjects.id');
             $query->whereIn('subject_id', $teacherSubjectIds);
         }
         
@@ -413,5 +415,11 @@ class QuestionResource extends Resource
     public static function getNavigationSort(): ?int
     {
         return 5;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Temporarily hidden - Hide for accounts users only
+        return false; // !(auth()->check() && auth()->user()->isAccounts());
     }
 }

@@ -18,7 +18,6 @@ class Video extends Model
         'youtube_url',
         'course_id',
         'subject_id',
-        'day_number',
     ];
 
     public function course(): BelongsTo

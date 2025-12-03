@@ -13,24 +13,16 @@ class EditBatch extends EditRecord
     protected array $toggleStates = [];
 
     /**
-     * Get available days based on user role
+     * Get available subjects based on user role
      */
-    protected function getAvailableDays()
+    protected function getAvailableSubjects()
     {
         if (auth()->user()->isTeacher()) {
-            // For teachers: only show days that have questions for their assigned subjects
-            $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
-            
-            if (empty($teacherSubjectIds)) {
-                return collect(); // No subjects assigned, no days to show
-            }
-            
-            return \App\Models\Day::whereHas('questions', function ($query) use ($teacherSubjectIds) {
-                $query->whereIn('subject_id', $teacherSubjectIds);
-            })->get();
+            // For teachers: only show their assigned subjects
+            return auth()->user()->subjects;
         } else {
-            // For admins: show all days that have questions
-            return \App\Models\Day::whereHas('questions')->get();
+            // For admins: show all subjects
+            return \App\Models\Subject::all();
         }
     }
 
@@ -45,48 +37,22 @@ class EditBatch extends EditRecord
     {
         $batch = $this->record;
         
-        // Set course toggles based on current assignments
+        // Set course toggles based on current assignments - dynamic courses
         $assignedCourseIds = $batch->courses->pluck('id')->toArray();
-        $data['course_1'] = in_array(1, $assignedCourseIds);
-        $data['course_2'] = in_array(2, $assignedCourseIds);
-        $data['course_3'] = in_array(3, $assignedCourseIds);
-        $data['course_4'] = in_array(4, $assignedCourseIds);
-        
-        // Handle active_day_ids field (ensure it's properly set)
-        if (auth()->user()->isTeacher()) {
-            // For teachers: filter active days to only their relevant ones
-            $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
-            
-            if (!empty($teacherSubjectIds) && !empty($batch->active_day_ids)) {
-                $relevantActiveDayIds = \App\Models\Day::whereIn('id', $batch->active_day_ids)
-                    ->whereHas('questions', function ($query) use ($teacherSubjectIds) {
-                        $query->whereIn('subject_id', $teacherSubjectIds);
-                    })
-                    ->pluck('id')
-                    ->toArray();
-                
-                $data['active_day_ids'] = $relevantActiveDayIds;
-            } else {
-                $data['active_day_ids'] = [];
-            }
-        } else {
-            // For admins: keep all active days
-            $data['active_day_ids'] = $batch->active_day_ids ?? [];
+        $courses = \App\Models\Course::all();
+        foreach ($courses as $course) {
+            $data["course_{$course->id}"] = in_array($course->id, $assignedCourseIds);
         }
         
-        // Set day toggles based on assignment AND completion status
-        $assignedDayIds = $batch->days->pluck('id')->toArray();
-        $availableDays = $this->getAvailableDays();
         
-        foreach ($availableDays as $day) {
-            // Toggle is ON only if day is both assigned AND completed
-            $isAssigned = in_array($day->id, $assignedDayIds);
-            $isCompleted = $batch->dayProgress()
-                ->where('day_id', $day->id)
-                ->where('is_completed', true)
-                ->exists();
-            
-            $data["day_{$day->id}"] = $isAssigned && $isCompleted;
+        // Set subject toggles based on assignment
+        $assignedSubjectIds = $batch->subjects->pluck('id')->toArray();
+        $availableSubjects = $this->getAvailableSubjects();
+        
+        foreach ($availableSubjects as $subject) {
+            // Toggle is ON if subject is assigned to the batch
+            $isAssigned = in_array($subject->id, $assignedSubjectIds);
+            $data["subject_{$subject->id}"] = $isAssigned;
         }
         
         return $data;
@@ -97,24 +63,24 @@ class EditBatch extends EditRecord
         // Store toggle states for later use in afterSave
         $this->toggleStates = [];
         
-        // Store course toggle states
-        $this->toggleStates['course_1'] = $data['course_1'] ?? false;
-        $this->toggleStates['course_2'] = $data['course_2'] ?? false;
-        $this->toggleStates['course_3'] = $data['course_3'] ?? false;
-        $this->toggleStates['course_4'] = $data['course_4'] ?? false;
-        
-        // Store day toggle states (toggle ON means assigned AND completed)
-        $availableDays = $this->getAvailableDays();
-        foreach ($availableDays as $day) {
-            $this->toggleStates["day_{$day->id}"] = $data["day_{$day->id}"] ?? false;
+        // Store course toggle states - dynamic courses
+        $courses = \App\Models\Course::all();
+        foreach ($courses as $course) {
+            $this->toggleStates["course_{$course->id}"] = $data["course_{$course->id}"] ?? false;
         }
         
-        // Remove toggle fields from data as they're not part of the model
-        foreach (['course_1', 'course_2', 'course_3', 'course_4'] as $field) {
-            unset($data[$field]);
+        // Store subject toggle states
+        $availableSubjects = $this->getAvailableSubjects();
+        foreach ($availableSubjects as $subject) {
+            $this->toggleStates["subject_{$subject->id}"] = $data["subject_{$subject->id}"] ?? false;
         }
-        foreach ($availableDays as $day) {
-            unset($data["day_{$day->id}"]);
+        
+        // Remove toggle fields from data as they're not part of the model - dynamic courses
+        foreach ($courses as $course) {
+            unset($data["course_{$course->id}"]);
+        }
+        foreach ($availableSubjects as $subject) {
+            unset($data["subject_{$subject->id}"]);
         }
         
         return $data;
@@ -124,42 +90,30 @@ class EditBatch extends EditRecord
     {
         $batch = $this->record;
         
-        // Handle course assignments
+        // Handle course assignments - dynamic courses
         $selectedCourseIds = [];
-        foreach ([1, 2, 3, 4] as $courseId) {
-            if ($this->toggleStates["course_{$courseId}"] ?? false) {
-                $selectedCourseIds[] = $courseId;
+        $courses = \App\Models\Course::all();
+        foreach ($courses as $course) {
+            if ($this->toggleStates["course_{$course->id}"] ?? false) {
+                $selectedCourseIds[] = $course->id;
             }
         }
         $batch->courses()->sync($selectedCourseIds);
         
-        // Handle day assignments and completion
-        $selectedDayIds = [];
-        $availableDays = $this->getAvailableDays();
+        // Handle subject assignments
+        $selectedSubjectIds = [];
+        $availableSubjects = $this->getAvailableSubjects();
         
-        foreach ($availableDays as $day) {
-            $isToggleOn = $this->toggleStates["day_{$day->id}"] ?? false;
+        foreach ($availableSubjects as $subject) {
+            $isToggleOn = $this->toggleStates["subject_{$subject->id}"] ?? false;
             
             if ($isToggleOn) {
-                // Toggle is ON: assign day AND mark as completed
-                $selectedDayIds[] = $day->id;
-                
-                // Mark as completed
-                $batch->dayProgress()->updateOrCreate(
-                    ['day_id' => $day->id],
-                    [
-                        'is_completed' => true,
-                        'completed_at' => now(),
-                        'completed_by' => auth()->id()
-                    ]
-                );
-            } else {
-                // Toggle is OFF: remove assignment and completion entirely
-                $batch->dayProgress()->where('day_id', $day->id)->delete();
+                // Toggle is ON: assign subject
+                $selectedSubjectIds[] = $subject->id;
             }
         }
         
-        // Sync day assignments (only assign days that are toggled ON)
-        $batch->days()->sync($selectedDayIds);
+        // Sync subject assignments
+        $batch->subjects()->sync($selectedSubjectIds);
     }
 }

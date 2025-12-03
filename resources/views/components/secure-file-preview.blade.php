@@ -339,11 +339,38 @@
                                 class="preview-iframe video-frame" 
                                 id="previewFrame"
                                 onload="hideLoading()"
+                                onerror="showPrivateVideoFallback()"
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen
                                 style="width: 100%; height: 100%; object-fit: contain;">
                             </iframe>
+                            
+                            <!-- Fallback for private videos -->
+                            <div id="privateVideoFallback" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 2rem;">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                                <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: #ff6b6b;">This video is private</h3>
+                                <p style="margin-bottom: 2rem; color: #ccc; max-width: 500px;">
+                                    This YouTube video is set to private and cannot be embedded. You can watch it directly on YouTube.
+                                </p>
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                                    <a href="{{ $item->youtube_url }}" target="_blank" style="background: #ff0000; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                        </svg>
+                                        Watch on YouTube
+                                    </a>
+                                    <button onclick="closePreview()" style="background: #6b7280; color: white; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer;">
+                                        Close
+                                    </button>
+                                </div>
+                                <div style="margin-top: 2rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; max-width: 600px;">
+                                    <p style="font-size: 0.9rem; color: #e5e7eb; margin: 0;">
+                                        <strong>Note:</strong> To embed private videos, change their visibility to "Unlisted" in YouTube Studio. 
+                                        Unlisted videos can be embedded but are not publicly searchable.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     @else
                         <div class="video-wrapper" style="width: 100%; height: 100%; position: relative; background: #000;">
@@ -484,35 +511,80 @@
                 return false;
             });
             
-            // Developer tools detection
+            // Developer tools detection (less aggressive for videos)
             let devtools = false;
             const threshold = 160;
+            let isVideo = document.querySelector('video') !== null || document.querySelector('iframe[src*="youtube.com"]') !== null;
             
             function checkDevTools() {
                 if (window.outerHeight - window.innerHeight > threshold || 
                     window.outerWidth - window.innerWidth > threshold) {
                     if (!devtools) {
                         devtools = true;
-                        window.location.href = '/student/study-materials';
+                        // For videos, show a warning instead of immediately redirecting
+                        if (isVideo) {
+                            alert('Please close developer tools to continue watching the video.');
+                            devtools = false; // Reset to allow retry
+                        } else {
+                            window.location.href = '/student/study-materials';
+                        }
                     }
                 }
             }
             
-            setInterval(checkDevTools, 500);
+            // Check less frequently for videos to avoid interruption
+            setInterval(checkDevTools, isVideo ? 2000 : 500);
             
-            // Auto-close on prolonged inactivity
+            // Auto-close on prolonged inactivity (disabled for videos to prevent interruption)
             let blurTimeout;
-            window.addEventListener('blur', function() {
-                blurTimeout = setTimeout(function() {
-                    closePreview();
-                }, 10000);
-            });
             
-            window.addEventListener('focus', function() {
-                if (blurTimeout) {
-                    clearTimeout(blurTimeout);
+            if (!isVideo) {
+                // Only apply blur timeout for PDFs, not videos
+                window.addEventListener('blur', function() {
+                    blurTimeout = setTimeout(function() {
+                        closePreview();
+                    }, 10000);
+                });
+                
+                window.addEventListener('focus', function() {
+                    if (blurTimeout) {
+                        clearTimeout(blurTimeout);
+                    }
+                });
+            } else {
+                // For videos, add user activity tracking to prevent any accidental closures
+                let lastActivity = Date.now();
+                let activityTimeout;
+                
+                function resetActivity() {
+                    lastActivity = Date.now();
+                    if (activityTimeout) {
+                        clearTimeout(activityTimeout);
+                    }
                 }
-            });
+                
+                // Track user activity
+                ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(name) {
+                    document.addEventListener(name, resetActivity, true);
+                });
+                
+                // Track video interaction
+                const videoElement = document.querySelector('video');
+                if (videoElement) {
+                    videoElement.addEventListener('play', resetActivity);
+                    videoElement.addEventListener('pause', resetActivity);
+                    videoElement.addEventListener('seeked', resetActivity);
+                }
+                
+                // Track YouTube iframe interaction
+                const youtubeIframe = document.querySelector('iframe[src*="youtube.com"]');
+                if (youtubeIframe) {
+                    // YouTube iframe events
+                    youtubeIframe.addEventListener('load', resetActivity);
+                    // Track clicks on YouTube iframe
+                    youtubeIframe.addEventListener('click', resetActivity);
+                }
+            }
             
         })();
         
@@ -586,6 +658,25 @@
             const loading = document.getElementById('loading');
             if (loading) {
                 loading.style.display = 'none';
+            }
+            
+            // Check if iframe loaded successfully (for YouTube videos)
+            const iframe = document.getElementById('previewFrame');
+            if (iframe && iframe.src.includes('youtube.com')) {
+                // Set a timeout to check if the iframe content loaded properly
+                setTimeout(function() {
+                    try {
+                        // Try to access iframe content - if it fails, it's likely private
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (!iframeDoc || iframeDoc.body.innerHTML.includes('private') || iframeDoc.body.innerHTML.includes('This video is private')) {
+                            showPrivateVideoFallback();
+                        }
+                    } catch (e) {
+                        // Cross-origin error is expected for YouTube, but we can check other indicators
+                        // If we can't access the content, it might be private
+                        console.log('Cannot access iframe content - video might be private');
+                    }
+                }, 3000); // Wait 3 seconds for iframe to load
             }
             
             // Security for video elements
@@ -702,8 +793,8 @@
             if (scrollControls) {
                 // Check if this is a PDF preview
                 const isPdf = document.querySelector('object[type="application/pdf"], iframe');
-                // Check if this is a video preview
-                const isVideo = document.querySelector('video');
+                // Check if this is a video preview (including YouTube embeds)
+                const isVideo = document.querySelector('video') || document.querySelector('iframe[src*="youtube.com"]');
                 
                 if (isPdf && !isVideo) {
                     // Show scroll controls for PDFs
@@ -723,6 +814,18 @@
             }
         }
         
+        function showPrivateVideoFallback() {
+            const iframe = document.getElementById('previewFrame');
+            const fallback = document.getElementById('privateVideoFallback');
+            const loading = document.getElementById('loading');
+            
+            if (iframe && fallback && loading) {
+                iframe.style.display = 'none';
+                loading.style.display = 'none';
+                fallback.style.display = 'flex';
+            }
+        }
+        
         // Prevent back button
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function(event) {
@@ -738,7 +841,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 // Block dangerous interactions on PDF elements but keep them functional for scrolling
-                const pdfElements = document.querySelectorAll('object[type="application/pdf"], iframe');
+                // Exclude YouTube iframes from PDF security measures
+                const pdfElements = document.querySelectorAll('object[type="application/pdf"], iframe:not([src*="youtube.com"])');
                 pdfElements.forEach(function(element) {
                     // Block context menu and selection
                     element.addEventListener('contextmenu', function(e) {

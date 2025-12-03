@@ -39,12 +39,17 @@ class CourseResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->color('gray'),
-                Tables\Actions\EditAction::make()->color('primary'),
-                Tables\Actions\DeleteAction::make()->color('danger'),
+                Tables\Actions\EditAction::make()
+                    ->color('primary')
+                    ->visible(fn () => !auth()->user()->isManager()),
+                Tables\Actions\DeleteAction::make()
+                    ->color('danger')
+                    ->visible(fn () => !auth()->user()->isManager()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => !auth()->user()->isManager()),
                 ]),
             ]);
     }
@@ -58,6 +63,14 @@ class CourseResource extends Resource
 
     public static function getPages(): array
     {
+        if (auth()->check() && auth()->user()->isManager()) {
+            // For manager users, only show list and view pages (read-only)
+            return [
+                'index' => Pages\ListCourses::route('/'),
+                'view' => Pages\ViewCourse::route('/{record}'),
+            ];
+        }
+        
         return [
             'index' => Pages\ListCourses::route('/'),
             'create' => Pages\CreateCourse::route('/create'),
@@ -73,7 +86,13 @@ class CourseResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        // Hide for datamanager and teacher
-        return !(auth()->check() && (auth()->user()->isDataManager() || auth()->user()->isTeacher()));
+        // Hide for datamanager, accounts, and dataentry users (show for teachers)
+        return !(auth()->check() && (auth()->user()->isDataManager() || auth()->user()->isAccounts() || auth()->user()->isDataEntry()));
+    }
+
+    public static function canCreate(): bool
+    {
+        // Managers cannot create courses
+        return !auth()->user()->isManager();
     }
 }

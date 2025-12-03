@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
-    protected $fillable = ['name', 'course_id', 'teacher_id'];
+    protected $fillable = ['name', 'course_id'];
+
+    public function course()
+    {
+        return $this->belongsTo(\App\Models\Course::class);
+    }
 
     public function days()
     {
@@ -18,8 +23,17 @@ class Subject extends Model
         return $this->hasMany(\App\Models\Question::class);
     }
 
-    public function teacher()
+    // Many-to-many relationship with teachers
+    public function teachers()
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsToMany(User::class, 'subject_teacher', 'subject_id', 'teacher_id')
+                    ->where('role', 'teacher')
+                    ->withTimestamps();
+    }
+
+    // Helper method to get teacher names as a string
+    public function getTeacherNamesAttribute()
+    {
+        return $this->teachers->pluck('name')->implode(', ');
     }
 }

@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'datamanager' => \App\Http\Middleware\DataManagerMiddleware::class,
         'teacher' => \App\Http\Middleware\DataManagerMiddleware::class,
         'student' => \App\Http\Middleware\StudentMiddleware::class,
+        'track.activity' => \App\Http\Middleware\TrackStudentActivity::class,
     ];
 } 

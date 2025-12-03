@@ -17,7 +17,6 @@ class Note extends Model
         'pdf_path',
         'course_id',
         'subject_id',
-        'day_number',
     ];
 
     public function course(): BelongsTo

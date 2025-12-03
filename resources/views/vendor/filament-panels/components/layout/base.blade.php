@@ -150,49 +150,49 @@
         });
         </script>
 
-        <!-- Disable Inspect Element and Developer Tools -->
+        <!-- Disable Inspect Element and Developer Tools - TEMPORARILY DISABLED -->
         <script>
         (function() {
-            // Disable right-click context menu
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+            // Disable right-click context menu - TEMPORARILY DISABLED
+            // document.addEventListener('contextmenu', function(e) {
+            //     e.preventDefault();
+            //     return false;
+            // });
 
-            // Disable keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // F12 key
-                if (e.keyCode === 123) {
-                    e.preventDefault();
-                    return false;
-                }
+            // Disable keyboard shortcuts - TEMPORARILY DISABLED
+            // document.addEventListener('keydown', function(e) {
+            //     // F12 key
+            //     if (e.keyCode === 123) {
+            //         e.preventDefault();
+            //         return false;
+            //     }
                 
-                // Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (Mac)
-                if ((e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
-                    (e.metaKey && e.altKey && e.keyCode === 73)) {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Ctrl+Shift+C (Windows/Linux) or Cmd+Option+C (Mac)
-                if ((e.ctrlKey && e.shiftKey && e.keyCode === 67) || 
-                    (e.metaKey && e.altKey && e.keyCode === 67)) {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Ctrl+U (View Source)
-                if (e.ctrlKey && e.keyCode === 85) {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Ctrl+Shift+J (Console)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
+            //     // Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (Mac)
+            //     if ((e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+            //         (e.metaKey && e.altKey && e.keyCode === 73)) {
+            //         e.preventDefault();
+            //         return false;
+            //     }
+            //     
+            //     // Ctrl+Shift+C (Windows/Linux) or Cmd+Option+C (Mac)
+            //     if ((e.ctrlKey && e.shiftKey && e.keyCode === 67) || 
+            //         (e.metaKey && e.altKey && e.keyCode === 67)) {
+            //         e.preventDefault();
+            //         return false;
+            //     }
+            //     
+            //     // Ctrl+U (View Source)
+            //     if (e.ctrlKey && e.keyCode === 85) {
+            //         e.preventDefault();
+            //         return false;
+            //     }
+            //     
+            //     // Ctrl+Shift+J (Console)
+            //     if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+            //         e.preventDefault();
+            //         return false;
+            //     }
+            // });
 
             // Disable text selection (optional - uncomment if needed)
             /*

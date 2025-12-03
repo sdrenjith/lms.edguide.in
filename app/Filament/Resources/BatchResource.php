@@ -40,41 +40,18 @@ class BatchResource extends Resource
                         ->label('Description')
                         ->maxLength(1000)
                         ->rows(3),
+                    Forms\Components\DatePicker::make('start_date')
+                        ->label('Start Date')
+                        ->placeholder('Select batch start date')
+                        ->helperText('Choose when this batch will start')
+                        ->displayFormat('d/m/Y')
+                        ->native(false),
                     Forms\Components\Select::make('teacher_id')
                         ->label('Assigned Teacher')
                         ->options(fn () => \App\Models\User::where('role', 'teacher')->pluck('name', 'id')->toArray())
                         ->placeholder('Select a teacher')
                         ->helperText('Choose a teacher to assign to this batch')
                         ->visible(fn () => auth()->user()->isAdmin())
-                        ->columnSpanFull(),
-                    Forms\Components\Select::make('active_day_ids')
-                        ->label('Currently Active Day')
-                        ->options(function ($record) {
-                            // Get days based on user role
-                            if (auth()->user()->isTeacher()) {
-                                // For teachers: only show days that have questions for their assigned subjects
-                                $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
-                                
-                                if (empty($teacherSubjectIds)) {
-                                    return []; // No subjects assigned, no days to show
-                                }
-                                
-                                $days = \App\Models\Day::with('course')
-                                    ->whereHas('questions', function ($query) use ($teacherSubjectIds) {
-                                        $query->whereIn('subject_id', $teacherSubjectIds);
-                                    })
-                                    ->get();
-                            } else {
-                                // For admins: show all days that have questions
-                                $days = \App\Models\Day::with('course')->whereHas('questions')->get();
-                            }
-                            
-                            return $days->pluck('title_with_course', 'id')->toArray();
-                        })
-                        ->searchable()
-                        ->multiple(fn() => !auth()->user()->isTeacher()) // Multiple for admins, single for teachers
-                        ->placeholder(auth()->user()->isTeacher() ? 'Select active day' : 'Select active days')
-                        ->helperText(auth()->user()->isTeacher() ? 'Select the day currently active for your students' : 'Select multiple active days for different teachers')
                         ->columnSpanFull(),
                     Forms\Components\Placeholder::make('courses_help')
                         ->label('')
@@ -84,67 +61,76 @@ class BatchResource extends Resource
                         ->description('Toggle on/off the courses that students in this batch should have access to')
                         ->schema([
                             Forms\Components\Grid::make(2)
-                                ->schema([
-                                    Forms\Components\Toggle::make('course_1')
-                                        ->label('A1 Course')
-                                        ->default(fn ($record) => $record ? $record->courses->contains(1) : false)
-                                        ->extraAttributes(['class' => 'custom-green-toggle']),
-                                    Forms\Components\Toggle::make('course_2')
-                                        ->label('A2 Course')
-                                        ->default(fn ($record) => $record ? $record->courses->contains(2) : false)
-                                        ->extraAttributes(['class' => 'custom-green-toggle']),
-                                    Forms\Components\Toggle::make('course_3')
-                                        ->label('B1 Course')
-                                        ->default(fn ($record) => $record ? $record->courses->contains(3) : false)
-                                        ->extraAttributes(['class' => 'custom-green-toggle']),
-                                    Forms\Components\Toggle::make('course_4')
-                                        ->label('B2 Course')
-                                        ->default(fn ($record) => $record ? $record->courses->contains(4) : false)
-                                        ->extraAttributes(['class' => 'custom-green-toggle']),
-                                ])
+                                ->schema(function () {
+                                    // Get all courses from database
+                                    $courses = \App\Models\Course::all();
+                                    
+                                    return $courses->map(function ($course) {
+                                        return Forms\Components\Toggle::make("course_{$course->id}")
+                                            ->label($course->name)
+                                            ->default(fn ($record) => $record ? $record->courses->contains($course->id) : false)
+                                            ->extraAttributes(['class' => 'custom-green-toggle'])
+                                            ->live();
+                                    })->toArray();
+                                })
                         ])
                         ->columnSpanFull(),
-                    Forms\Components\Section::make('Day Status')
-                        ->description('Toggle on/off the specific days that students in this batch should have access to. Toggling ON marks the day as completed.')
+                    Forms\Components\Section::make('Subject Assignments')
+                        ->description('Toggle on/off the subjects that students in this batch should have access to.')
                         ->schema([
-                            Forms\Components\Grid::make(3)
-                                ->schema(function ($record) {
-                                    // Get days based on user role
-                                    if (auth()->user()->isTeacher()) {
-                                        // For teachers: only show days that have questions for their assigned subjects
-                                        $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
-                                        
-                                        if (empty($teacherSubjectIds)) {
-                                            return []; // No subjects assigned, no days to show
+                            Forms\Components\Grid::make(2)
+                                ->schema(function ($record, $get) {
+                                    // Get selected course IDs from toggles
+                                    $selectedCourseIds = [];
+                                    $courses = \App\Models\Course::all();
+                                    foreach ($courses as $course) {
+                                        if ($get("course_{$course->id}")) {
+                                            $selectedCourseIds[] = $course->id;
                                         }
-                                        
-                                        $days = \App\Models\Day::with('course')
-                                            ->whereHas('questions', function ($query) use ($teacherSubjectIds) {
-                                                $query->whereIn('subject_id', $teacherSubjectIds);
-                                            })
-                                            ->get();
-                                    } else {
-                                        // For admins: show all days that have questions
-                                        $days = \App\Models\Day::with('course')->whereHas('questions')->get();
                                     }
                                     
-                                    return $days->map(function ($day) {
-                                        return Forms\Components\Toggle::make("day_{$day->id}")
-                                            ->label("{$day->course->name} - {$day->title}")
-                                            ->default(function ($record) use ($day) {
+                                    // If no courses are selected, show no subjects
+                                    if (empty($selectedCourseIds)) {
+                                        return [
+                                            Forms\Components\Placeholder::make('no_courses_selected')
+                                                ->label('')
+                                                ->content('Please select at least one course to see available subjects.')
+                                                ->columnSpanFull()
+                                        ];
+                                    }
+                                    
+                                    // Get subjects based on selected courses and user role
+                                    if (auth()->user()->isTeacher()) {
+                                        // For teachers: only show their assigned subjects that belong to selected courses
+                                        $subjects = auth()->user()->subjects()->whereIn('course_id', $selectedCourseIds)->get();
+                                    } else {
+                                        // For admins: show subjects that belong to selected courses
+                                        $subjects = \App\Models\Subject::whereIn('course_id', $selectedCourseIds)->get();
+                                    }
+                                    
+                                    if ($subjects->isEmpty()) {
+                                        return [
+                                            Forms\Components\Placeholder::make('no_subjects_available')
+                                                ->label('')
+                                                ->content('No subjects available for the selected courses.')
+                                                ->columnSpanFull()
+                                        ];
+                                    }
+                                    
+                                    return $subjects->map(function ($subject) {
+                                        return Forms\Components\Toggle::make("subject_{$subject->id}")
+                                            ->label($subject->name)
+                                            ->default(function ($record) use ($subject) {
                                                 if (!$record) return false;
-                                                // Toggle is ON if day is assigned AND completed
-                                                return $record->days->contains($day->id) && 
-                                                       $record->dayProgress()
-                                                           ->where('day_id', $day->id)
-                                                           ->where('is_completed', true)
-                                                           ->exists();
+                                                // Toggle is ON if subject is assigned to the batch
+                                                return $record->subjects->contains($subject->id);
                                             })
                                             ->extraAttributes(['class' => 'custom-green-toggle']);
                                     })->toArray();
                                 })
                         ])
-                        ->columnSpanFull(),
+                        ->columnSpanFull()
+                        ->live(),
                 ])
             ]);
     }
@@ -169,6 +155,11 @@ class BatchResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->limit(50)
                     ->wrap(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Start Date')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->placeholder('Not set'),
                 Tables\Columns\TextColumn::make('teacher.name')
                     ->label('Assigned Teacher')
                     ->sortable()
@@ -193,72 +184,27 @@ class BatchResource extends Resource
                     })
                     ->color('info')
                     ->sortable(false),
-                Tables\Columns\TextColumn::make('active_days')
-                    ->label('Active Days')
-                    ->getStateUsing(function ($record) {
-                        if (empty($record->active_day_ids)) {
-                            return 'No active days';
-                        }
-                        
-                        $activeDays = $record->active_days;
-                        if ($activeDays->isEmpty()) {
-                            return 'No active days';
-                        }
-                        
-                        // Filter active days based on user role
-                        if (auth()->user()->isTeacher()) {
-                            // For teachers: only show active days that have questions for their subjects
-                            $teacherSubjectIds = auth()->user()->subjects()->pluck('id')->toArray();
-                            
-                            if (empty($teacherSubjectIds)) {
-                                return 'No active days';
-                            }
-                            
-                            $relevantActiveDays = $activeDays->filter(function ($day) use ($teacherSubjectIds) {
-                                return $day->questions()->whereIn('subject_id', $teacherSubjectIds)->exists();
-                            });
-                            
-                            if ($relevantActiveDays->isEmpty()) {
-                                return 'No active days';
-                            }
-                            
-                            $activeDays = $relevantActiveDays;
-                        }
-                        
-                        // Show up to 2 days, then "and X more"
-                        $dayNames = $activeDays->take(2)->map(function ($day) {
-                            return $day->title_with_course;
-                        })->toArray();
-                        
-                        if ($activeDays->count() > 2) {
-                            $remaining = $activeDays->count() - 2;
-                            $dayNames[] = "and {$remaining} more";
-                        }
-                        
-                        return implode(', ', $dayNames);
-                    })
-                    ->wrap()
-                    ->sortable(false),
                 Tables\Columns\TextColumn::make('students_count')
                     ->label('Students')
                     ->counts('students')
                     ->badge()
                     ->color('primary'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('status')
+                    ->label('View Status')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn ($record) => route('filament.admin.resources.batches.status', $record))
+                    ->color('info')
+                    ->openUrlInNewTab(false)
+                    ->visible(fn () => auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isTeacher() || auth()->user()->isAccounts() || auth()->user()->isManager())),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => static::canEdit($record)),
+                    ->visible(fn ($record) => static::canEdit($record) && !auth()->user()->isManager()),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => static::canDelete($record))
+                    ->visible(fn ($record) => static::canDelete($record) && !auth()->user()->isManager())
                     ->requiresConfirmation()
                     ->modalHeading('Delete Batch')
                     ->modalDescription(fn ($record) => 
@@ -274,9 +220,10 @@ class BatchResource extends Resource
                         ->requiresConfirmation()
                         ->modalHeading('Delete Selected Batches')
                         ->modalDescription('Are you sure you want to delete the selected batches? Students in these batches will be unassigned but not deleted.')
-                        ->modalSubmitActionLabel('Yes, Delete Batches'),
+                        ->modalSubmitActionLabel('Yes, Delete Batches')
+                        ->visible(fn () => (auth()->user()->isAdmin() || auth()->user()->isAccounts()) && !auth()->user()->isManager()),
                 ])
-                ->visible(fn () => auth()->user()->isAdmin()),
+                ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isAccounts()),
             ]);
     }
 
@@ -293,18 +240,24 @@ class BatchResource extends Resource
             'index' => Pages\ListBatches::route('/'),
             'create' => Pages\CreateBatch::route('/create'),
             'edit' => Pages\EditBatch::route('/{record}/edit'),
+            'status' => Pages\BatchStatus::route('/{record}/status'),
         ];
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->isAdmin();
+        return (auth()->user()->isAdmin() || auth()->user()->isAccounts()) && !auth()->user()->isManager();
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        // Admins can edit any batch
-        if (auth()->user()->isAdmin()) {
+        // Managers cannot edit
+        if (auth()->user()->isManager()) {
+            return false;
+        }
+        
+        // Admins and accounts users can edit any batch
+        if (auth()->user()->isAdmin() || auth()->user()->isAccounts()) {
             return true;
         }
         
@@ -318,7 +271,18 @@ class BatchResource extends Resource
 
     public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        // Only admins can delete batches
-        return auth()->user()->isAdmin();
+        // Managers cannot delete
+        if (auth()->user()->isManager()) {
+            return false;
+        }
+        
+        // Only admins and accounts users can delete batches
+        return auth()->user()->isAdmin() || auth()->user()->isAccounts();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Hide for dataentry users, only show for admin, accounts, and teachers
+        return !(auth()->check() && auth()->user()->isDataEntry());
     }
 }

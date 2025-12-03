@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Answer Question - Rocys German Academy</title>
+    <title>Answer Question - Edguide Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -103,6 +103,76 @@
             opacity: 1 !important;
             color: white !important;
         }
+        
+        /* Success Modal Styles */
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .modal-header.bg-success {
+            border-bottom: none;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+        }
+        
+        /* Options Reference Styles */
+        .options-reference-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .options-title::before {
+            content: "📝";
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .options-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .option-tag {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #3b82f6;
+            transition: all 0.2s ease;
+        }
+        
+        .option-tag:hover {
+            background: linear-gradient(135deg, #bfdbfe, #93c5fd);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px -2px rgba(59, 130, 246, 0.3);
+        }
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -115,16 +185,26 @@
     // Set a default value for $isReAttempt if not already set
     $isReAttempt = $isReAttempt ?? false;
     
-    // Reset read-only and view mode for re-attempt
+    // Check if we have a result from the session (means this is a submission result page)
+    $hasResult = session('answer_result') !== null;
+    
+    // CRITICAL FIX: Only show detailed result modal on re-attempts
+    // Initial submissions should never show detailed comparison
+    $showDetailedResult = $hasResult && $isReAttempt && session('show_result_modal');
+    
+    // For initial submissions, just show simple success/failure message and redirect
+    $showSimpleResult = $hasResult && !$isReAttempt && session('show_result_modal');
+    
+    // For re-attempt mode, always allow new submission (don't show view mode)
     $isReadOnly = $isReAttempt ? false : (isset($studentAnswer) && $studentAnswer->answer_data !== null && $studentAnswer->answer_data !== '');
     $isViewMode = $isReAttempt ? false : (isset($submittedAnswer) && !empty($submittedAnswer));
     
-    // Reset answer data for re-attempt
+    // For re-attempt mode, don't show previous answers (allow fresh submission)
     $viewModeAnswerData = $isReAttempt ? null : (
-        $isViewMode ? 
-        (is_string($submittedAnswer['answer_data']) 
-            ? (json_decode($submittedAnswer['answer_data'], true) ?: $submittedAnswer['answer_data']) 
-            : $submittedAnswer['answer_data']) 
+        $isViewMode && isset($submittedAnswer) && !empty($submittedAnswer) ? 
+        (is_string($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null) 
+            ? (json_decode($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? '', true) ?: ($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null)) 
+            : ($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null)) 
         : null
     );
     
@@ -133,7 +213,21 @@
         $viewModeAnswerData = $isReAttempt ? null : intval($viewModeAnswerData);
     }
     
+    // Initialize $answer if not already set
+    if (!isset($answer)) {
+        $answer = null;
+    }
+    
     $answer = $isReAttempt ? null : $answer;
+    
+    // Additional debugging
+    \Log::info('Submission Flow Debug', [
+        'hasResult' => $hasResult,
+        'isReAttempt' => $isReAttempt,
+        'showDetailedResult' => $showDetailedResult,
+        'showSimpleResult' => $showSimpleResult,
+        'session_show_modal' => session('show_result_modal')
+    ]);
     
     // Debugging: Print out all relevant variables
     \Log::info('Answer Question Debug', [
@@ -141,7 +235,9 @@
         'submittedAnswer' => $submittedAnswer ?? 'Not set',
         'studentAnswer' => $studentAnswer ?? 'Not set',
         'question_data' => $qdata,
-        'isReadOnly' => $isReadOnly ?? 'Not set'
+        'isReadOnly' => $isReadOnly ?? 'Not set',
+        'hasResult' => $hasResult,
+        'isReAttempt' => $isReAttempt
     ]);
     
     // Additional debugging
@@ -166,8 +262,7 @@
                         <i class="fas fa-arrow-left text-lg sm:text-xl"></i>
                     </button>
                     <div class="flex items-center min-w-0">
-                        <i class="fas fa-graduation-cap text-xl sm:text-2xl text-blue-600 mr-2 flex-shrink-0"></i>
-                        <span class="text-lg sm:text-xl font-bold text-gray-900 truncate">Rocys German Academy</span>
+                        <img src="{{ asset('/edguide-logo.png') }}" alt="EdGuide" class="header-logo h-8 sm:h-10 md:h-12 flex-shrink-0" style="width: auto; max-width: 120px; sm:max-width: 140px;" />
                     </div>
                 </div>
 
@@ -245,7 +340,81 @@
         </div>
     </div>
 
-    @if($isViewMode && !$isReAttempt && isset($submittedAnswer) && !empty($submittedAnswer['answer_data']))
+    <!-- Session Messages -->
+    @if(session('success'))
+        <div class="bg-green-50 border-b border-green-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                    <div>
+                        <h3 class="text-sm font-medium text-green-800">Success!</h3>
+                        <p class="text-sm text-green-700 mt-1">{{ session('success') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('info'))
+        <div class="bg-blue-50 border-b border-blue-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                    <div>
+                        <h3 class="text-sm font-medium text-blue-800">Information</h3>
+                        <p class="text-sm text-blue-700 mt-1">{{ session('info') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-50 border-b border-red-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                    <div>
+                        <h3 class="text-sm font-medium text-red-800">Error</h3>
+                        <p class="text-sm text-red-700 mt-1">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-red-50 border-b border-red-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                    <div>
+                        <h3 class="text-sm font-medium text-red-800">Validation Errors</h3>
+                        <ul class="text-sm text-red-700 mt-1 list-disc list-inside">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- JavaScript Validation Error Banner (hidden by default) -->
+    <div id="js-validation-error" class="bg-red-50 border-b border-red-200 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                <div>
+                    <h3 class="text-sm font-medium text-red-800">Please Complete All Required Fields</h3>
+                    <p class="text-sm text-red-700 mt-1">Make sure you have selected an answer for all questions before submitting.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if($isViewMode && !$isReAttempt && isset($submittedAnswer) && !empty($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null))
         <div class="view-mode-banner bg-blue-50 border-b border-blue-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex items-center">
@@ -255,11 +424,11 @@
                     <div>
                         <h3 class="text-sm font-medium text-blue-800">Viewing Submitted Answer</h3>
                         <p class="text-sm text-blue-700 mt-1">
-                            Submitted on {{ $submittedAnswer['submitted_at'] ?? 'Unknown Date' }}
-                            @if(isset($submittedAnswer['is_correct']))
+                            Submitted on {{ $submittedAnswer->submitted_at ?? $submittedAnswer['submitted_at'] ?? 'Unknown Date' }}
+                            @if(null !== ($submittedAnswer->is_correct ?? $submittedAnswer['is_correct'] ?? null))
                                 • 
-                                <span class="{{ $submittedAnswer['is_correct'] ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $submittedAnswer['is_correct'] ? 'Correct' : 'Incorrect' }}
+                                <span class="{{ ($submittedAnswer->is_correct ?? $submittedAnswer['is_correct'] ?? false) ? 'text-green-600' : 'text-red-600' }}">
+                                    {{ ($submittedAnswer->is_correct ?? $submittedAnswer['is_correct'] ?? false) ? 'Correct' : 'Incorrect' }}
                                 </span>
                             @endif
                         </p>
@@ -273,7 +442,7 @@
         $isOpinionQuestion = $question->questionType && $question->questionType->name === 'opinion';
     @endphp
 
-    @if($isOpinionQuestion && $existingAnswer)
+    @if($isOpinionQuestion && isset($existingAnswer) && $existingAnswer)
         <!-- Opinion Question Status Message -->
         <div class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -295,9 +464,15 @@
                             <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <div>
+                            <div class="flex-1">
                                 <h3 class="text-sm font-medium text-green-800">Answer Verified as Correct</h3>
                                 <p class="text-sm text-green-700 mt-1">Your opinion answer has been verified as correct! You earned 1 point. You can submit a new answer if you wish.</p>
+                                @if($existingAnswer->verification_comment)
+                                    <div class="mt-3 p-3 bg-white rounded-lg border border-green-200">
+                                        <h4 class="text-xs font-medium text-green-800 mb-1">Teacher's Comment:</h4>
+                                        <p class="text-sm text-gray-700">{{ $existingAnswer->verification_comment }}</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -307,9 +482,15 @@
                             <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                             </svg>
-                            <div>
+                            <div class="flex-1">
                                 <h3 class="text-sm font-medium text-yellow-800">Answer Needs Revision</h3>
                                 <p class="text-sm text-yellow-700 mt-1">Your opinion answer has been reviewed and needs improvement. Please provide a new response below.</p>
+                                @if($existingAnswer->verification_comment)
+                                    <div class="mt-3 p-3 bg-white rounded-lg border border-yellow-200">
+                                        <h4 class="text-xs font-medium text-yellow-800 mb-1">Teacher's Comment:</h4>
+                                        <p class="text-sm text-gray-700">{{ $existingAnswer->verification_comment }}</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -318,7 +499,76 @@
         </div>
     @endif
 
-    @if(session('answer_result'))
+    <!-- Simple Result for Initial Submissions -->
+    @if($showSimpleResult)
+        @php
+            $result = session('answer_result');
+        @endphp
+        
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show simple success/failure message
+            @if(isset($result['is_correct']) && $result['is_correct'])
+                // Correct answer
+                showToast('Correct Answer! You earned {{ $question->points ?? 1 }} point(s).', 'success');
+            @else
+                // Wrong answer or needs review
+                showToast('Answer submitted! You can re-attempt this question if needed.', 'info');
+            @endif
+            
+            // Clear session flags
+            fetch('{{ route("filament.student.clear_result_modal") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                }
+            }).catch(error => console.log('Error clearing modal flag:', error));
+            
+            // Auto redirect after 2 seconds
+            setTimeout(function() {
+                goBackToQuestions();
+            }, 2000);
+        });
+        
+        function showToast(message, type) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                    <div>
+                        <strong>${type === 'success' ? 'Success!' : 'Information'}</strong>
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+        
+        function goBackToQuestions() {
+            const courseId = {{ $question->course_id ?? 1 }};
+            const subjectId = {{ $question->subject_id ?? 1 }};
+            const dayId = {{ $question->day_id ?? 1 }};
+            
+            const questionsUrl = `{{ route('filament.student.pages.questions') }}?course=${courseId}&subject=${subjectId}&day=${dayId}`;
+            window.location.href = questionsUrl;
+        }
+    </script>
+    @endif
+
+    <!-- Detailed Result Modal (Re-attempt Submissions Only) -->
+    @if($showDetailedResult)
         @php
             $result = session('answer_result');
             $questionId = session('question_id');
@@ -351,76 +601,172 @@
                                                 $questionType = $question->questionType->name ?? '';
                                             @endphp
                                             @if($questionType === 'audio_picture_match')
-                                                @foreach($result['student_answer_text'] as $audioIndex => $imageIndex)
+                                                @foreach($result['student_answer_text'] as $audioIndex => $answerText)
                                                     <div class="mb-2">
-                                                        <strong>Audio {{ $audioIndex + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $imageIndex !== '' ? 'Image ' . ($imageIndex + 1) : '(No selection)' }}</span>
-        </div>
+                                                        <strong>Audio {{ intval($audioIndex) + 1 }}:</strong> 
+                                                        <span class="text-dark">{{ $answerText }}</span>
+                                                    </div>
                                                 @endforeach
                                             @elseif($questionType === 'picture_mcq' || $questionType === 'audio_image_text_single' || $questionType === 'audio_image_text_multiple')
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $imageIndex => $answerText)
+                                                        <div class="mb-2">
+                                                            <span class="text-dark">{{ $answerText ?: '(No answer provided)' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="mb-2">
+                                                        <span class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
+                                                    </div>
+                                                @endif
+                                            @elseif($questionType === 'audio_mcq_single')
                                                 @php
                                                     $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
-                                                    $rightOptions = $question->right_options ?? $questionData['right_options'] ?? [];
+                                                    $subQuestions = $questionData['sub_questions'] ?? [];
                                                 @endphp
-                                                @foreach($result['student_answer_text'] as $imageIndex => $optionIndex)
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        @php
+                                                            $subQuestion = $subQuestions[$index] ?? [];
+                                                            $options = $subQuestion['options'] ?? [];
+                                                            $answerIndex = is_numeric($answer) ? intval($answer) : null;
+                                                            $answerText = $answerIndex !== null && isset($options[$answerIndex]) ? $options[$answerIndex] : $answer;
+                                                        @endphp
+                                                        <div class="mb-2">
+                                                            <strong>Question {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ $answerText ?: '(No answer provided)' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>{{ $questionType === 'picture_mcq' ? 'Image' : 'Pair' }} {{ $imageIndex + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $optionIndex !== '' ? ($rightOptions[$optionIndex] ?? 'Option ' . ($optionIndex + 1)) : '(No selection)' }}</span>
+                                                        <strong>Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
                                                     </div>
-                                                @endforeach
-                                            @elseif($questionType === 'audio_mcq_single')
-                                                @foreach($result['student_answer_text'] as $index => $answer)
-                                                    <div class="mb-2">
-                                                        <strong>Question {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
-                                                    </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'true_false_multiple')
-                                                @foreach($result['student_answer_text'] as $index => $answer)
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Statement {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ ucfirst($answer ?: '(No answer provided)') }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Statement {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ ucfirst($answer ?: '(No answer provided)') }}</span>
+                                                        <strong>Answer:</strong> 
+                                                        <span class="text-dark">{{ ucfirst($result['student_answer_text'] ?: '(No answer provided)') }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'statement_match')
-                                                @foreach($result['student_answer_text'] as $index => $matchAnswer)
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $matchAnswer)
+                                                        <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="badge bg-danger me-2">{{ intval($index) + 1 }}</span>
+                                                                <span class="text-dark fw-bold">{{ $matchAnswer ?: '(No answer provided)' }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                                                         <div class="d-flex align-items-center">
-                                                            <span class="badge bg-danger me-2">{{ $index + 1 }}</span>
-                                                            <span class="text-dark fw-bold">{{ $matchAnswer ?: '(No answer provided)' }}</span>
+                                                            <span class="badge bg-danger me-2">1</span>
+                                                            <span class="text-dark fw-bold">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
                                                         </div>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'opinion')
                                                 <div class="p-3 bg-blue-50 rounded border">
-                                                    <p class="text-dark">{{ $result['student_answer_text'] ?: '(No response provided)' }}</p>
+                                                    <p class="text-dark">{{ is_array($result['student_answer_text']) ? implode(' ', $result['student_answer_text']) : ($result['student_answer_text'] ?: '(No response provided)') }}</p>
                                                 </div>
                                             @elseif($questionType === 'reorder')
                                                 <div class="p-3 bg-blue-50 rounded border">
-                                                    <p class="text-dark">{{ $result['student_answer_text'] ?: '(No response provided)' }}</p>
+                                                    <p class="text-dark">{{ is_array($result['student_answer_text']) ? implode(' ', $result['student_answer_text']) : ($result['student_answer_text'] ?: '(No response provided)') }}</p>
                                                 </div>
+                                            @elseif($questionType === 'form_fill' || $questionType === 'audio_fill_blank' || $questionType === 'picture_fill_blank' || $questionType === 'video_fill_blank')
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Blank {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ is_array($answer) ? implode(', ', $answer) : ($answer ?: '(No answer provided)') }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="p-3 bg-blue-50 rounded border">
+                                                        <p class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</p>
+                                                    </div>
+                                                @endif
                                             @elseif($questionType === 'mcq_single')
-                                                @foreach($result['student_answer_text'] as $index => $answer)
+                                                @php
+                                                    $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
+                                                    $options = $questionData['options'] ?? [];
+                                                @endphp
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Option {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    @php
+                                                        $studentAnswerIndex = is_numeric($result['student_answer_text']) ? intval($result['student_answer_text']) : null;
+                                                        $studentAnswerText = $studentAnswerIndex !== null && isset($options[$studentAnswerIndex]) ? $options[$studentAnswerIndex] : $result['student_answer_text'];
+                                                    @endphp
                                                     <div class="mb-2">
-                                                        <strong>Option {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
+                                                        <strong>Selected Option:</strong> 
+                                                        <span class="text-dark">{{ $studentAnswerText ?: '(No answer provided)' }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'mcq_multiple')
-                                                @foreach($result['student_answer_text'] as $index => $answer)
+                                                @php
+                                                    $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
+                                                    $subQuestions = $questionData['sub_questions'] ?? [];
+                                                @endphp
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        @php
+                                                            $subQuestion = $subQuestions[$index] ?? [];
+                                                            $options = $subQuestion['options'] ?? [];
+                                                            $answerText = $answer;
+                                                            if (is_array($answer)) {
+                                                                $selectedOptions = [];
+                                                                foreach ($answer as $optionIndex) {
+                                                                    if (isset($options[$optionIndex])) {
+                                                                        $selectedOptions[] = $options[$optionIndex];
+                                                                    }
+                                                                }
+                                                                $answerText = !empty($selectedOptions) ? implode(', ', $selectedOptions) : '(No answer provided)';
+                                                            } elseif (is_numeric($answer) && isset($options[$answer])) {
+                                                                $answerText = $options[$answer];
+                                                            }
+                                                        @endphp
+                                                        <div class="mb-2">
+                                                                                                                    <strong>Sub-question {{ chr(97 + intval($index)) }}):</strong> 
+                                                        <span class="text-dark">{{ $answerText ?: '(No answer provided)' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Sub-question {{ chr(97 + $index) }}):</strong> 
-                                                        <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
+                                                        <strong>Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
                                                     </div>
-                                                @endforeach
-                                            @else
-                                                @foreach($result['student_answer_text'] as $index => $answer)
+                                                @endif
+                                                                                        @else
+                                                @if(is_array($result['student_answer_text']))
+                                                    @foreach($result['student_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Blank {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Blank {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer ?: '(No answer provided)' }}</span>
+                                                        <strong>Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
                                                     </div>
-                                                @endforeach
-    @endif
+                                                @endif
+                                            @endif
                                         @else
                                             <span class="text-dark">{{ $result['student_answer_text'] ?: '(No answer provided)' }}</span>
                                         @endif
@@ -434,75 +780,171 @@
                                                 $questionType = $question->questionType->name ?? '';
                                             @endphp
                                             @if($questionType === 'audio_picture_match')
-                                                @foreach($result['correct_answer_text'] as $pair)
+                                                @foreach($result['correct_answer_text'] as $audioIndex => $answerText)
                                                     <div class="mb-2">
-                                                        <strong>Audio {{ ($pair['left'] ?? 0) + 1 }}:</strong> 
-                                                        <span class="text-dark">Image {{ ($pair['right'] ?? 0) + 1 }}</span>
+                                                        <strong>Audio {{ intval($audioIndex) + 1 }}:</strong> 
+                                                        <span class="text-dark">{{ $answerText }}</span>
                                                     </div>
                                                 @endforeach
                                             @elseif($questionType === 'picture_mcq' || $questionType === 'audio_image_text_single' || $questionType === 'audio_image_text_multiple')
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $imageIndex => $answerText)
+                                                        <div class="mb-2">
+                                                            <span class="text-dark">{{ $answerText }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="mb-2">
+                                                        <span class="text-dark">{{ $result['correct_answer_text'] }}</span>
+                                                    </div>
+                                                @endif
+                                            @elseif($questionType === 'audio_mcq_single')
                                                 @php
                                                     $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
-                                                    $rightOptions = $question->right_options ?? $questionData['right_options'] ?? [];
+                                                    $subQuestions = $questionData['sub_questions'] ?? [];
                                                 @endphp
-                                                @foreach($result['correct_answer_text'] as $pair)
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        @php
+                                                            $subQuestion = $subQuestions[$index] ?? [];
+                                                            $options = $subQuestion['options'] ?? [];
+                                                            $answerIndex = is_numeric($answer) ? intval($answer) : null;
+                                                            $answerText = $answerIndex !== null && isset($options[$answerIndex]) ? $options[$answerIndex] : $answer;
+                                                        @endphp
+                                                        <div class="mb-2">
+                                                            <strong>Question {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ $answerText }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>{{ $questionType === 'picture_mcq' ? 'Image' : 'Pair' }} {{ ($pair['left'] ?? 0) + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $rightOptions[$pair['right'] ?? 0] ?? 'Option ' . (($pair['right'] ?? 0) + 1) }}</span>
+                                                        <strong>Correct Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['correct_answer_text'] }}</span>
                                                     </div>
-                                                @endforeach
-                                            @elseif($questionType === 'audio_mcq_single')
-                                                @foreach($result['correct_answer_text'] as $index => $answer)
-                                                    <div class="mb-2">
-                                                        <strong>Question {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer }}</span>
-                                                    </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'true_false_multiple')
-                                                @foreach($result['correct_answer_text'] as $index => $answer)
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Statement {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ ucfirst($answer) }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Statement {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ ucfirst($answer) }}</span>
+                                                        <strong>Correct Answer:</strong> 
+                                                        <span class="text-dark">{{ ucfirst($result['correct_answer_text']) }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'statement_match')
-                                                @foreach($result['correct_answer_text'] as $index => $matchAnswer)
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $matchAnswer)
+                                                        <div class="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="badge bg-success me-2">{{ intval($index) + 1 }}</span>
+                                                                <span class="text-dark fw-bold">{{ $matchAnswer }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                                                         <div class="d-flex align-items-center">
-                                                            <span class="badge bg-success me-2">{{ $index + 1 }}</span>
-                                                            <span class="text-dark fw-bold">{{ $matchAnswer }}</span>
+                                                            <span class="badge bg-success me-2">1</span>
+                                                            <span class="text-dark fw-bold">{{ $result['correct_answer_text'] }}</span>
                                                         </div>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'opinion')
                                                 <div class="p-3 bg-green-50 rounded border">
-                                                    <p class="text-dark">{{ $result['correct_answer_text'] }}</p>
+                                                    <p class="text-dark">{{ is_array($result['correct_answer_text']) ? implode(' ', $result['correct_answer_text']) : $result['correct_answer_text'] }}</p>
                                                 </div>
                                             @elseif($questionType === 'reorder')
                                                 <div class="p-3 bg-green-50 rounded border">
-                                                    <p class="text-dark">{{ $result['correct_answer_text'] }}</p>
+                                                    <p class="text-dark">{{ is_array($result['correct_answer_text']) ? implode(' ', $result['correct_answer_text']) : $result['correct_answer_text'] }}</p>
                                                 </div>
+                                            @elseif($questionType === 'form_fill' || $questionType === 'audio_fill_blank' || $questionType === 'picture_fill_blank' || $questionType === 'video_fill_blank')
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Blank {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ is_array($answer) ? implode(', ', $answer) : $answer }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="p-3 bg-green-50 rounded border">
+                                                        <p class="text-dark">{{ $result['correct_answer_text'] }}</p>
+                                                    </div>
+                                                @endif
                                             @elseif($questionType === 'mcq_single')
-                                                @foreach($result['correct_answer_text'] as $index => $answer)
+                                                @php
+                                                    $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
+                                                    $options = $questionData['options'] ?? [];
+                                                @endphp
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Option {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ $answer }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    @php
+                                                        $correctAnswerIndex = is_numeric($result['correct_answer_text']) ? intval($result['correct_answer_text']) : null;
+                                                        $correctAnswerText = $correctAnswerIndex !== null && isset($options[$correctAnswerIndex]) ? $options[$correctAnswerIndex] : $result['correct_answer_text'];
+                                                    @endphp
                                                     <div class="mb-2">
-                                                        <strong>Option {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer }}</span>
+                                                        <strong>Correct Option:</strong> 
+                                                        <span class="text-dark">{{ $correctAnswerText }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @elseif($questionType === 'mcq_multiple')
-                                                @foreach($result['correct_answer_text'] as $index => $answer)
+                                                @php
+                                                    $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
+                                                    $subQuestions = $questionData['sub_questions'] ?? [];
+                                                @endphp
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        @php
+                                                            $subQuestion = $subQuestions[$index] ?? [];
+                                                            $options = $subQuestion['options'] ?? [];
+                                                            $answerText = $answer;
+                                                            if (is_array($answer)) {
+                                                                $selectedOptions = [];
+                                                                foreach ($answer as $optionIndex) {
+                                                                    if (isset($options[$optionIndex])) {
+                                                                        $selectedOptions[] = $options[$optionIndex];
+                                                                    }
+                                                                }
+                                                                $answerText = !empty($selectedOptions) ? implode(', ', $selectedOptions) : '';
+                                                            } elseif (is_numeric($answer) && isset($options[$answer])) {
+                                                                $answerText = $options[$answer];
+                                                            }
+                                                        @endphp
+                                                        <div class="mb-2">
+                                                            <strong>Sub-question {{ chr(97 + intval($index)) }}):</strong> 
+                                                            <span class="text-dark">{{ $answerText }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Sub-question {{ chr(97 + $index) }}):</strong> 
-                                                        <span class="text-dark">{{ $answer }}</span>
+                                                        <strong>Correct Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['correct_answer_text'] }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @else
-                                                @foreach($result['correct_answer_text'] as $index => $answer)
+                                                @if(is_array($result['correct_answer_text']))
+                                                    @foreach($result['correct_answer_text'] as $index => $answer)
+                                                        <div class="mb-2">
+                                                            <strong>Blank {{ intval($index) + 1 }}:</strong> 
+                                                            <span class="text-dark">{{ is_array($answer) ? implode(', ', $answer) : $answer }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
                                                     <div class="mb-2">
-                                                        <strong>Blank {{ $index + 1 }}:</strong> 
-                                                        <span class="text-dark">{{ $answer }}</span>
+                                                        <strong>Correct Answer:</strong> 
+                                                        <span class="text-dark">{{ $result['correct_answer_text'] }}</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
                                             @endif
                                         @else
                                             <span class="text-dark">{{ $result['correct_answer_text'] }}</span>
@@ -532,10 +974,30 @@
                 // Auto-show the modal
                 const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
                 resultModal.show();
+                
+                // Clear the show_result_modal flag after showing the modal
+                // This prevents the modal from showing again on page refresh
+                fetch('{{ route("filament.student.clear_result_modal") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                    }
+                }).catch(error => console.log('Error clearing modal flag:', error));
             });
             
             function goBackToQuestions() {
-                window.history.back();
+                // Redirect to questions listing page with proper parameters
+                const url = new URL(window.location.href);
+                const questionId = url.pathname.split('/').pop();
+                
+                // Get the question details from the page or use default values
+                const courseId = {{ $question->course_id ?? 1 }};
+                const subjectId = {{ $question->subject_id ?? 1 }};
+                const dayId = {{ $question->day_id ?? 1 }};
+                
+                const questionsUrl = `{{ route('filament.student.pages.questions') }}?course=${courseId}&subject=${subjectId}&day=${dayId}`;
+                window.location.href = questionsUrl;
             }
         </script>
     @endif
@@ -599,6 +1061,42 @@
                                     <a href="{{ asset('storage/' . $question->explanation_file) }}" target="_blank" class="file-link">
                                         View Explanation File
                                     </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    @if($question->explanation && !$question->explanation_file)
+                        <div class="explanation-text-section">
+                            <div class="explanation-card">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="explanation-title">Explanation</p>
+                                    @php
+                                        $explanationPath = $question->explanation;
+                                        $isAudioFile = preg_match('/\.(mp3|wav|ogg|m4a)$/i', $explanationPath);
+                                        $isVideoFile = preg_match('/\.(mp4|avi|mov|wmv)$/i', $explanationPath);
+                                    @endphp
+                                    
+                                    @if($isAudioFile)
+                                        <div class="audio-player-section">
+                                            <audio controls class="audio-player">
+                                                <source src="{{ asset('storage/' . $explanationPath) }}" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+                                    @elseif($isVideoFile)
+                                        <div class="video-player-section">
+                                            <video controls class="video-player">
+                                                <source src="{{ asset('storage/' . $explanationPath) }}" type="video/mp4">
+                                                Your browser does not support the video element.
+                                            </video>
+                                        </div>
+                                    @else
+                                        <p class="explanation-text">{{ $question->explanation }}</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -692,24 +1190,17 @@
                                     @endphp
                                     
                                     @foreach(($qdata['sub_questions'] ?? []) as $subIdx => $sub)
-                                        <div class="sub-question-item">
+                                        <div class="sub-question-item" data-sub-question="{{ $subIdx }}">
                                             <h4 class="sub-question-title">{{ chr(97+$subIdx) }}) {{ $sub['question'] ?? '' }}</h4>
                                             <div class="checkbox-options-grid">
                                                 @foreach(($sub['options'] ?? []) as $optIdx => $opt)
-                                                    <label class="checkbox-option-item {{ 
-                                                        isset($submittedAnswers[$subIdx]) && 
-                                                        in_array($optIdx, $submittedAnswers[$subIdx]) 
-                                                        ? 'submitted-answer' : '' 
-                                                    }}">
+                                                    <label class="checkbox-option-item" data-option="{{ $optIdx }}">
                                                         <input type="checkbox" 
                                                                name="answer[{{ $subIdx }}][]" 
                                                                value="{{ $optIdx }}" 
                                                                class="checkbox-input"
-                                                               {{ 
-                                                               isset($submittedAnswers[$subIdx]) && 
-                                                               in_array($optIdx, $submittedAnswers[$subIdx]) 
-                                                               ? 'checked disabled' : 'disabled' 
-                                                               }}>
+                                                               data-sub-question="{{ $subIdx }}"
+                                                               data-option="{{ $optIdx }}">
                                                         <div class="checkbox-card">
                                                             <div class="checkbox-indicator">
                                                                 <svg class="w-3 h-3 checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -866,22 +1357,23 @@
                                 </div>
                                 
                                 @foreach(($qdata['sub_questions'] ?? []) as $subIdx => $sub)
-                                    <div class="sub-question-item">
+                                    <div class="sub-question-item" data-sub-question="{{ $subIdx }}">
                                         <h4 class="sub-question-title">{{ chr(97+$subIdx) }}) {{ $sub['question'] ?? '' }}</h4>
-                                        <div class="checkbox-options-grid">
+                                        <div class="mcq-options-grid">
                                             @foreach(($sub['options'] ?? []) as $optIdx => $opt)
-                                                <label class="checkbox-option-item">
+                                                <label class="mcq-option-item" data-option="{{ $optIdx }}">
                                                     <input type="checkbox" 
                                                            name="answer[{{ $subIdx }}][]" 
                                                            value="{{ $optIdx }}" 
-                                                           class="checkbox-input">
-                                                    <div class="checkbox-card">
-                                                        <div class="checkbox-indicator">
-                                                            <svg class="w-3 h-3 checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                           class="mcq-checkbox">
+                                                    <div class="option-card">
+                                                        <div class="option-indicator">{{ chr(65 + $optIdx) }}</div>
+                                                        <span class="option-text">{{ $opt }}</span>
+                                                        <div class="selection-mark">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                                             </svg>
                                                         </div>
-                                                        <span class="option-text">{{ $opt }}</span>
                                                     </div>
                                                 </label>
                                             @endforeach
@@ -1010,6 +1502,7 @@
                         @if($type === 'reorder')
                             <div class="answer-section">
                                 <h3 class="section-title">Sentence Reordering</h3>
+                                
                                 <div class="info-banner">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -1133,7 +1626,7 @@
                                     </label>
                                     <textarea name="answer" rows="6" class="essay-textarea" 
                                         @if(!$isSpeakingSubject) required @endif
-                                        placeholder="@if($isSpeakingSubject)Write your response here (required if no audio/video file is uploaded)...@elseWrite your detailed response here...@endif">{{ old('answer', is_array($answer) ? implode(' ', $answer) : $answer) }}</textarea>
+                                        placeholder="@if($isSpeakingSubject)Write your response here (required if no audio/video file is uploaded)...@elseWrite your detailed response here...@endif">{{ old('answer', isset($existingAnswer) && $existingAnswer ? (is_array($existingAnswer->answer_data) ? implode(' ', $existingAnswer->answer_data) : $existingAnswer->answer_data) : (is_array($answer) ? implode(' ', $answer) : $answer)) }}</textarea>
                                     <div class="character-info">
                                         <span class="char-count">0 characters</span>
                                     </div>
@@ -1508,6 +2001,7 @@
                                 @php
                                     $paragraph = $question->audio_fill_paragraph ?? $question->picture_fill_paragraph ?? $question->video_fill_paragraph ?? $qdata['paragraph'] ?? '';
                                     $blanks = preg_match_all('/___/', $paragraph, $matches);
+                                    $options = $qdata['options'] ?? []; // ADD THIS LINE
                                 @endphp
                                 
                                 <div class="paragraph-display-card">
@@ -1527,6 +2021,18 @@
                                         @endfor
                                     </div>
                                 @endif
+                                
+                                <!-- ADD THIS OPTIONS REFERENCE SECTION -->
+                                @if($options)
+                                    <div class="options-reference-card">
+                                        <h4 class="options-title">Available Options:</h4>
+                                        <div class="options-tags">
+                                            @foreach($options as $option)
+                                                <span class="option-tag">{{ $option }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         @endif
 
@@ -1537,7 +2043,7 @@
                                 $showViewModeButtons = $isViewMode && 
                                     (!isset($test) || 
                                      (isset($test) && isset($submittedAnswer) && !empty($submittedAnswer) && 
-                                      isset($submittedAnswer['answer_data']) && $submittedAnswer['answer_data'] !== null && $submittedAnswer['answer_data'] !== ''));
+                                      null !== ($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null) && ($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null) !== null && ($submittedAnswer->answer_data ?? $submittedAnswer['answer_data'] ?? null) !== ''));
                                 
                                 // Show submit button if not in view mode, not read only, and not showing view mode buttons
                                 $showSubmitButton = !$showViewModeButtons && !$isReadOnly;
@@ -1681,6 +2187,82 @@
     font-size: 0.875rem;
 }
 
+/* Explanation Text */
+.explanation-text-section {
+    margin-top: 1rem;
+}
+
+.explanation-card {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #f59e0b;
+    transition: all 0.3s ease;
+}
+
+.explanation-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -4px rgba(245, 158, 11, 0.3);
+}
+
+.explanation-title {
+    font-weight: 600;
+    color: #92400e;
+    margin: 0 0 0.25rem 0;
+    font-size: 0.875rem;
+}
+
+.explanation-text {
+    color: #78350f;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* Audio and Video Players */
+.audio-player-section,
+.video-player-section {
+    margin-top: 0.5rem;
+}
+
+.audio-player,
+.video-player {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.audio-player {
+    height: 40px;
+}
+
+.video-player {
+    max-height: 300px;
+}
+
+.audio-player::-webkit-media-controls-panel {
+    background-color: #f8fafc;
+}
+
+.audio-player::-webkit-media-controls-play-button {
+    background-color: #3b82f6;
+    border-radius: 50%;
+}
+
+.audio-player::-webkit-media-controls-play-button:hover {
+    background-color: #2563eb;
+}
+
+.video-player::-webkit-media-controls-panel {
+    background-color: #f8fafc;
+}
+
 /* Answer Sections */
 .answer-section {
     margin-bottom: 2rem;
@@ -1738,7 +2320,8 @@
     cursor: pointer;
 }
 
-.mcq-radio {
+.mcq-radio,
+.mcq-checkbox {
     display: none;
 }
 
@@ -1759,10 +2342,17 @@
     box-shadow: 0 4px 12px -4px rgba(59, 130, 246, 0.2);
 }
 
-.mcq-option-item:has(.mcq-radio:checked) .option-card {
+.mcq-option-item:has(.mcq-radio:checked) .option-card,
+.mcq-option-item:has(.mcq-checkbox:checked) .option-card {
     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.mcq-option-item:has(.mcq-checkbox:checked) .selection-mark {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
 }
 
 .option-indicator {
@@ -1798,7 +2388,8 @@
     transition: all 0.3s ease;
 }
 
-.mcq-option-item:has(.mcq-radio:checked) .selection-mark {
+.mcq-option-item:has(.mcq-radio:checked) .selection-mark,
+.mcq-option-item:has(.mcq-checkbox:checked) .selection-mark {
     background: #10b981;
     border-color: #10b981;
     color: white;
@@ -1815,7 +2406,13 @@
 }
 
 .checkbox-input {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
 }
 
 .checkbox-card {
@@ -1833,7 +2430,8 @@
     box-shadow: 0 2px 8px -2px rgba(59, 130, 246, 0.2);
 }
 
-.checkbox-option-item:has(.checkbox-input:checked) .checkbox-card {
+.checkbox-option-item:has(.checkbox-input:checked) .checkbox-card,
+.mcq-option-item:has(.mcq-checkbox:checked) .option-card {
     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     border-color: #3b82f6;
 }
@@ -1851,7 +2449,8 @@
     flex-shrink: 0;
 }
 
-.checkbox-option-item:has(.checkbox-input:checked) .checkbox-indicator {
+.checkbox-option-item:has(.checkbox-input:checked) .checkbox-indicator,
+.mcq-option-item:has(.mcq-checkbox:checked) .selection-mark {
     background: #3b82f6;
     border-color: #3b82f6;
     color: white;
@@ -1863,7 +2462,8 @@
     transition: all 0.3s ease;
 }
 
-.checkbox-option-item:has(.checkbox-input:checked) .checkmark {
+.checkbox-option-item:has(.checkbox-input:checked) .checkmark,
+.mcq-option-item:has(.mcq-checkbox:checked) .selection-mark svg {
     opacity: 1;
     transform: scale(1);
 }
@@ -4107,7 +4707,7 @@ document.addEventListener('DOMContentLoaded', function() {
             @if($type === 'mcq_multiple')
                 @foreach($viewModeAnswerData as $subIdx => $selectedOptions)
                     @foreach($selectedOptions as $optIdx)
-                        const multiOptionInput = document.querySelector(`input[name="answer[{{ $subIdx }}][]"][value="{{ $optIdx }}"]`);
+                        const multiOptionInput = document.querySelector(`input[name="answer[${subIdx}][]"][value="${optIdx}"]`);
                         if (multiOptionInput) {
                             multiOptionInput.checked = true;
                             multiOptionInput.closest('.checkbox-option-item').classList.add('submitted-answer');
@@ -4128,7 +4728,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // True/False Multiple
             @if($type === 'true_false_multiple')
                 @foreach($viewModeAnswerData as $statementIdx => $answer)
-                    const tfMultiInput = document.querySelector(`input[name="answer[{{ $statementIdx }}]"][value="{{ $answer }}"]`);
+                    const tfMultiInput = document.querySelector(`input[name="answer[${statementIdx}]"][value="{{ $answer }}"]`);
                     if (tfMultiInput) {
                         tfMultiInput.checked = true;
                         tfMultiInput.closest('.tf-option-item').classList.add('submitted-answer');
@@ -4139,7 +4739,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fill in Blanks
             @if($type === 'form_fill')
                 @foreach($viewModeAnswerData as $blankIdx => $blankAnswer)
-                    const blankInput = document.querySelector(`input[name="answer[{{ $blankIdx }}]"]`);
+                    const blankInput = document.querySelector(`input[name="answer[${blankIdx}]"]`);
                     if (blankInput) {
                         blankInput.value = "{{ $blankAnswer }}";
                         blankInput.classList.add('submitted-answer');
@@ -4150,7 +4750,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Statement Match
             @if($type === 'statement_match')
                 @foreach($viewModeAnswerData as $itemIdx => $matchedItemIndex)
-                    const matchInput = document.querySelector(`input[name="answer[{{ $itemIdx }}]"]`);
+                    const matchInput = document.querySelector(`input[name="answer[${itemIdx}]"]`);
                     if (matchInput) {
                         matchInput.value = "{{ $matchedItemIndex }}";
                         matchInput.classList.add('submitted-answer');
@@ -4161,7 +4761,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Picture MCQ / Audio Image Text
             @if($type === 'picture_mcq' || $type === 'audio_image_text_single' || $type === 'audio_image_text_multiple')
                 @foreach($viewModeAnswerData as $imageIdx => $selectedOptionIndex)
-                    const imageSelect = document.querySelector(`select[name="answer[{{ $imageIdx }}]"]`);
+                    const imageSelect = document.querySelector(`select[name="answer[${imageIdx}]"]`);
                     if (imageSelect) {
                         imageSelect.value = "{{ $selectedOptionIndex }}";
                         imageSelect.classList.add('submitted-answer');
@@ -4172,7 +4772,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Audio Picture Match
             @if($type === 'audio_picture_match')
                 @foreach($viewModeAnswerData as $audioIdx => $imageIndex)
-                    const audioSelect = document.querySelector(`select[name="answer[{{ $audioIdx }}]"]`);
+                    const audioSelect = document.querySelector(`select[name="answer[${audioIdx}]"]`);
                     if (audioSelect) {
                         audioSelect.value = "{{ $imageIndex }}";
                         audioSelect.classList.add('submitted-answer');
@@ -4346,18 +4946,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateOptionVisuals() {
         console.log('Updating option visuals...');
         
-        // MCQ Single options
+        // Handle ALL .mcq-option-item elements (both radio and checkbox)
         const mcqOptions = form.querySelectorAll('.mcq-option-item');
         console.log('Found MCQ options:', mcqOptions.length);
         
         mcqOptions.forEach((option, index) => {
             const radio = option.querySelector('input[type="radio"]');
+            const checkbox = option.querySelector('input[type="checkbox"]');
+            const input = radio || checkbox;
             const optionCard = option.querySelector('.option-card');
             const selectionMark = option.querySelector('.selection-mark');
             
-            console.log(`Option ${index}: radio=${radio ? radio.checked : 'not found'}`);
+            console.log(`Option ${index}: radio=${radio ? radio.checked : 'none'}, checkbox=${checkbox ? checkbox.checked : 'none'}`);
             
-            if (radio && radio.checked) {
+            if (input && input.checked) {
                 console.log(`Selecting option ${index}`);
                 option.classList.add('selected');
                 option.style.cssText = 'background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important; border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;';
@@ -4378,43 +4980,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 if (selectionMark) {
                     selectionMark.style.cssText = '';
-                }
-            }
-        });
-        
-        // MCQ Multiple options
-        const checkboxOptions = form.querySelectorAll('.checkbox-option-item');
-        checkboxOptions.forEach((option, index) => {
-            const checkbox = option.querySelector('input[type="checkbox"]');
-            const checkboxCard = option.querySelector('.checkbox-card');
-            const checkboxIndicator = option.querySelector('.checkbox-indicator');
-            const checkmark = option.querySelector('.checkmark');
-            
-            if (checkbox && checkbox.checked) {
-                option.classList.add('selected');
-                option.style.cssText = 'background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important; border-color: #3b82f6 !important;';
-                
-                if (checkboxCard) {
-                    checkboxCard.style.cssText = 'background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important; border-color: #3b82f6 !important;';
-                }
-                if (checkboxIndicator) {
-                    checkboxIndicator.style.cssText = 'background: #3b82f6 !important; border-color: #3b82f6 !important; color: white !important;';
-                }
-                if (checkmark) {
-                    checkmark.style.cssText = 'opacity: 1 !important; transform: scale(1) !important;';
-                }
-            } else {
-                option.classList.remove('selected');
-                option.style.cssText = '';
-                
-                if (checkboxCard) {
-                    checkboxCard.style.cssText = '';
-                }
-                if (checkboxIndicator) {
-                    checkboxIndicator.style.cssText = '';
-                }
-                if (checkmark) {
-                    checkmark.style.cssText = '';
                 }
             }
         });
@@ -4463,20 +5028,38 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('change', function() {
                 console.log('Input changed:', this.name, this.value, this.checked);
                 updateOptionVisuals();
+                hideValidationError();
             });
             input.addEventListener('click', function() {
                 console.log('Input clicked:', this.name, this.value, this.checked);
                 setTimeout(updateOptionVisuals, 1);
+                hideValidationError();
             });
             input.addEventListener('input', function() {
                 console.log('Input input event:', this.name, this.value, this.checked);
                 setTimeout(updateOptionVisuals, 1);
+                hideValidationError();
             });
         } else {
-            input.addEventListener('change', updateOptionVisuals);
-            input.addEventListener('input', updateOptionVisuals);
+            input.addEventListener('change', function() {
+                updateOptionVisuals();
+                hideValidationError();
+            });
+            input.addEventListener('input', function() {
+                updateOptionVisuals();
+                hideValidationError();
+            });
         }
     });
+    
+    // Function to hide validation error banner
+    function hideValidationError() {
+        const jsErrorBanner = document.getElementById('js-validation-error');
+        if (jsErrorBanner) {
+            jsErrorBanner.classList.add('hidden');
+            jsErrorBanner.style.display = 'none';
+        }
+    }
     
     // Add click handlers with immediate visual feedback - FIXED VERSION
     const mcqOptions = form.querySelectorAll('.mcq-option-item');
@@ -4574,6 +5157,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('✅ SUCCESS: Radio is properly checked');
                 }
             }, 100);
+            
+            hideValidationError();
         });
     });
     
@@ -4613,59 +5198,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             }
+            
+            hideValidationError();
         });
     });
     
-    // Remove the old updateOptionVisuals function calls and replace with direct styling
-    const checkboxOptions = form.querySelectorAll('.checkbox-option-item');
-    checkboxOptions.forEach((option, index) => {
+    // UNIFIED MCQ handling for both single (radio) and multiple (checkbox)
+    const mcqOptions = form.querySelectorAll('.mcq-option-item');
+    console.log('Setting up unified MCQ options:', mcqOptions.length);
+
+    mcqOptions.forEach((option, index) => {
         option.addEventListener('click', function(e) {
             // Don't trigger if clicking directly on the input
-            if (e.target.type === 'checkbox') return;
+            if (e.target.type === 'radio' || e.target.type === 'checkbox') {
+                console.log('Clicked directly on input, letting it handle itself');
+                return;
+            }
             
-            console.log(`Checkbox Option ${index} clicked`);
+            const radio = this.querySelector('input[type="radio"]');
             const checkbox = this.querySelector('input[type="checkbox"]');
-            if (checkbox && !checkbox.disabled) {
-                checkbox.checked = !checkbox.checked;
-                console.log('Checkbox state:', checkbox.checked);
-                
-                // Immediate visual styling
-                if (checkbox.checked) {
-                    this.style.cssText = 'background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important; border-color: #3b82f6 !important;';
+            const input = radio || checkbox;
+            
+            console.log('Found input:', input?.type, 'checked:', input?.checked);
+            
+            if (input && !input.disabled) {
+                if (radio) {
+                    // For radio buttons, clear all others in the same group first
+                    const allRadios = form.querySelectorAll(`input[name="${radio.name}"]`);
+                    allRadios.forEach(r => {
+                        r.checked = false;
+                        const parentOpt = r.closest('.mcq-option-item');
+                        if (parentOpt) {
+                            parentOpt.classList.remove('selected');
+                        }
+                    });
+                    
+                    // Set this radio to checked
+                    radio.checked = true;
                     this.classList.add('selected');
                     
-                    const checkboxCard = this.querySelector('.checkbox-card');
-                    const checkboxIndicator = this.querySelector('.checkbox-indicator');
-                    const checkmark = this.querySelector('.checkmark');
+                } else if (checkbox) {
+                    // For checkboxes, just toggle the state
+                    checkbox.checked = !checkbox.checked;
                     
-                    if (checkboxCard) {
-                        checkboxCard.style.cssText = 'background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important; border-color: #3b82f6 !important;';
+                    if (checkbox.checked) {
+                        this.classList.add('selected');
+                    } else {
+                        this.classList.remove('selected');
                     }
-                    if (checkboxIndicator) {
-                        checkboxIndicator.style.cssText = 'background: #3b82f6 !important; border-color: #3b82f6 !important; color: white !important;';
-                    }
-                    if (checkmark) {
-                        checkmark.style.cssText = 'opacity: 1 !important; transform: scale(1) !important;';
-                    }
-                } else {
-                    this.style.cssText = '';
-                    this.classList.remove('selected');
-                    
-                    const checkboxCard = this.querySelector('.checkbox-card');
-                    const checkboxIndicator = this.querySelector('.checkbox-indicator');
-                    const checkmark = this.querySelector('.checkmark');
-                    
-                    if (checkboxCard) checkboxCard.style.cssText = '';
-                    if (checkboxIndicator) checkboxIndicator.style.cssText = '';
-                    if (checkmark) checkmark.style.cssText = '';
                 }
                 
-                // Trigger events
-                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-                checkbox.dispatchEvent(new Event('input', { bubbles: true }));
+                // Update visuals and trigger events
+                updateOptionVisuals();
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                hideValidationError();
+                
+                console.log(`Updated input state: checked=${input.checked}`);
             }
         });
     });
+    
+    // Note: updateMCQVisuals function removed - now using unified updateOptionVisuals()
     
     const tfOptions = form.querySelectorAll('.tf-option-item');
     tfOptions.forEach((option, index) => {
@@ -4715,6 +5308,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Trigger events
                 radio.dispatchEvent(new Event('change', { bubbles: true }));
                 radio.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                hideValidationError();
             }
         });
     });
@@ -4764,31 +5359,90 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
+    // Add test function to manually test checkboxes
+    window.testCheckbox = function(subIndex, optionIndex) {
+        const checkbox = document.querySelector(`input[name="answer[${subIndex}][]"][value="${optionIndex}"]`);
+        if (checkbox) {
+            console.log('Manually toggling checkbox:', checkbox.name, checkbox.value);
+            checkbox.checked = !checkbox.checked;
+            console.log('Checkbox state:', checkbox.checked);
+            
+            // Update visuals using the unified function
+            updateOptionVisuals();
+            
+            // Force a CSS update
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            
+            // Log the visual state
+            const option = checkbox.closest('.mcq-option-item');
+            if (option) {
+                const optionCard = option.querySelector('.option-card');
+                const selectionMark = option.querySelector('.selection-mark');
+                console.log('Visual state after toggle:');
+                console.log('- Option card background:', optionCard ? getComputedStyle(optionCard).background : 'none');
+                console.log('- Selection mark background:', selectionMark ? getComputedStyle(selectionMark).background : 'none');
+                console.log('- Option selected class:', option.classList.contains('selected'));
+            }
+        } else {
+            console.log('Checkbox not found:', `answer[${subIndex}][]`, optionIndex);
+        }
+    };
+    
+    // Add debug function to check selection states
+    window.debugSelection = function() {
+        console.log('=== DEBUG SELECTION STATES ===');
+        const mcqOptions = document.querySelectorAll('.mcq-option-item');
+        mcqOptions.forEach((option, index) => {
+            const radio = option.querySelector('input[type="radio"]');
+            const checkbox = option.querySelector('input[type="checkbox"]');
+            const input = radio || checkbox;
+            
+            console.log(`Option ${index}:`, {
+                hasRadio: radio !== null,
+                hasCheckbox: checkbox !== null,
+                inputType: input ? input.type : 'none',
+                inputName: input ? input.name : 'none',
+                inputValue: input ? input.value : 'none',
+                inputChecked: input ? input.checked : 'none',
+                optionSelected: option.classList.contains('selected'),
+                optionBackground: getComputedStyle(option).background
+            });
+        });
+    };
+    
     console.log('Debug functions added:');
     console.log('- debugRadios() - check all radio states');
     console.log('- testRadio(0) - manually set first radio (0,1,2,3)');
+    console.log('- testCheckbox(0, 0) - manually toggle first checkbox of first sub-question');
     
     submitButton.addEventListener('click', function(e) {
-        if (!validateForm()) {
+        const isValid = validateForm();
+        console.log('Form validation result:', isValid);
+        
+        if (!isValid) {
             e.preventDefault();
             
-            // Show validation error
-            let errorBanner = document.querySelector('.validation-error');
-            if (errorBanner) {
-                errorBanner.style.display = 'block';
-            } else {
-                const newErrorBanner = document.createElement('div');
-                newErrorBanner.className = 'validation-error bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative mb-4';
-                newErrorBanner.innerHTML = `
-                    <strong class="font-bold">Please complete all required fields!</strong>
-                    <span class="block sm:inline">Make sure you have selected an answer for all questions.</span>
-                `;
-                form.insertBefore(newErrorBanner, form.firstChild);
+            // Show JavaScript validation error banner
+            const jsErrorBanner = document.getElementById('js-validation-error');
+            if (jsErrorBanner) {
+                jsErrorBanner.classList.remove('hidden');
+                jsErrorBanner.style.display = 'block';
             }
             
             // Scroll to top to show error
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return false;
         }
+        
+        // Hide error banner if form is valid
+        const jsErrorBanner = document.getElementById('js-validation-error');
+        if (jsErrorBanner) {
+            jsErrorBanner.classList.add('hidden');
+            jsErrorBanner.style.display = 'none';
+        }
+        
+        // If valid, allow form submission
+        console.log('Form is valid, allowing submission');
     });
     });
     
@@ -4823,6 +5477,58 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Form CSRF token value:', formToken.value);
             console.log('Form CSRF token length:', formToken.value.length);
         }
+        
+                    // Debug MCQ Multiple checkboxes
+        const questionType = '{{ $type }}';
+        console.log('Question type:', questionType);
+        
+        if (questionType === 'mcq_multiple') {
+            console.log('=== MCQ MULTIPLE DEBUG ===');
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            console.log('Total checkboxes found:', checkboxes.length);
+            
+            checkboxes.forEach((checkbox, index) => {
+                console.log(`Checkbox ${index}:`, {
+                    name: checkbox.name,
+                    value: checkbox.value,
+                    checked: checkbox.checked,
+                    disabled: checkbox.disabled,
+                    visible: checkbox.offsetParent !== null
+                });
+                
+                // Add a visual indicator to show the checkbox is found
+                const option = checkbox.closest('.mcq-option-item');
+                if (option) {
+                    option.style.border = '2px solid #10b981';
+                    option.style.backgroundColor = '#f0fdf4';
+                    console.log(`Checkbox ${index} is properly connected to option element`);
+                } else {
+                    console.log(`Checkbox ${index} is NOT connected to an option element`);
+                }
+            });
+            
+            const mcqOptions = document.querySelectorAll('.mcq-option-item');
+            console.log('MCQ option items found:', mcqOptions.length);
+            
+            mcqOptions.forEach((option, index) => {
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                const radio = option.querySelector('input[type="radio"]');
+                const input = checkbox || radio;
+                console.log(`MCQ option ${index}:`, {
+                    element: option,
+                    hasInput: input !== null,
+                    inputType: input ? input.type : 'none',
+                    inputName: input ? input.name : 'none',
+                    inputValue: input ? input.value : 'none'
+                });
+                
+                if (!input) {
+                    option.style.border = '2px solid #ef4444';
+                    option.style.backgroundColor = '#fef2f2';
+                    console.log(`Option ${index} is missing input`);
+                }
+            });
+        }
     });
     
     // Form submission handler
@@ -4845,65 +5551,53 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Form validation passed, proceeding with submission');
             
-            // CRITICAL: Refresh CSRF token before submission
-            e.preventDefault(); // Prevent default submission
-            
-            // Make a request to refresh the CSRF token
-            fetch(window.location.href, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                console.log('CSRF refresh response status:', response.status);
+            // For MCQ Multiple, ensure all checkboxes are properly included
+            const questionType = '{{ $type }}';
+            if (questionType === 'mcq_multiple') {
+                console.log('Processing MCQ Multiple form data...');
+                const formData = new FormData(window.form);
                 
-                // Get fresh CSRF token from meta tag
-                const freshCsrfToken = document.querySelector('meta[name="csrf-token"]');
-                console.log('Fresh CSRF token:', freshCsrfToken ? freshCsrfToken.content : 'Not found');
-                
-                if (freshCsrfToken && freshCsrfToken.content) {
-                    // Update form CSRF token
-                    let hiddenTokenInput = window.form.querySelector('input[name="_token"]');
-                    if (!hiddenTokenInput) {
-                        hiddenTokenInput = document.createElement('input');
-                        hiddenTokenInput.type = 'hidden';
-                        hiddenTokenInput.name = '_token';
-                        window.form.appendChild(hiddenTokenInput);
-                    }
-                    
-                    hiddenTokenInput.value = freshCsrfToken.content;
-                    console.log('Updated CSRF token in form:', hiddenTokenInput.value);
-                    
-                    // Log form data for debugging
-                    const formData = new FormData(window.form);
-                    console.log('Form data being submitted:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`);
-                    }
-                    
-                    // Show loading state
-                    const submitButton = window.form.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.innerHTML = 'Submitting...';
-                        submitButton.style.opacity = '0.7';
-                    }
-                    
-                    // Now submit the form
-                    console.log('Submitting form with fresh CSRF token...');
-                    window.form.submit();
-                } else {
-                    console.error('Failed to get fresh CSRF token');
-                    alert('Failed to refresh security token. Please refresh the page and try again.');
+                // Log all form data for debugging
+                console.log('Form data before submission:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
                 }
-            })
-            .catch(error => {
-                console.error('Error refreshing CSRF token:', error);
-                alert('Network error. Please check your connection and try again.');
-            });
+                
+                // Ensure all checked checkboxes are included
+                const checkedCheckboxes = window.form.querySelectorAll('input[type="checkbox"]:checked');
+                console.log('Checked checkboxes found:', checkedCheckboxes.length);
+                checkedCheckboxes.forEach((checkbox, index) => {
+                    console.log(`Checkbox ${index}: name=${checkbox.name}, value=${checkbox.value}`);
+                });
+                
+                // Also log all checkboxes to see their state
+                const allCheckboxes = window.form.querySelectorAll('input[type="checkbox"]');
+                console.log('All checkboxes state:');
+                allCheckboxes.forEach((checkbox, index) => {
+                    console.log(`Checkbox ${index}: name=${checkbox.name}, value=${checkbox.value}, checked=${checkbox.checked}`);
+                });
+                
+                // Log all MCQ options to see their state
+                const allMCQOptions = window.form.querySelectorAll('.mcq-option-item');
+                console.log('All MCQ options state:');
+                allMCQOptions.forEach((option, index) => {
+                    const checkbox = option.querySelector('input[type="checkbox"]');
+                    const radio = option.querySelector('input[type="radio"]');
+                    const input = checkbox || radio;
+                    console.log(`MCQ Option ${index}: type=${input ? input.type : 'none'}, name=${input ? input.name : 'none'}, value=${input ? input.value : 'none'}, checked=${input ? input.checked : 'none'}`);
+                });
+            }
+            
+            // Show loading state
+            const submitButton = window.form.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Submitting...';
+                submitButton.style.opacity = '0.7';
+            }
+            
+            // Allow form to submit normally
+            console.log('Form is valid, submitting...');
         });
     }
   </script>

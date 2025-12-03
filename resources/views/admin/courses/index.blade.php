@@ -78,7 +78,7 @@
 .modern-btn-danger { background: #fee2e2; color: #b91c1c; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.95rem; }
 .modern-btn-danger:hover { background: #fecaca; }
 .modern-card-list { display: flex; flex-direction: column; gap: 1.5rem; }
-.modern-card { background: #fff; border-radius: 1rem; box-shadow: 0 2px 8px 0 #0001; padding: 1.5rem; }
+.modern-card { background: #000000; border-radius: 1rem; box-shadow: 0 2px 8px 0 #0001; padding: 1.5rem; }
 .modern-alert-success { background: #dcfce7; color: #166534; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; }
 .modern-alert-info { background: #e0e7ff; color: #3730a3; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; }
 .modern-accordion { margin-top: 1rem; }

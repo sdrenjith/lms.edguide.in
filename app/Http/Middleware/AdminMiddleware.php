@@ -16,11 +16,12 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            if (auth()->user()->role === 'admin' || auth()->user()->role === 'teacher') {
+            $userRole = strtolower(auth()->user()->role);
+            if ($userRole === 'admin' || $userRole === 'teacher' || $userRole === 'accounts' || $userRole === 'dataentry' || $userRole === 'manager') {
                 return $next($request);
             }
 
-            if (auth()->user()->role === 'student') {
+            if ($userRole === 'student') {
                 return redirect()->route('filament.student.pages.dashboard');
             }
             

@@ -12,6 +12,11 @@ class ListSubjects extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            Actions\CreateAction::make()
+                ->label('Create Subject')
+                ->icon('heroicon-o-plus')
+                ->color('primary'),
+        ];
     }
 }

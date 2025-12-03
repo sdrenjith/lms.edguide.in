@@ -15,8 +15,8 @@ class SpeakingSessionResource extends Resource
 {
     protected static ?string $model = SpeakingSession::class;
     protected static ?string $navigationIcon = 'heroicon-o-microphone';
-    protected static ?string $label = 'Speaking Session';
-    protected static ?string $pluralLabel = 'Speaking Sessions';
+    protected static ?string $label = 'Live Class';
+    protected static ?string $pluralLabel = 'Live Classes';
 
     public static function form(Form $form): Form
     {
@@ -26,6 +26,11 @@ class SpeakingSessionResource extends Resource
                     ->schema([
                         Components\Grid::make(2)
                             ->schema([
+                                Components\Select::make('batch_id')
+                                    ->label('Batch')
+                                    ->options(\App\Models\Batch::all()->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->required(),
                                 Components\TextInput::make('gmeet_link')
                                     ->label('GMeet Link')
                                     ->required(),
@@ -54,6 +59,10 @@ class SpeakingSessionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('batch.name')
+                    ->label('Batch')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('gmeet_link')
                     ->label('GMeet Link')
                     ->wrap()
@@ -74,7 +83,10 @@ class SpeakingSessionResource extends Resource
             ])
             ->defaultSort('session_date', 'desc')
             ->filters([
-                // Add filters if needed
+                Tables\Filters\SelectFilter::make('batch_id')
+                    ->label('Batch')
+                    ->options(\App\Models\Batch::all()->pluck('name', 'id'))
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -97,7 +109,8 @@ class SpeakingSessionResource extends Resource
     }
 
     public static function shouldRegisterNavigation(): bool {
-        return true;
+        // Show for admin and teacher users
+        return auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isTeacher());
     }
 
     public static function canCreate(): bool {

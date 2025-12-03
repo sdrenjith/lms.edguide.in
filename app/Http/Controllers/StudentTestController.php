@@ -145,6 +145,9 @@ class StudentTestController extends Controller
         $score = null;
         $result = null;
         $earnedPoints = 0;
+        $totalPoints = $test->total_score; // Always define totalPoints
+        $passmark = $test->passmark; // Always define passmark
+        $percentage = 0; // Initialize percentage
         
         if (!$hasOpinion || $allOpinionVerified) {
             // Calculate earned points from correct answers
@@ -166,8 +169,6 @@ class StudentTestController extends Controller
             }
             
             $score = $earnedPoints; // Use earned points
-            $totalPoints = $test->total_score; // Use test's total_score from admin panel
-            $passmark = $test->passmark; // Use test's passmark from admin panel
             
             // Calculate percentage for display purposes
             $percentage = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
@@ -366,6 +367,36 @@ class StudentTestController extends Controller
             case 'form_fill':
                 $rules = ['answer' => 'required|array'];
                 break;
+            case 'audio_mcq_single':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'picture_mcq':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'audio_image_text_single':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'audio_image_text_multiple':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'audio_picture_match':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'audio_fill_blank':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'picture_fill_blank':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'video_fill_blank':
+                $rules = ['answer' => 'required|array'];
+                break;
+            case 'reorder':
+                $rules = ['answer' => 'required'];
+                break;
+            case 'statement_match':
+                $rules = ['answer' => 'required|array'];
+                break;
             case 'opinion':
                 $rules = [
                     'answer' => $isSpeakingSubject ? 'nullable' : 'required_without:audio_video_file',
@@ -405,7 +436,20 @@ class StudentTestController extends Controller
         $questionType = $question->questionType->name ?? '';
         
         // Ensure array for multi-answer types
-        $multiTypes = ['mcq_multiple', 'true_false_multiple', 'form_fill', 'reorder', 'statement_match'];
+        $multiTypes = [
+            'mcq_multiple', 
+            'true_false_multiple', 
+            'form_fill', 
+            'statement_match',
+            'audio_mcq_single',
+            'picture_mcq',
+            'audio_image_text_single',
+            'audio_image_text_multiple',
+            'audio_picture_match',
+            'audio_fill_blank',
+            'picture_fill_blank',
+            'video_fill_blank'
+        ];
         
         // Special handling for MCQ Single to ensure numeric index
         if ($questionType === 'mcq_single') {
@@ -470,21 +514,35 @@ class StudentTestController extends Controller
                 $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);
                 $fragments = $question->reorder_fragments ?? $questionData['fragments'] ?? [];
                 $correctSentence = $question->reorder_answer_key ?? '';
-                $studentOrder = is_array($studentAnswer) ? implode('', $studentAnswer) : $studentAnswer;
-                $studentOrder = str_replace([',', ' '], '', trim($studentOrder));
+                
+                // Parse student answer (numeric indices like "1,2,3,4" or "1, 2, 3, 4")
+                $studentOrder = is_array($studentAnswer) ? implode(',', $studentAnswer) : $studentAnswer;
+                $studentOrder = trim($studentOrder);
+                
+                // Convert student's numeric order to actual text sequence
                 $studentSequence = '';
-                if (!empty($fragments)) {
+                if (!empty($fragments) && !empty($studentOrder)) {
+                    // Split by comma and clean up
+                    $orderArray = array_map('trim', explode(',', $studentOrder));
+                    $orderArray = array_filter($orderArray, function($item) {
+                        return !empty($item) && is_numeric($item);
+                    });
+                    
                     $studentFragments = [];
-                    for ($i = 0; $i < strlen($studentOrder); $i++) {
-                        $index = (int)$studentOrder[$i] - 1;
+                    foreach ($orderArray as $orderNum) {
+                        $index = (int)$orderNum - 1; // Convert to 0-based
                         if (isset($fragments[$index])) {
                             $studentFragments[] = $fragments[$index];
                         }
                     }
                     $studentSequence = implode(' ', $studentFragments);
                 }
+                
+                // Compare the student's reconstructed sentence with the correct sentence
+                // Normalize by removing extra spaces, punctuation differences, and converting to lowercase
                 $studentNormalized = preg_replace('/[^\w\s]/u', '', preg_replace('/\s+/', ' ', strtolower(trim($studentSequence))));
                 $correctNormalized = preg_replace('/[^\w\s]/u', '', preg_replace('/\s+/', ' ', strtolower(trim($correctSentence))));
+                
                 return $studentNormalized === $correctNormalized;
             case 'statement_match':
                 $correctPairs = $question->correct_pairs ?? [];
@@ -533,15 +591,31 @@ class StudentTestController extends Controller
             case 'audio_image_text_multiple':
                 $correctPairs = $correctAnswer['correct_pairs'] ?? [];
                 $studentPairs = is_array($studentAnswer) ? $studentAnswer : [];
+                
+                // Check if all required matches are made
                 $allMatched = true;
                 foreach ($correctPairs as $correctPair) {
                     $leftIndex = $correctPair['left'] ?? '';
                     $rightIndex = $correctPair['right'] ?? '';
-                    if (!isset($studentPairs[$leftIndex]) || $studentPairs[$leftIndex] != $rightIndex) {
+                    
+                    // Handle both associative and sequential arrays
+                    $studentImageIndex = null;
+                    if (isset($studentPairs[$leftIndex])) {
+                        $studentImageIndex = $studentPairs[$leftIndex];
+                    } elseif (isset($studentPairs[(int)$leftIndex])) {
+                        $studentImageIndex = $studentPairs[(int)$leftIndex];
+                    }
+                    
+                    // Convert to string for comparison since form data might be strings
+                    $studentImageIndexStr = $studentImageIndex !== null ? (string)$studentImageIndex : '';
+                    $expectedImageIndex = (string)$rightIndex;
+                    
+                    if ($studentImageIndexStr !== $expectedImageIndex) {
                         $allMatched = false;
                         break;
                     }
                 }
+                
                 return $allMatched;
             case 'audio_mcq_single':
                 $questionData = is_string($question->question_data) ? json_decode($question->question_data, true) : ($question->question_data ?? []);

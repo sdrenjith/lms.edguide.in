@@ -1,15 +1,15 @@
 /* Custom CSS to fix Filament checkbox styling issues */
 
-/* Fix checkbox visual feedback */
+/* Fix checkbox visual feedback - EdGuide Theme */
 .filament-tables-checkbox-cell input[type="checkbox"]:checked {
-    background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
+    background-color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
     background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e") !important;
 }
 
 .filament-tables-checkbox-cell input[type="checkbox"]:checked:hover {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
 }
 
 .filament-tables-checkbox-cell input[type="checkbox"]:focus {
@@ -47,8 +47,8 @@
 }
 
 .custom-checkbox:checked ~ .custom-checkbox-label {
-    background-color: #3b82f6;
-    border-color: #3b82f6;
+    background-color: #14b8a6;
+    border-color: #14b8a6;
 }
 
 .custom-checkbox:checked ~ .custom-checkbox-label::after {
@@ -76,8 +76,8 @@
 }
 
 .filament-tables-checkbox-cell input[type="checkbox"]:checked:hover {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
 }
 
 /* Fix for indeterminate state (select all) */
@@ -85,4 +85,513 @@
     background-color: #6b7280 !important;
     border-color: #6b7280 !important;
     background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3 8h10a1 1 0 010 2H3a1 1 0 010-2z'/%3e%3c/svg%3e") !important;
+}
+
+/* Improved spacing for fee management interface */
+.filament-main-content {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+}
+
+/* Stats overview widget spacing */
+.filament-widgets-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Table container spacing */
+.filament-tables-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Widget spacing */
+.filament-widget {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Page header spacing */
+.filament-page-header {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Search and filters spacing */
+.filament-tables-filters-form {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Table content spacing */
+.filament-tables-table {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+}
+
+/* Pagination spacing */
+.filament-tables-pagination {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Specific spacing for fee management pages */
+.filament-resource-fees .filament-main-content {
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Stats cards spacing */
+.filament-stats-overview-widget .filament-stats-overview-widget-card {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+}
+
+/* Table widget spacing */
+.filament-widgets-container .filament-widget {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+}
+
+/* Content wrapper spacing */
+.filament-content {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Page wrapper spacing */
+.filament-page {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Responsive spacing */
+@media (min-width: 768px) {
+    .filament-main-content {
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
+    }
+    
+    .filament-resource-fees .filament-main-content {
+        padding-left: 3.5rem !important;
+        padding-right: 3.5rem !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .filament-main-content {
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+    }
+    
+    .filament-resource-fees .filament-main-content {
+        padding-left: 4.5rem !important;
+        padding-right: 4.5rem !important;
+    }
+}
+
+/* Ensure proper spacing for all content areas */
+.filament-app {
+    padding-left: 0.5rem !important;
+}
+
+.filament-main {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Fix left margin alignment for fee payments page */
+.filament-resource-fees .filament-page-header {
+    margin-left: 0 !important;
+    padding-left: 2rem !important;
+}
+
+/* Target the main content wrapper */
+.filament-resource-fees .filament-main-content {
+    padding-left: 2rem !important;
+}
+
+/* Target the widgets container specifically */
+.filament-resource-fees .filament-widgets-container {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+}
+
+/* Target the tables container specifically */
+.filament-resource-fees .filament-tables-container {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+}
+
+/* Ensure consistent left margin for all fee payment page content */
+.filament-resource-fees .filament-main-content > * {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+}
+
+/* Specific fix for stats overview widget - move it more rightwards */
+.filament-resource-fees .filament-stats-overview-widget {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+}
+
+/* Specific fix for table widget */
+.filament-resource-fees .filament-widgets-container .filament-widget {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+}
+
+/* Target the stats cards directly */
+.filament-resource-fees .filament-stats-overview-widget .filament-stats-overview-widget-card {
+    margin-left: 0 !important;
+    max-width: 250px !important;
+    width: 250px !important;
+}
+
+
+
+/* Reduce width of stats overview widget container */
+.filament-resource-fees .filament-stats-overview-widget {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+    max-width: calc(100% - 4rem) !important;
+    width: calc(100% - 4rem) !important;
+}
+
+/* Reduce width of widgets container */
+.filament-resource-fees .filament-widgets-container {
+    margin-left: 2rem !important;
+    padding-left: 4rem !important;
+    max-width: calc(100% - 6rem) !important;
+    width: calc(100% - 6rem) !important;
+}
+
+/* Target the table content directly */
+.filament-resource-fees .filament-tables-table {
+    margin-left: 0 !important;
+    max-width: calc(100% - 4rem) !important;
+    width: calc(100% - 4rem) !important;
+}
+
+/* Reduce width of tables container */
+.filament-resource-fees .filament-tables-container {
+    margin-left: 0 !important;
+    padding-left: 4rem !important;
+    max-width: calc(100% - 4rem) !important;
+    width: calc(100% - 4rem) !important;
+}
+
+/* Force left margin for all content */
+.filament-resource-fees .filament-main-content {
+    padding-left: 2rem !important;
+    margin-left: 2rem !important;
+}
+
+/* Additional spacing for the entire page */
+.filament-resource-fees {
+    padding-left: 2rem !important;
+    margin-left: 2rem !important;
+}
+
+/* Specific styling for Fee Stats Widget (only widget now) */
+.filament-resource-fees .filament-widgets-container .filament-widget:first-child {
+    margin-left: 6rem !important;
+    padding-left: 8rem !important;
+    max-width: calc(100% - 14rem) !important;
+    width: calc(100% - 14rem) !important;
+}
+
+
+
+/* Ensure stats cards are positioned at top with proper spacing */
+.filament-resource-fees .filament-stats-overview-widget {
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
+}
+
+/* ===== BULK ACTIONS STYLING FIXES ===== */
+.fi-ta-bulk-actions {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+    padding: 0.5rem !important;
+}
+
+.fi-ta-bulk-actions-button {
+    background-color: #f3f4f6 !important;
+    border: 1px solid #d1d5db !important;
+    color: #374151 !important;
+    border-radius: 6px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.fi-ta-bulk-actions-button:hover {
+    background-color: #e5e7eb !important;
+    border-color: #9ca3af !important;
+    color: #1f2937 !important;
+}
+
+.fi-ta-bulk-actions-dropdown {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    margin-top: 0.25rem !important;
+}
+
+.fi-ta-bulk-actions-item {
+    color: #374151 !important;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    transition: background-color 0.2s ease-in-out !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.fi-ta-bulk-actions-item:hover {
+    background-color: #f9fafb !important;
+    color: #1f2937 !important;
+}
+
+.fi-ta-bulk-actions-item:last-child {
+    border-bottom: none !important;
+}
+
+.fi-ta-bulk-actions-item svg {
+    color: #6b7280 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+}
+
+.fi-ta-bulk-actions-item:hover svg {
+    color: #374151 !important;
+}
+
+/* ===== USER DROPDOWN STYLING FIXES ===== */
+.fi-user-menu {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    padding: 0.5rem !important;
+    min-width: 12rem !important;
+}
+
+.fi-user-menu-item {
+    color: #374151 !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease-in-out !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    text-decoration: none !important;
+}
+
+.fi-user-menu-item:hover {
+    background-color: #f9fafb !important;
+    color: #1f2937 !important;
+}
+
+.fi-user-menu-item svg {
+    color: #6b7280 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+}
+
+.fi-user-menu-item:hover svg {
+    color: #374151 !important;
+}
+
+.fi-user-menu-signout {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    border: 1px solid #dc2626 !important;
+    margin-top: 0.5rem !important;
+}
+
+.fi-user-menu-signout:hover {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+.fi-user-menu-signout svg {
+    color: #ffffff !important;
+}
+
+/* ===== GENERAL DROPDOWN IMPROVEMENTS ===== */
+.fi-dropdown {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.fi-dropdown-item {
+    color: #374151 !important;
+    padding: 0.75rem 1rem !important;
+    transition: background-color 0.2s ease-in-out !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.fi-dropdown-item:hover {
+    background-color: #f9fafb !important;
+    color: #1f2937 !important;
+}
+
+.fi-dropdown-item svg {
+    color: #6b7280 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+}
+
+.fi-dropdown-item:hover svg {
+    color: #374151 !important;
+}
+
+
+
+/* Additional spacing for stats cards container */
+.filament-resource-fees .filament-widgets-container {
+    margin-left: 2rem !important;
+    padding-left: 4rem !important;
+}
+
+/* Specific override for stats overview widget container */
+.filament-resource-fees .filament-stats-overview-widget .filament-widgets-container {
+    margin-left: 2rem !important;
+    padding-left: 4rem !important;
+}
+
+/* Responsive adjustments for fee payments page */
+@media (min-width: 768px) {
+    .filament-resource-fees .filament-page-header {
+        padding-left: 3rem !important;
+    }
+    
+    .filament-resource-fees .filament-main-content {
+        padding-left: 3rem !important;
+        margin-left: 3rem !important;
+    }
+    
+    .filament-resource-fees .filament-widgets-container {
+        margin-left: 3rem !important;
+        padding-left: 5rem !important;
+        max-width: calc(100% - 8rem) !important;
+        width: calc(100% - 8rem) !important;
+    }
+    
+    .filament-resource-fees .filament-stats-overview-widget {
+        padding-left: 5rem !important;
+        max-width: calc(100% - 5rem) !important;
+        width: calc(100% - 5rem) !important;
+    }
+    
+    .filament-resource-fees .filament-stats-overview-widget .filament-stats-overview-widget-card {
+        max-width: 220px !important;
+        width: 220px !important;
+    }
+    
+
+    
+    .filament-resource-fees .filament-tables-container,
+    .filament-resource-fees .filament-main-content > * {
+        padding-left: 5rem !important;
+        max-width: calc(100% - 5rem) !important;
+        width: calc(100% - 5rem) !important;
+    }
+    
+    /* Batch summary widget responsive */
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child {
+        margin-left: 4rem !important;
+        padding-left: 6rem !important;
+        max-width: calc(100% - 10rem) !important;
+        width: calc(100% - 10rem) !important;
+    }
+    
+    /* Fee stats widget responsive (only widget now) */
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child {
+        margin-left: 8rem !important;
+        padding-left: 10rem !important;
+        max-width: calc(100% - 18rem) !important;
+        width: calc(100% - 18rem) !important;
+    }
+    
+
+    
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child .filament-tables-container,
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child .filament-tables-table {
+        padding-left: 6rem !important;
+        max-width: calc(100% - 6rem) !important;
+        width: calc(100% - 6rem) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .filament-resource-fees .filament-page-header {
+        padding-left: 4rem !important;
+    }
+    
+    .filament-resource-fees .filament-main-content {
+        padding-left: 4rem !important;
+        margin-left: 4rem !important;
+    }
+    
+    .filament-resource-fees .filament-widgets-container {
+        margin-left: 4rem !important;
+        padding-left: 6rem !important;
+        max-width: calc(100% - 10rem) !important;
+        width: calc(100% - 10rem) !important;
+    }
+    
+    .filament-resource-fees .filament-stats-overview-widget {
+        padding-left: 6rem !important;
+        max-width: calc(100% - 6rem) !important;
+        width: calc(100% - 6rem) !important;
+    }
+    
+    .filament-resource-fees .filament-stats-overview-widget .filament-stats-overview-widget-card {
+        max-width: 200px !important;
+        width: 200px !important;
+    }
+    
+
+    
+    .filament-resource-fees .filament-tables-container,
+    .filament-resource-fees .filament-main-content > * {
+        padding-left: 6rem !important;
+        max-width: calc(100% - 6rem) !important;
+        width: calc(100% - 6rem) !important;
+    }
+    
+    /* Batch summary widget responsive - desktop */
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child {
+        margin-left: 5rem !important;
+        padding-left: 7rem !important;
+        max-width: calc(100% - 12rem) !important;
+        width: calc(100% - 12rem) !important;
+    }
+    
+    /* Fee stats widget responsive - desktop (only widget now) */
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child {
+        margin-left: 10rem !important;
+        padding-left: 12rem !important;
+        max-width: calc(100% - 22rem) !important;
+        width: calc(100% - 22rem) !important;
+    }
+    
+
+    
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child .filament-tables-container,
+    .filament-resource-fees .filament-widgets-container .filament-widget:first-child .filament-tables-table {
+        padding-left: 7rem !important;
+        max-width: calc(100% - 7rem) !important;
+        width: calc(100% - 7rem) !important;
+    }
 } 

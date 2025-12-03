@@ -112,21 +112,27 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .fi-header { display: none !important; }
+        body { background-color: white !important; }
+        html { background-color: white !important; }
+        .bg-black, .bg-gray-900, .bg-gray-800, .bg-gray-700 { background-color: white !important; }
+        .text-white { color: #14b8a6 !important; }
+        .text-gray-900 { color: #1f2937 !important; }
+        .text-gray-600 { color: #4b5563 !important; }
         /* Hide scrollbar for Chrome, Safari and Opera */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         /* Hide scrollbar for IE, Edge and Firefox */
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     
-    <div class="bg-gray-50">
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
+    <div class="bg-white min-h-screen">
+    <div class="min-h-screen bg-white flex flex-col">
         <!-- Enhanced Navigation Header -->
-        <nav class="bg-white shadow-sm sticky top-0 z-50 w-full border-b border-gray-100">
-            <div class="w-full max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="bg-white shadow-sm sticky top-0 z-50 w-full border-b border-gray-200">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
                     <!-- Logo -->
                     <div class="flex items-center">
-                        <img src="{{ asset('/logo_whitebg.jpeg') }}" alt="Logo" class="h-10 sm:h-12 mr-4" style="width: 140px;" />
+                        <img src="{{ asset('/edguide-logo.png') }}" alt="Logo" class="h-10 sm:h-12 mr-4" style="width: 140px;" />
                     </div>
                     
                     <!-- Desktop Navigation -->
@@ -135,18 +141,18 @@
                         
                         <!-- User Menu -->
                         <div class="relative group">
-                            <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                            <button id="userMenuButton" class="flex items-center space-x-2 text-[#14b8a6] hover:text-gray-900 focus:outline-none">
                                 <img src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}" alt="{{ $user->name }}" class="h-8 w-8 rounded-full border-2 border-gray-200" />
                                 <span class="text-sm font-medium">{{ $user->name }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
-                                <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                                <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-2 text-sm text-[#14b8a6] hover:bg-gray-100">Profile</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Logout</button>
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#14b8a6] hover:bg-gray-100">Logout</button>
                                 </form>
                             </div>
                         </div>
@@ -154,7 +160,7 @@
                     
                     <!-- Mobile Menu Button -->
                     <div class="md:hidden">
-                        <button id="mobileMenuButton" class="text-gray-600 hover:text-gray-900 focus:outline-none" onclick="toggleMobileMenu()">
+                        <button id="mobileMenuButton" class="text-[#14b8a6] hover:text-gray-900 focus:outline-none" onclick="toggleMobileMenu()">
                             <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
@@ -163,16 +169,16 @@
                 </div>
                 
                 <!-- Desktop Navigation Links -->
-                <div class="hidden md:flex justify-center border-t border-gray-100 py-3">
+                <div class="hidden md:flex justify-center border-t border-gray-200 py-3">
                     <div class="flex space-x-8">
-                        <a href="{{ route('filament.student.pages.dashboard') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Dashboard</a>
-                        <a href="{{ route('filament.student.pages.courses') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Courses</a>
-                        <a href="{{ route('filament.student.pages.tests') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Test</a>
-                        <a href="{{ route('filament.student.pages.study-materials') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Study Materials</a>
-                        <a href="{{ route('filament.student.pages.profile') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Profile</a>
-                        <a href="{{ route('filament.student.pages.daily-works') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.daily-works') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Daily Works</a>
-                        <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Speaking Sessions</a>
-                        <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 border-b-2 border-cyan-500' : 'text-gray-500 hover:text-gray-700' }} px-3 py-2 transition-colors duration-200">Doubt Clearance</a>
+                        <a href="{{ route('filament.student.pages.dashboard') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Dashboard</a>
+                        <a href="{{ route('filament.student.pages.courses') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Courses</a>
+                        {{-- <a href="{{ route('filament.student.pages.tests') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Test</a> --}}
+                        <a href="{{ route('filament.student.pages.study-materials') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Study Materials</a>
+                        <a href="{{ route('filament.student.pages.profile') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Profile</a>
+                        {{-- <a href="{{ route('filament.student.pages.opinion-verification') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.opinion-verification') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Opinion Verification</a> --}}
+                        <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Live Classes</a>
+                        <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-[#14b8a6] border-b-2 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900' }} px-3 py-2 transition-colors duration-200">Doubt Clearance</a>
                     </div>
                 </div>
             </div>
@@ -180,14 +186,14 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
                 <div class="px-4 py-3 space-y-2">
-                    <a href="{{ route('filament.student.pages.dashboard') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Dashboard</a>
-                    <a href="{{ route('filament.student.pages.courses') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Courses</a>
-                    <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a>
-                    <a href="{{ route('filament.student.pages.study-materials') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Study Materials</a>
-                    <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Profile</a>
-                    <a href="{{ route('filament.student.pages.daily-works') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.daily-works') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Daily Works</a>
-                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Speaking Sessions</a>
-                    <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a>
+                    <a href="{{ route('filament.student.pages.dashboard') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.dashboard') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Dashboard</a>
+                    <a href="{{ route('filament.student.pages.courses') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Courses</a>
+                    {{-- <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a> --}}
+                    <a href="{{ route('filament.student.pages.study-materials') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.study-materials') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Study Materials</a>
+                    <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.profile') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Profile</a>
+                    {{-- <a href="{{ route('filament.student.pages.opinion-verification') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.opinion-verification') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Opinion Verification</a> --}}
+                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.speaking-sessions') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Live Classes</a>
+                    <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.doubt-clearance') ? 'text-[#14b8a6] bg-teal-50 border-l-4 border-[#14b8a6]' : 'text-[#14b8a6] hover:text-gray-900 hover:bg-gray-100' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a>
                     
                     <!-- Mobile User Menu -->
                     <div class="border-t border-gray-200 pt-4 mt-4">
@@ -209,19 +215,19 @@
 
         <!-- Main Content -->
         <main class="flex-1 w-full">
-            <div class="w-full max-w-[120rem] mx-auto px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
+            <div class="w-full px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
                 <!-- Page Header -->
                 <div class="mb-8 sm:mb-10">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                         <div class="mb-4 sm:mb-0">
                             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                                🏠 Welcome to Rosy's German Academy
+                                🏠 Welcome to <span class="text-[#14b8a6]">EdGuide</span>
                             </h1>
-                            <p class="text-gray-600 text-base sm:text-lg" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            <p class="text-[#14b8a6] text-base sm:text-lg" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
                                 Your learning journey starts here
                             </p>
                         </div>
-                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <div class="flex items-center space-x-2 text-sm text-[#14b8a6]">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
@@ -232,108 +238,108 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
                     <!-- Card 1: Assigned Courses -->
-                    <a href="{{ route('filament.student.pages.courses') }}" class="bg-[#F5F5F5] rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block">
-                        <div class="bg-blue-500 p-3 sm:p-4 text-white flex justify-between items-center">
+                    <a href="{{ route('filament.student.pages.courses') }}" class="bg-white rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block border border-gray-200">
+                        <div class="bg-[#14b8a6] p-3 sm:p-4 text-white flex justify-between items-center">
                             <span class="text-sm sm:text-base font-medium">My Courses</span>
-                            <span class="text-lg sm:text-xl cursor-pointer hover:text-blue-100">📚</span>
+                            <span class="text-lg sm:text-xl cursor-pointer hover:text-gray-200">📚</span>
                         </div>
                         <div class="p-3 sm:p-4 flex flex-col items-center">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-700 rounded-lg flex items-center justify-center mb-3">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-[#14b8a6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
                             </div>
                             @if($assignedCourses->count() > 0)
                                 <div class="text-center w-full">
-                                    <div class="text-xs text-gray-600 mb-2">Course Assigned</div>
-                                    <div class="text-2xl font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg">
+                                    <div class="text-xs text-[#14b8a6] mb-2">Course Assigned</div>
+                                    <div class="text-2xl font-bold text-[#14b8a6] bg-gray-700 px-4 py-2 rounded-lg">
                                         {{ $assignedCourses->first()->name }}
                                     </div>
                                 </div>
                             @else
-                                <p class="text-sm text-gray-600 text-center">No courses assigned yet</p>
+                                <p class="text-sm text-[#14b8a6] text-center">No courses assigned yet</p>
                             @endif
                         </div>
                     </a>
 
                     <!-- Card 2: Course Subjects -->
-                    <div class="bg-[#F5F5F5] rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block">
-                        <div class="bg-green-500 p-3 sm:p-4 text-white flex justify-between items-center">
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block border border-gray-200">
+                        <div class="bg-[#14b8a6] p-3 sm:p-4 text-white flex justify-between items-center">
                             <span class="text-sm sm:text-base font-medium">Course Subjects</span>
-                            <span class="text-lg sm:text-xl cursor-pointer hover:text-green-100">📖</span>
+                            <span class="text-lg sm:text-xl cursor-pointer hover:text-gray-200">📖</span>
                         </div>
                         <div class="p-3 sm:p-4">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-[#14b8a6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
                             @if($subjects->count() > 0)
                                 <div class="grid grid-cols-2 gap-2">
                                     @foreach($subjects as $subject)
-                                        <div class="bg-green-50 rounded-lg px-2 py-1 text-center">
-                                            <span class="text-xs font-medium text-green-800">{{ $subject->name }}</span>
+                                        <div class="bg-gray-700 rounded-lg px-2 py-1 text-center">
+                                            <span class="text-xs font-medium text-[#14b8a6]">{{ $subject->name }}</span>
                                         </div>
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-sm text-gray-600 text-center">No subjects available</p>
+                                <p class="text-sm text-[#14b8a6] text-center">No subjects available</p>
                             @endif
                         </div>
                     </div>
 
                     <!-- Card 3: Study Materials Count -->
-                    <a href="{{ route('filament.student.pages.study-materials') }}" class="bg-[#F5F5F5] rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block">
-                        <div class="bg-orange-500 p-3 sm:p-4 text-white flex justify-between items-center">
+                    <a href="{{ route('filament.student.pages.study-materials') }}" class="bg-white rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block border border-gray-200">
+                        <div class="bg-[#14b8a6] p-3 sm:p-4 text-white flex justify-between items-center">
                             <span class="text-sm sm:text-base font-medium">Study Materials</span>
-                            <span class="text-lg sm:text-xl cursor-pointer hover:text-orange-100">📑</span>
+                            <span class="text-lg sm:text-xl cursor-pointer hover:text-gray-200">📑</span>
                         </div>
                         <div class="p-3 sm:p-4 flex flex-col items-center">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-700 rounded-lg flex items-center justify-center mb-3">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-[#14b8a6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                 </svg>
                             </div>
                             <div class="text-center w-full">
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div class="bg-pink-50 rounded-lg p-2">
-                                        <div class="text-lg font-bold text-pink-600">{{ $totalNotes }}</div>
-                                        <div class="text-xs text-pink-700">📄 Notes</div>
+                                    <div class="bg-gray-700 rounded-lg p-2">
+                                        <div class="text-lg font-bold text-[#14b8a6]">{{ $totalNotes }}</div>
+                                        <div class="text-xs text-[#14b8a6]">📄 Notes</div>
                                     </div>
-                                    <div class="bg-blue-50 rounded-lg p-2">
-                                        <div class="text-lg font-bold text-blue-600">{{ $totalVideos }}</div>
-                                        <div class="text-xs text-blue-700">🎥 Videos</div>
+                                    <div class="bg-gray-700 rounded-lg p-2">
+                                        <div class="text-lg font-bold text-[#14b8a6]">{{ $totalVideos }}</div>
+                                        <div class="text-xs text-[#14b8a6]">🎥 Videos</div>
                                     </div>
                                 </div>
-                                <p class="mt-2 text-xs text-gray-600">Available study resources</p>
+                                <p class="mt-2 text-xs text-[#14b8a6]">Available study resources</p>
                             </div>
                         </div>
                     </a>
 
                     <!-- Card 4: Day Progress -->
-                    <div class="bg-[#F5F5F5] rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block">
-                        <div class="bg-teal-500 p-3 sm:p-4 text-white flex justify-between items-center">
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden transform transition-transform duration-200 hover:scale-[1.02] block border border-gray-200">
+                        <div class="bg-[#14b8a6] p-3 sm:p-4 text-white flex justify-between items-center">
                             <span class="text-sm sm:text-base font-medium">Day Progress</span>
-                            <span class="text-lg sm:text-xl cursor-pointer hover:text-teal-100">📊</span>
+                            <span class="text-lg sm:text-xl cursor-pointer hover:text-gray-200">📊</span>
                         </div>
                         <div class="p-3 sm:p-4">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-[#14b8a6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
                             <div class="space-y-2">
-                                <div class="flex items-center justify-between bg-green-50 rounded-lg px-2 py-1">
-                                    <span class="text-xs font-medium text-green-800">✅ Completed</span>
-                                    <span class="text-xs font-bold text-green-600">{{ $completedDays }}</span>
+                                <div class="flex items-center justify-between bg-gray-700 rounded-lg px-2 py-1">
+                                    <span class="text-xs font-medium text-[#14b8a6]">✅ Completed</span>
+                                    <span class="text-xs font-bold text-[#14b8a6]">{{ $completedDays }}</span>
                                 </div>
-                                <div class="flex items-center justify-between bg-yellow-50 rounded-lg px-2 py-1">
-                                    <span class="text-xs font-medium text-yellow-800">⏳ Pending</span>
-                                    <span class="text-xs font-bold text-yellow-600">{{ $pendingDays }}</span>
+                                <div class="flex items-center justify-between bg-gray-700 rounded-lg px-2 py-1">
+                                    <span class="text-xs font-medium text-[#14b8a6]">⏳ Pending</span>
+                                    <span class="text-xs font-bold text-[#14b8a6]">{{ $pendingDays }}</span>
                                 </div>
-                                <div class="flex items-center justify-between bg-blue-50 rounded-lg px-2 py-1">
-                                    <span class="text-xs font-medium text-blue-800">🔓 Unlocked</span>
-                                    <span class="text-xs font-bold text-blue-600">{{ $totalAssignedDays }}</span>
+                                <div class="flex items-center justify-between bg-gray-700 rounded-lg px-2 py-1">
+                                    <span class="text-xs font-medium text-[#14b8a6]">🔓 Unlocked</span>
+                                    <span class="text-xs font-bold text-[#14b8a6]">{{ $totalAssignedDays }}</span>
                                 </div>
                             </div>
                         </div>
@@ -346,12 +352,12 @@
         <div class="bg-gray-200 py-2 w-full"></div>
 
         <!-- New Design Section -->
-        <section class="w-full bg-white">
-            <div class="w-full max-w-[120rem] mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
+        <section class="w-full bg-gray-50">
+            <div class="w-full px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                 <div class="flex-1 w-full lg:w-auto">
-                    <h2 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-left">Rosy's German School- Linguist Since 1971</h2>
-                    <p class="text-sm sm:text-base text-gray-600">We Are The Best Choice For Your Dream</p>
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-left text-gray-900">EdGuide - Linguist Since 1971</h2>
+                    <p class="text-sm sm:text-base text-[#14b8a6]">We Are The Best Choice For Your Dream</p>
                 </div>
                 <div class="flex-1 w-full lg:w-auto">
                     @php
@@ -404,12 +410,12 @@
         </section>
 
         <!-- Test Progress Section -->
-        <section class="w-full bg-gray-50">
-            <div class="w-full max-w-[120rem] mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
+        <section class="w-full bg-white">
+            <div class="w-full px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                     <div class="flex-1 w-full lg:w-auto">
-                        <h2 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-left">Test Performance</h2>
-                        <p class="text-sm sm:text-base text-gray-600">Track your test completion and success rate</p>
+                        <h2 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-left text-gray-900">Test Performance</h2>
+                        <p class="text-sm sm:text-base text-[#14b8a6]">Track your test completion and success rate</p>
                     </div>
                     <div class="flex-1 w-full lg:w-auto">
                         @php
@@ -432,11 +438,11 @@
                                 $testMotivationalMessage = "📚 Keep practicing for better results!";
                             }
                         @endphp
-                        <div class="bg-purple-500 p-4 sm:p-6 text-white rounded-lg">
+                        <div class="bg-[#14b8a6] p-4 sm:p-6 text-white rounded-lg">
                             <h3 class="text-base sm:text-lg font-semibold">Test Progress</h3>
                             
                             <!-- Overall Summary -->
-                            <div class="mt-3 mb-4 p-3 bg-purple-400 rounded-lg">
+                            <div class="mt-3 mb-4 p-3 bg-gray-700 rounded-lg">
                                 <p class="text-sm font-medium">Overall Summary</p>
                                 <p class="text-sm">{{ $completedTests }}/{{ $totalTests }} tests completed ({{ $testProgressPercentage }}%)</p>
                                 @if($completedTests > 0)
@@ -492,12 +498,12 @@
                             @endif
                             
                             <!-- Progress Bar -->
-                            <div class="w-full bg-purple-400 rounded-full h-2 mb-3">
+                            <div class="w-full bg-gray-700 rounded-full h-2 mb-3">
                                 <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: {{ $testProgressPercentage }}%"></div>
                             </div>
                             
                             <p class="text-sm mb-3">{{ $testMotivationalMessage }}</p>
-                            <a href="{{ route('filament.student.pages.tests') }}" class="mt-3 sm:mt-4 bg-white text-purple-500 px-3 sm:px-4 py-2 rounded inline-block text-sm sm:text-base font-medium hover:bg-gray-50 transition-colors duration-200">View Tests</a>
+                            <a href="{{ route('filament.student.pages.tests') }}" class="mt-3 sm:mt-4 bg-white text-[#14b8a6] px-3 sm:px-4 py-2 rounded inline-block text-sm sm:text-base font-medium hover:bg-gray-50 transition-colors duration-200">View Tests</a>
                         </div>
                     </div>
                 </div>
@@ -505,17 +511,17 @@
         </section>
 
         <!-- Enhanced Footer -->
-        <div class="bg-gradient-to-r from-gray-100 to-gray-200 py-1 w-full"></div>
-        <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6 sm:py-8 w-full mt-auto">
-            <div class="w-full max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-r from-gray-200 to-gray-300 py-1 w-full"></div>
+        <footer class="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 py-6 sm:py-8 w-full mt-auto">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
                     <div class="text-center sm:text-left">
-                        <p class="text-lg sm:text-xl font-semibold">Rosy's German Academy</p>
-                        <p class="text-sm text-gray-300 mt-1">Empowering German language learning</p>
+                        <p class="text-lg sm:text-xl font-semibold text-[#14b8a6]">EdGuide</p>
+                        <p class="text-sm text-[#14b8a6] mt-1">Empowering learning</p>
                     </div>
                     <div class="text-center sm:text-right">
-                        <p class="text-sm text-gray-300">© 2025 All rights reserved</p>
-                        <p class="text-xs text-gray-400 mt-1">Terms & Privacy Policy</p>
+                        <p class="text-sm text-[#14b8a6]">© 2025 All rights reserved</p>
+                        <p class="text-xs text-[#14b8a6] mt-1">Terms & Privacy Policy</p>
                     </div>
                 </div>
             </div>

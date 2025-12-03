@@ -1635,7 +1635,7 @@
     <style>
     /* Custom styling for Filament header */
     .fi-header {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+        background: linear-gradient(135deg, #000000 0%, #000000 100%) !important;
         border-radius: 12px !important;
         margin-bottom: 1.5rem !important;
         padding: 1.25rem 1.5rem !important;

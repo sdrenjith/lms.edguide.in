@@ -3,6 +3,7 @@
 namespace App\Filament\Student\Pages;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class Profile extends Page
 {
@@ -14,6 +15,31 @@ class Profile extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
+    }
+    
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.student.pages.profile';
+    }
+
+    public function mount(): void
+    {
+        $user = Auth::user();
+        
+        // Debug logging
+        \Log::info('Filament Profile page - User verification status:', [
+            'user_id' => $user->id,
+            'is_verified' => $user->is_verified,
+            'verification_code' => $user->verification_code,
+            'verification_code_id' => $user->verification_code_id
+        ]);
+    }
+
+    public function getViewData(): array
+    {
+        return [
+            'user' => Auth::user(),
+        ];
     }
 } 

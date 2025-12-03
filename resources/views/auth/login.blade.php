@@ -11,7 +11,7 @@
     <div class="login-card">
         <div class="login-header">
             <div class="login-icon" style="width: 150px; height: 80px; margin: 0 auto 1rem;padding:10px;">
-                <img src="{{ asset('/logo.jpeg') }}" alt="Study Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                <img src="{{ asset('/edguide-logo.png') }}" alt="Study Logo" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <h1 class="login-title">Welcome Back</h1>
             <p class="login-subtitle">Sign in to continue your journey</p>
@@ -93,7 +93,7 @@
         </form>
 
         <div class="login-footer">
-            <p>Don't have an account? <a href="#" class="signup-link">Sign up here</a></p>
+            <p>Don't have an account? <a href="{{ route('student.register.form') }}" class="signup-link">Register as Student</a></p>
         </div>
     </div>
 </div>

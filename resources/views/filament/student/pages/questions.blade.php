@@ -6,6 +6,397 @@
     <title>Questions - {{ $course->name }} - {{ $subject->name }} - {{ $day->title }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <style>
+        /* Custom header styles */
+        .header-logo {
+            transition: transform 0.2s ease-in-out;
+        }
+        .header-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-menu-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .user-menu-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 0.5rem;
+        }
+        
+        .mobile-menu-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .mobile-menu-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 0.5rem;
+        }
+        
+        /* Smooth dropdown animation */
+        .user-dropdown {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+            transform-origin: top right;
+        }
+        
+        .user-dropdown.hidden {
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+        }
+        
+        .user-dropdown:not(.hidden) {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    </style>
+    
+    <!-- Custom Translation Script -->
+    <script type="text/javascript">
+        // Detect current page language
+        function detectLanguage() {
+            // Check if any Google Translate elements exist
+            var translateSelect = document.querySelector('.goog-te-combo');
+            if (translateSelect) {
+                return translateSelect.value || 'de';
+            }
+            
+            // Fallback to detecting text
+            var bodyText = document.body.innerText.toLowerCase();
+            return bodyText.match(/[äöüß]/) ? 'de' : 'en';
+        }
+
+        // Perform translation
+        function translatePage(targetLang) {
+            // Method 1: Use Google Translate Element if available
+            var translateSelect = document.querySelector('.goog-te-combo');
+            if (translateSelect) {
+                try {
+                    translateSelect.value = targetLang;
+                    translateSelect.dispatchEvent(new Event('change'));
+                    
+                    // Try to trigger translate button
+                    var translateButton = document.querySelector('.goog-te-button button');
+                    if (translateButton) {
+                        translateButton.click();
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('Google Translate method failed:', error);
+                }
+            }
+
+            // Method 2: Fallback to browser's built-in translation
+            if ('translate' in window.navigator) {
+                try {
+                    window.navigator.translate.translate(targetLang);
+                    return true;
+                } catch (error) {
+                    console.error('Browser translation failed:', error);
+                }
+            }
+
+            // Method 3: Reload with translation parameter
+            var currentUrl = window.location.href;
+            var separator = currentUrl.includes('?') ? '&' : '?';
+            window.location.href = currentUrl + separator + 'lang=' + targetLang;
+
+            return false;
+        }
+
+        // Toggle language function
+        function toggleLanguage() {
+            var currentLang = detectLanguage();
+            var btn = document.getElementById('language-toggle-btn');
+            
+            if (currentLang === 'de') {
+                translatePage('en');
+                if (btn) {
+                    btn.querySelector('.language-toggle-text').textContent = 'Convert to German';
+                }
+            } else {
+                translatePage('de');
+                if (btn) {
+                    btn.querySelector('.language-toggle-text').textContent = 'Convert to English';
+                }
+            }
+        }
+
+        // Ensure translation is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add global translate function for potential external calls
+            window.toggleLanguage = toggleLanguage;
+        });
+    </script>
+
+    <!-- Advanced Translation Script -->
+    <script>
+        // Comprehensive Translation Mechanism
+        (function() {
+            // Translation State Management
+            const TranslationState = {
+                currentLang: 'de',
+                isTranslating: false
+            };
+
+            // Translation Utility
+            const TranslationEngine = {
+                // Translate entire page via server
+                translatePage: function(targetLang) {
+                    // Prevent multiple translations
+                    if (TranslationState.isTranslating) return;
+                    TranslationState.isTranslating = true;
+
+                    // Show loading indicator
+                    this.showLoadingIndicator();
+
+                    // Fetch CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    // Send translation request
+                    fetch('{{ route("translate.page") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({ lang: targetLang })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.applyTranslation(data.content);
+                            this.updateUI(targetLang);
+                        } else {
+                            this.fallbackTranslation(targetLang);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Translation error:', error);
+                        this.fallbackTranslation(targetLang);
+                    })
+                    .finally(() => {
+                        TranslationState.isTranslating = false;
+                        this.hideLoadingIndicator();
+                    });
+                },
+
+                // Apply translated content
+                applyTranslation: function(translatedContent) {
+                    // Update specific page elements
+                    if (translatedContent.title) {
+                        const titleElements = document.querySelectorAll('h1, .page-title');
+                        titleElements.forEach(el => el.textContent = translatedContent.title);
+                    }
+
+                    if (translatedContent.instructions) {
+                        const instructionElements = document.querySelectorAll('.page-instructions');
+                        instructionElements.forEach(el => el.textContent = translatedContent.instructions);
+                    }
+                },
+
+                // Fallback translation method
+                fallbackTranslation: function(targetLang) {
+                    // Manual translation of key elements
+                    const translations = {
+                        'de_to_en': {
+                            'Listening Questions': 'Listening Questions',
+                            'Complete all listening questions first': 'Complete all listening questions first'
+                        },
+                        'en_to_de': {
+                            'Listening Questions': 'Listening Questions',
+                            'Complete all listening questions first': 'Beenden Sie zuerst alle Listening-Fragen'
+                        }
+                    };
+
+                    const key = `${TranslationState.currentLang}_to_${targetLang}`;
+                    const translationMap = translations[key] || {};
+
+                    // Replace text in key elements
+                    document.body.innerHTML = document.body.innerHTML.replace(
+                        new RegExp(Object.keys(translationMap).join('|'), 'gi'),
+                        matched => translationMap[matched] || matched
+                    );
+                },
+
+                // Update UI after translation
+                updateUI: function(targetLang) {
+                    const btn = document.getElementById('language-toggle-btn');
+                    if (btn) {
+                        btn.querySelector('.language-toggle-text').textContent = 
+                            targetLang === 'en' ? 'Convert to German' : 'Convert to English';
+                    }
+                    TranslationState.currentLang = targetLang;
+                },
+
+                // Show loading indicator
+                showLoadingIndicator: function() {
+                    const loadingIndicator = document.createElement('div');
+                    loadingIndicator.id = 'translation-loading';
+                    loadingIndicator.innerHTML = `
+                        <div class="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center">
+                            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+                        </div>
+                    `;
+                    document.body.appendChild(loadingIndicator);
+                },
+
+                // Hide loading indicator
+                hideLoadingIndicator: function() {
+                    const loadingIndicator = document.getElementById('translation-loading');
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+                }
+            };
+
+            // Global toggle function
+            window.toggleLanguage = function() {
+                const currentLang = TranslationState.currentLang;
+                TranslationEngine.translatePage(currentLang === 'de' ? 'en' : 'de');
+            };
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                // Add click listener to translation toggle button
+                const btn = document.getElementById('language-toggle-btn');
+                if (btn) {
+                    btn.addEventListener('click', window.toggleLanguage);
+                }
+            });
+        })();
+    </script>
+
+    <style>
+        /* Google Translate Styling */
+        .translate-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+        }
+        
+        #google_translate_element,
+        #google_translate_element_mobile {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #google_translate_element .goog-te-gadget,
+        #google_translate_element_mobile .goog-te-gadget {
+            font-family: inherit !important;
+            font-size: 12px !important;
+            color: transparent !important;
+        }
+        
+        #google_translate_element .goog-te-combo,
+        #google_translate_element_mobile .goog-te-combo {
+            background: white !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
+            font-size: 12px !important;
+            color: #374151 !important;
+            outline: none !important;
+            transition: all 0.2s !important;
+            min-width: 120px !important;
+            max-width: 140px !important;
+            height: 32px !important;
+            cursor: pointer !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+        }
+        
+        #google_translate_element .goog-te-combo:focus,
+        #google_translate_element_mobile .goog-te-combo:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        /* Hide original Google Translate elements */
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner,
+        #goog-gt-tt,
+        .goog-te-balloon-frame {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+        }
+        
+        body {
+            top: 0px !important;
+        }
+        
+        /* Custom dropdown arrow */
+        #google_translate_element .goog-te-combo {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 8px center !important;
+            padding-right: 24px !important;
+        }
+
+        /* Language Toggle Button Styling */
+        .language-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            outline: none;
+            gap: 8px;
+            height: 36px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .language-toggle-btn:hover {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-toggle-btn:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .language-toggle-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            color: #6b7280;
+        }
+        
+        .language-toggle-text {
+            white-space: nowrap;
+            color: #374151;
+        }
+
+        /* Prevent Google Translate from adding extra space */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+        }
+        
+        body {
+            top: 0px !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     @php
@@ -13,36 +404,45 @@
     @endphp
     <div class="min-h-screen flex flex-col">
         <!-- Enhanced Navigation Header -->
-        <nav class="bg-white shadow-sm sticky top-0 z-50 w-full border-b border-gray-100">
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
             <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
-                    <!-- Logo & Back Button -->
+                    <!-- Left Side: Back Button & Logo -->
                     <div class="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
-                        <img src="{{ asset('/logo_whitebg.jpeg') }}" alt="Logo" class="h-8 sm:h-10 md:h-12 flex-shrink-0" style="width: auto; max-width: 120px; sm:max-width: 140px;" />
-                        <div class="hidden sm:block w-px h-6 sm:h-8 bg-gray-300"></div>
-                        <a href="{{ route('filament.student.pages.courses') }}" class="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 min-w-0">
+                        <a href="{{ route('filament.student.pages.courses') }}" 
+                           class="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 min-w-0">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
                             <span class="hidden sm:inline text-sm sm:text-base">Back to Courses</span>
                             <span class="sm:hidden text-sm">Back</span>
                         </a>
+                        
+                        <div class="hidden sm:block w-px h-6 sm:h-8 bg-gray-300"></div>
+                        
+                        <!-- Logo -->
+                        <img src="{{ asset('/edguide-logo.png') }}" alt="EdGuide" class="header-logo h-8 sm:h-10 md:h-12 flex-shrink-0" style="width: auto; max-width: 120px; sm:max-width: 140px;" />
                     </div>
                     
-                    <!-- Desktop Navigation -->
-                    <div class="hidden md:flex items-center space-x-8">
-
+                    <!-- Right Side: User Menu -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Mobile Menu Button -->
+                        <button id="mobileMenuButton" class="mobile-menu-button md:hidden flex items-center p-2 text-gray-600 hover:text-gray-900 focus:outline-none">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
                         
-                        <!-- User Menu -->
-                        <div class="relative group">
-                            <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                        <!-- Desktop User Menu -->
+                        <div class="hidden md:block relative group">
+                            <button id="userMenuButton" class="user-menu-button flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none p-2">
                                 <img src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}" alt="{{ auth()->user()->name }}" class="h-8 w-8 rounded-full border-2 border-gray-200" />
                                 <span class="text-sm font-medium">{{ auth()->user()->name }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                            <div id="userMenuDropdown" class="user-dropdown hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
                                 <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -50,15 +450,6 @@
                                 </form>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Mobile Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobileMenuButton" class="text-gray-600 hover:text-gray-900 focus:outline-none" onclick="toggleMobileMenu()">
-                            <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -68,12 +459,18 @@
                 <div class="px-4 py-3 space-y-2">
                     <a href="{{ route('filament.student.pages.dashboard') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Dashboard</a>
                     <a href="{{ route('filament.student.pages.courses') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.courses') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Courses</a>
-                    <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a>
+                    {{-- <a href="{{ route('filament.student.pages.tests') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.tests') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Test</a> --}}
                     <a href="{{ route('filament.student.pages.study-materials') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Study Materials</a>
                     <a href="{{ route('filament.student.pages.profile') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Profile</a>
-                    <a href="{{ route('filament.student.pages.daily-works') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.daily-works') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Daily Works</a>
-                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Speaking Sessions</a>
-                    <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a>
+                    {{-- <a href="{{ route('filament.student.pages.opinion-verification') }}" class="block px-4 py-3 text-base font-medium {{ request()->routeIs('filament.student.pages.opinion-verification') ? 'text-cyan-600 bg-cyan-50 border-l-4 border-cyan-500' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }} rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Opinion Verification</a> --}}
+                    <a href="{{ route('filament.student.pages.speaking-sessions') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Live Classes</a>
+                    {{-- <a href="{{ route('filament.student.pages.doubt-clearance') }}" class="block px-4 py-3 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" onclick="closeMobileMenu()">Doubt Clearance</a> --}}
+                    
+                    <!-- Mobile Google Translate -->
+                    <div class="flex items-center px-4 py-3">
+                        <span class="text-sm text-gray-600 mr-2">Translate:</span>
+                        <div id="google_translate_element_mobile" class="inline-block"></div>
+                    </div>
                     
                     <!-- Mobile User Menu -->
                     <div class="border-t border-gray-200 pt-4 mt-4">
@@ -167,6 +564,8 @@
                     @foreach($questions as $index => $question)
                         @php
                             $isAnswered = in_array($question->id, $answeredQuestionIds);
+                            $studentAnswer = $studentAnswers->where('question_id', $question->id)->first();
+                            $isOpinionQuestion = $question->questionType && $question->questionType->name === 'opinion';
                         @endphp
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 w-full">
                             <div class="p-4 sm:p-6">
@@ -188,7 +587,19 @@
                                                     <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{{ $question->questionType->name ?? 'Unknown Type' }}</span>
                                                     <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full">{{ $question->points ?? 1 }} {{ ($question->points ?? 1) == 1 ? 'point' : 'points' }}</span>
                                                     @if($isAnswered)
-                                                        <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">Completed</span>
+                                                        @if($isOpinionQuestion)
+                                                            @if($studentAnswer && $studentAnswer->verification_status === 'pending')
+                                                                <span class="bg-blue-200 text-blue-800 px-2 py-1 rounded-full font-medium">Awaiting Teacher</span>
+                                                            @elseif($studentAnswer && $studentAnswer->verification_status === 'verified_correct')
+                                                                <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">Correct</span>
+                                                            @elseif($studentAnswer && $studentAnswer->verification_status === 'verified_incorrect')
+                                                                <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full font-medium">Needs Revision</span>
+                                                            @else
+                                                                <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded-full font-medium">Submitted</span>
+                                                            @endif
+                                                        @else
+                                                            <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">Completed</span>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </div>
@@ -203,6 +614,13 @@
                                         @if($question->question_text)
                                             <div class="mb-3 sm:mb-4">
                                                 <p class="text-sm sm:text-base text-gray-700 leading-relaxed">{{ Str::limit($question->question_text, 200) }}</p>
+                                            </div>
+                                        @endif
+                                        
+                                        @if($isOpinionQuestion && $studentAnswer && $studentAnswer->verification_comment)
+                                            <div class="mb-3 sm:mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                <h4 class="text-xs font-medium text-yellow-800 mb-1">Teacher's Comment:</h4>
+                                                <p class="text-sm text-gray-700">{{ $studentAnswer->verification_comment }}</p>
                                             </div>
                                         @endif
                                     </div>
@@ -329,8 +747,8 @@
             <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
                     <div class="text-center sm:text-left">
-                        <p class="text-lg sm:text-xl font-semibold">Rosy's German Academy</p>
-                        <p class="text-sm text-gray-300 mt-1">Empowering German language learning</p>
+                        <p class="text-lg sm:text-xl font-semibold">EdGuide</p>
+                        <p class="text-sm text-gray-300 mt-1">Empowering learning</p>
                     </div>
                     <div class="text-center sm:text-right">
                         <p class="text-sm text-gray-300">© 2025 All rights reserved</p>
@@ -345,36 +763,50 @@
     @include('components.student-watermark')
 
     <script>
+        // Mobile menu functionality
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('menu-icon');
+            const button = document.getElementById('mobileMenuButton');
             if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+                // Change icon to X
+                button.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
             } else {
                 menu.classList.add('hidden');
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+                // Change icon back to hamburger
+                button.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
             }
         }
         
         function closeMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('menu-icon');
+            const button = document.getElementById('mobileMenuButton');
             menu.classList.add('hidden');
-            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+            // Change icon back to hamburger
+            button.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
         }
 
+        // User dropdown functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('userMenuButton');
-            const dropdown = document.getElementById('userMenuDropdown');
-            if (btn && dropdown) {
-                btn.addEventListener('click', function(e) {
+            // Mobile menu button
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            }
+            
+            // User dropdown
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            if (userMenuButton && userMenuDropdown) {
+                userMenuButton.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    dropdown.classList.toggle('hidden');
+                    userMenuDropdown.classList.toggle('hidden');
                 });
+                
+                // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!btn.contains(e.target)) {
-                        dropdown.classList.add('hidden');
+                    if (!userMenuButton.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
                     }
                 });
             }

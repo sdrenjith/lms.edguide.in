@@ -43,15 +43,38 @@ class VideoResource extends Resource
                         Forms\Components\TextInput::make('youtube_url')
                             ->label('YouTube Video URL')
                             ->placeholder('https://www.youtube.com/watch?v=...')
-                            ->helperText('Paste the full YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)')
-                            ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('replace_video')
+                            ->helperText('Paste the full YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID). This is an alternative to uploading a video file.')
+                            ->url()
+                            ->columnSpanFull()
+                            ->rules([
+                                function () {
+                                    return function (string $attribute, $value, \Closure $fail) {
+                                        if (!empty($value) && !\App\Helpers\VideoHelper::isValidYoutubeUrl($value)) {
+                                            $fail('Please provide a valid YouTube URL.');
+                                        }
+                                    };
+                                },
+                            ]),
+                        Forms\Components\FileUpload::make('video_path')
                             ->label('Upload Video File')
-                            ->helperText('Upload a new video to replace the existing one. Leave empty to keep the current video.')
-                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo'])
+                            ->helperText(fn ($record) => $record ? 'Upload a new video to replace the existing one. Leave empty to keep the current video.' : 'Upload a video file OR provide a YouTube URL above. Maximum file size: 100MB')
+                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/avi', 'video/mov'])
                             ->maxSize(102400) // 100MB
-                            ->columnSpanFull(),
-                        Forms\Components\Grid::make(['default' => 1, 'md' => 3])
+                            ->disk('public')
+                            ->directory('videos')
+                            ->visibility('public')
+                            ->openable()
+                            ->downloadable()
+                            ->previewable(false)
+                            ->columnSpanFull()
+                            ->uploadingMessage('Uploading video file...')
+                            ->extraInputAttributes([
+                                'class' => 'fi-fo-file-upload fi-fo-file-upload-wrapper'
+                            ])
+                            ->extraAttributes([
+                                'style' => 'border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 1rem; background-color: #f9fafb; min-height: 120px;'
+                            ]),
+                        Forms\Components\Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
                                 Forms\Components\Select::make('course_id')
                                     ->label('Course')
@@ -65,11 +88,6 @@ class VideoResource extends Resource
                                     ->required()
                                     ->placeholder('Select subject')
                                     ->preload(),
-                                Forms\Components\TextInput::make('day_number')
-                                    ->label('Day')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(1),
                             ]),
                     ])
                     ->columns(2),
@@ -88,10 +106,6 @@ class VideoResource extends Resource
                 Tables\Columns\TextColumn::make('course.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('subject.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('day_number')
-                    ->label('Day')
-                    ->formatStateUsing(fn($state) => 'Day ' . $state)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('video_type')
                     ->label('Type')
@@ -154,5 +168,11 @@ class VideoResource extends Resource
             'create' => Pages\CreateVideo::route('/create'),
             'edit' => Pages\EditVideo::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Show for all users except dataentry users
+        return !(auth()->check() && auth()->user()->isDataEntry());
     }
 } 

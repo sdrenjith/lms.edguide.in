@@ -113,4 +113,10 @@ class DoubtResource extends Resource
             'edit' => Pages\EditDoubt::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Show for admin and teacher users
+        return auth()->check() && in_array(auth()->user()->role, ['admin', 'teacher']);
+    }
 } 
